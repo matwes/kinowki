@@ -2,22 +2,16 @@
   "name": "kinowki-api-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "implicitDependencies": [
-    "kinowki-api"
-  ],
+  "implicitDependencies": ["kinowki-api"],
   "targets": {
     "e2e": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{e2eProjectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{e2eProjectRoot}"],
       "options": {
         "jestConfig": "apps/kinowki-api-e2e/jest.config.ts",
         "passWithNoTests": true
       },
-      "dependsOn": [
-        "kinowki-api:build"
-      ]
+      "dependsOn": ["kinowki-api:build"]
     }
   }
 }
