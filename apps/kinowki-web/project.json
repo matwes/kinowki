@@ -1,0 +1,85 @@
+{
+  "name": "kinowki-web",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/kinowki-web/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/kinowki-web",
+        "browser": "apps/kinowki-web/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/kinowki-web/tsconfig.app.json",
+        "inlineStyleLanguage": "sass",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/kinowki-web/public"
+          }
+        ],
+        "styles": ["apps/kinowki-web/src/styles.sass"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "kinowki-web:build:production"
+        },
+        "development": {
+          "buildTarget": "kinowki-web:build:development"
+        }
+      },
+      "defaultConfiguration": "development",
+      "options": {
+        "proxyConfig": "apps/kinowki-web/proxy.conf.json"
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular/build:extract-i18n",
+      "options": {
+        "buildTarget": "kinowki-web:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "kinowki-web:build",
+        "staticFilePath": "dist/apps/kinowki-web/browser",
+        "spa": true
+      }
+    }
+  }
+}
