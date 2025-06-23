@@ -1,0 +1,6 @@
+<div class="sidebar shadow-3">
+  <div class="title">kinówki</div>
+  @for(page of pages; track page.url) {
+  <a class="page" [routerLink]="page.url" routerLinkActive="active">{{ page.label }}</a>
+  }
+</div>

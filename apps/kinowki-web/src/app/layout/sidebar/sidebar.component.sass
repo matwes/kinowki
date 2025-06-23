@@ -1,0 +1,43 @@
+.sidebar
+  position: absolute
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  background: var(--p-orange-500)
+  top: 0
+  left: 0
+  bottom: 0
+  width: 10rem
+  gap: 1rem
+  font-family: monospace
+
+  .title
+    top: 0.125rem
+    left: 0
+    width: 10rem
+    text-align: center
+    font-size: 2rem
+    overflow: hidden
+    letter-spacing: -0.0625rem
+    position: fixed
+
+  .page
+    font-size: 1.125rem
+    font-weight: bold
+    text-transform: uppercase
+    letter-spacing: 0.0625rem
+
+    &.active
+      &::before, &::after
+        content: "-"
+        font-family: auto
+
+      &::before
+        margin-right: 0.25rem
+
+      &::after
+        margin-left: 0.25rem
+
+    &:hover:not(.active)
+      text-decoration: underline
