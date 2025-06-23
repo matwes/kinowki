@@ -4,9 +4,9 @@ import { RouterModule } from '@angular/router';
 @Component({
   imports: [RouterModule],
   selector: 'app-root',
-  templateUrl: './app.html',
-  styleUrl: './app.sass',
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.sass',
 })
-export class App {
-  protected title = 'kinowki-web';
+export class AppComponent {
+  title = 'kinowki-web';
 }
