@@ -1,8 +1,84 @@
-<form class="flex flex-column" [formGroup]="form">
-  <p-selectbutton
-    [options]="letters"
-    formControlName="letter"
-    fluid
-    class="w-full overflow-y-auto"
-    styleClass="w-full min-w-max" />
-</form>
+<div class="card flex flex-column overflow-hidden h-full p-5">
+  <p-toast />
+  <p-toolbar class="flex-none" styleClass="mb-6">
+    <ng-template #start>
+      <h1 class="m-0">Filmy</h1>
+    </ng-template>
+    <ng-template #end>
+      <div class="flex gap-3">
+        <p-iconfield>
+          <p-inputicon styleClass="pi pi-search" />
+          <input
+            pInputText
+            type="text"
+            (input)="dt.filterGlobal($any($event.target)?.value ?? '', 'contains')"
+            placeholder="Szukaj..." />
+        </p-iconfield>
+        <p-button label="Dodaj" severity="primary" icon="pi pi-plus" (onClick)="openFilmDialog()" />
+      </div>
+    </ng-template>
+  </p-toolbar>
+  <p-table
+    #dt
+    class="flex-auto overflow-hidden"
+    dataKey="_id"
+    [value]="films"
+    [rows]="10"
+    scrollHeight="flex"
+    [scrollable]="true"
+    [rowHover]="true"
+    [paginator]="true"
+    [globalFilterFields]="['title', 'originalTitle', 'genres', 'year']"
+    currentPageReportTemplate="Wyświetlam od {first} do {last} ze wszystkich {totalRecords} filmów"
+    [showCurrentPageReport]="true">
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="title" [style.minWidth.rem]="16">
+          Tytuł
+          <p-sortIcon field="title" />
+        </th>
+        <th pSortableColumn="originalTitle" [style.minWidth.rem]="16">
+          Tytuł oryginalny
+          <p-sortIcon field="originalTitle" />
+        </th>
+        <th pSortableColumn="year" [style.minWidth.rem]="3">
+          Rok
+          <p-sortIcon field="year" />
+        </th>
+        <th [style.minWidth.rem]="12">Gatunek</th>
+        <th [style.minWidth.rem]="8"></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-film>
+      <tr class="table-row">
+        <td>{{ film.title }}</td>
+        <td>{{ film.originalTitle }}</td>
+        <td>{{ film.year }}</td>
+        <td>
+          <div class="flex gap-2">
+            @for (genre of film.genres; track genre) {
+            <p-tag [value]="genre | genreName" severity="secondary" />
+            }
+          </div>
+        </td>
+        <td class="text-right">
+          <p-button
+            icon="pi pi-pencil"
+            class="mr-2"
+            size="small"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="openFilmDialog(film)" />
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            size="small"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="deleteFilm(film)" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-confirmDialog [style.width.rem]="28" />
+</div>

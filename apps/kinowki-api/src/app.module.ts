@@ -5,7 +5,6 @@ import { ReleaseModule } from './release/release.module';
 import { DistributorModule } from './distributor/distributor.module';
 import { FlyerModule } from './flyer/flyer.module';
 import { TagModule } from './tag/tag.module';
-import { GenreModule } from './genre/genre.module';
 import { FlyerTypeModule } from './flyer-type/flyer-type.module';
 import { FlyerSizeModule } from './flyer-size/flyer-size.module';
 import { UserModule } from './user/user.module';
@@ -19,7 +18,6 @@ import { UserFlyerModule } from './user-flyer/user-flyer.module';
     FlyerModule,
     FlyerSizeModule,
     FlyerTypeModule,
-    GenreModule,
     ReleaseModule,
     TagModule,
     UserFlyerModule,

@@ -1,0 +1,46 @@
+<form [formGroup]="form" (submit)="onSave()">
+  <div class="formgrid grid">
+    <div class="field col-12">
+      <p-iftalabel>
+        <input pInputText fluid id="title" [formControl]="title" />
+        <label for="title">Tytuł</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-12">
+      <p-iftalabel>
+        <input pInputText fluid id="originalTitle" [formControl]="originalTitle" />
+        <label for="originalTitle">Tytuł oryginalny</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-6">
+      <p-iftalabel>
+        <p-inputNumber inputId="year" fluid [formControl]="year" [useGrouping]="false" />
+        <label for="year">Rok</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-6">
+      <p-iftalabel>
+        <p-inputNumber inputId="imdb" fluid [formControl]="imdb" [useGrouping]="false" />
+        <label for="imdb">IMDb</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-12">
+      <p-iftalabel>
+        <p-multiSelect
+          id="genres"
+          fluid
+          scrollHeight="15rem"
+          [filter]="true"
+          filterBy="label"
+          [options]="options.genres"
+          [formControl]="genres"
+          appendTo="body" />
+        <label for="genres">Gatunek</label>
+      </p-iftalabel>
+    </div>
+  </div>
+  <div class="flex flex-row-reverse gap-3">
+    <p-button label="Zapisz" severity="primary" type="submit" />
+    <p-button label="Anuluj" severity="secondary" (onClick)="onCancel()" />
+  </div>
+</form>

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, SchemaTypes, Types } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
 export type FilmDocument = HydratedDocument<Film>;
 
@@ -17,8 +17,8 @@ export class Film {
   @Prop({ required: false })
   description?: string;
 
-  @Prop({ required: true, type: [SchemaTypes.ObjectId], ref: 'Genre' })
-  genres: Types.ObjectId[];
+  @Prop({ required: true })
+  genres: number[];
 
   @Prop({ required: false })
   imdb?: number;

@@ -1,5 +1,7 @@
 <div class="sidebar shadow-3">
-  <div class="title">kinówki</div>
+  <div class="title">
+    <img class="w-full" src="logo.png" alt="logo" />
+  </div>
   @for(page of pages; track page.url) {
   <a class="page" [routerLink]="page.url" routerLinkActive="active">{{ page.label }}</a>
   }

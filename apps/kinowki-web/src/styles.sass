@@ -1,4 +1,5 @@
 @import "../../../node_modules/primeflex/primeflex.css"
+@import "primeicons/primeicons.css"
 
 html
   font-family: Poppins, sans-serif, "Roboto", sans-serif
@@ -7,8 +8,12 @@ html
 
 html, body
   height: 100%
+  margin: 0
   overflow: hidden
 
 a, a:visited, a:hover, a:active
   color: inherit
   text-decoration: none
+
+.p-inputtext.ng-invalid.ng-touched
+  border-color: var(--p-inputtext-invalid-border-color)
