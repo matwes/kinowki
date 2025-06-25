@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { CreateFilmDto, UpdateFilmDto } from '@kinowki/shared';
 import { CrudService } from '../utils';
-import { Film } from './schemas/film.schema';
-import { CreateFilmDto } from './dto/create-film.dto';
-import { UpdateFilmDto } from './dto/update-film.dto';
+import { Film } from './film.schema';
 
 @Injectable()
 export class FilmService extends CrudService<Film, CreateFilmDto, UpdateFilmDto> {

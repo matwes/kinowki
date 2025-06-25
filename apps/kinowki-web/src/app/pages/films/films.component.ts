@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,24 +9,16 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
-import { Table, TableModule } from 'primeng/table';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
-import { filter } from 'rxjs';
+import { filter, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
 
-import { GenreNamePipe, mockedFilms, notEmpty } from '../../utils';
+import { FilmDto } from '@kinowki/shared';
+import { FilmService } from '../../services';
+import { GenreNamePipe, notEmpty } from '../../utils';
 import { FilmDialogComponent } from './film-dialog';
-
-interface Film {
-  _id?: string;
-  title?: string;
-  originalTitle?: string;
-  year?: number;
-  genres?: number[];
-  description?: string;
-  imdb?: number;
-}
 
 @UntilDestroy()
 @Component({
@@ -49,20 +40,39 @@ interface Film {
     ToastModule,
     ToolbarModule,
   ],
-  providers: [MessageService, ConfirmationService, DialogService],
+  providers: [ConfirmationService, DialogService, FilmService, MessageService],
 })
 export class FilmsComponent {
-  @ViewChild('dt') dt!: Table;
+  films: FilmDto[] = [];
+  totalRecords = 0;
+  event?: TableLazyLoadEvent;
+  lazyEvent = new Subject<TableLazyLoadEvent>();
 
-  films: Film[] = mockedFilms;
+  data$ = this.lazyEvent.pipe(
+    switchMap((lazyEvent) => this.filmService.getAll({ first: lazyEvent.first ?? 0, rows: lazyEvent.rows ?? 20 })),
+    shareReplay(1)
+  );
+
+  films$ = this.data$.pipe(map((res) => res.data));
+  totalRecords$ = this.data$.pipe(map((res) => res.totalRecords));
 
   constructor(
     private readonly messageService: MessageService,
     private readonly confirmationService: ConfirmationService,
-    private readonly dialogService: DialogService
+    private readonly dialogService: DialogService,
+    private readonly filmService: FilmService
   ) {}
 
-  openFilmDialog(film?: Film) {
+  lazyLoad(event?: TableLazyLoadEvent) {
+    if (event) {
+      this.event = event;
+    }
+    if (this.event) {
+      this.lazyEvent.next(this.event);
+    }
+  }
+
+  openFilmDialog(film?: FilmDto) {
     this.dialogService
       .open(FilmDialogComponent, {
         data: { item: film },
@@ -71,22 +81,35 @@ export class FilmsComponent {
         closeOnEscape: false,
         modal: true,
       })
-      .onClose.pipe(untilDestroyed(this), filter(notEmpty<any>))
+      .onClose.pipe(
+        untilDestroyed(this),
+        filter(notEmpty),
+        switchMap((data) => (film ? this.filmService.update(film._id, data) : this.filmService.create(data))),
+        tap(() => this.lazyLoad())
+      )
       .subscribe();
   }
 
-  deleteFilm(film: Film) {
+  deleteFilm(film: FilmDto) {
     this.confirmationService.confirm({
       message: `Czy na pewno chcesz usunąć film „${film.title}”?`,
       header: 'Usuń film',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sukces',
-          detail: `Usunięto film „${film.title}”`,
-          life: 3000,
-        });
+        this.filmService
+          .delete(film._id)
+          .pipe(
+            untilDestroyed(this),
+            tap(() => this.lazyLoad())
+          )
+          .subscribe(() => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sukces',
+              detail: `Usunięto film „${film.title}”`,
+              life: 3000,
+            });
+          });
       },
     });
   }

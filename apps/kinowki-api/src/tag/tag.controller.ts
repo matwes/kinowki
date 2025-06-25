@@ -1,9 +1,8 @@
 import { Controller } from '@nestjs/common';
 
+import { CreateTagDto, UpdateTagDto } from '@kinowki/shared';
 import { CrudController } from '../utils';
-import { Tag } from './schemas/tag.schema';
-import { CreateTagDto } from './dto/create-tag.dto';
-import { UpdateTagDto } from './dto/update-tag.dto';
+import { Tag } from './tag.schema';
 import { TagService } from './tag.service';
 
 @Controller('tag')

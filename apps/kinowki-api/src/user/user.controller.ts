@@ -1,9 +1,8 @@
 import { Controller } from '@nestjs/common';
 
+import { CreateUserDto, UpdateUserDto } from '@kinowki/shared';
 import { CrudController } from '../utils';
-import { User } from './schemas/user.schema';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './user.schema';
 import { UserService } from './user.service';
 
 @Controller('user')

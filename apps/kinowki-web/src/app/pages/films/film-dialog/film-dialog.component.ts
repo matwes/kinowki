@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,7 +8,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 
-import { genres } from '../../../utils';
+import { FilmDto, genres } from '@kinowki/shared';
 
 @Component({
   selector: 'app-film-dialog',
@@ -29,16 +28,11 @@ export class FilmDialogComponent implements OnInit {
   options = { genres };
 
   form = this.fb.group({
-    _id: [
-      {
-        value: undefined as unknown as number,
-        disabled: true,
-      },
-    ],
+    _id: [{ value: undefined as unknown as string, disabled: true }],
     title: [undefined as unknown as string, Validators.required],
     originalTitle: undefined as string | undefined,
     year: [undefined as unknown as number, Validators.required],
-    genres: [[] as string[]],
+    genres: [[] as number[]],
     imdb: undefined as number | undefined,
   });
 
@@ -68,7 +62,7 @@ export class FilmDialogComponent implements OnInit {
 
   constructor(
     private readonly ref: DynamicDialogRef,
-    private readonly config: DynamicDialogConfig<{ item: any }>,
+    private readonly config: DynamicDialogConfig<{ item: FilmDto }>,
     private readonly fb: NonNullableFormBuilder
   ) {}
 
@@ -99,7 +93,7 @@ export class FilmDialogComponent implements OnInit {
     }
   }
 
-  private getFromForm() {
+  private getFromForm(): Partial<FilmDto> {
     return {
       _id: this._id.value,
       title: this.title.value,

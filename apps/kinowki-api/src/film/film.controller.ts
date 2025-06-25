@@ -1,9 +1,8 @@
 import { Controller } from '@nestjs/common';
 
+import { CreateFilmDto, UpdateFilmDto } from '@kinowki/shared';
 import { CrudController } from '../utils';
-import { Film } from './schemas/film.schema';
-import { CreateFilmDto } from './dto/create-film.dto';
-import { UpdateFilmDto } from './dto/update-film.dto';
+import { Film } from './film.schema';
 import { FilmService } from './film.service';
 
 @Controller('film')

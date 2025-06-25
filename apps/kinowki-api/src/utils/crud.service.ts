@@ -27,7 +27,7 @@ export abstract class CrudService<Schema, CreateDto, UpdateDto> {
       query = query.limit(params.rows).skip(params.first);
     }
 
-    const itemData = await query.sort(this.sortKey).lean().exec();
+    const itemData = await query.sort(this.sortKey).collation({ locale: 'pl', strength: 2 }).lean().exec();
     if (!itemData) {
       throw new NotFoundException(`${this.name} data not found!`);
     }

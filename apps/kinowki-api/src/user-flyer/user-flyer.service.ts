@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { CreateUserFlyerDto, UpdateUserFlyerDto } from '@kinowki/shared';
 import { CrudService } from '../utils';
-import { UserFlyer } from './schemas/user-flyer.schema';
-import { CreateUserFlyerDto } from './dto/create-user-flyer.dto';
-import { UpdateUserFlyerDto } from './dto/update-user-flyer.dto';
+import { UserFlyer } from './user-flyer.schema';
 
 @Injectable()
 export class UserFlyerService extends CrudService<UserFlyer, CreateUserFlyerDto, UpdateUserFlyerDto> {

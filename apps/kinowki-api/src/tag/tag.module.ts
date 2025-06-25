@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { Tag, TagSchema } from './schemas/tag.schema';
+import { Tag, TagSchema } from './tag.schema';
 import { TagService } from './tag.service';
 import { TagController } from './tag.controller';
 

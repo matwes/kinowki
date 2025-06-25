@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { CreateTagDto, UpdateTagDto } from '@kinowki/shared';
 import { CrudService } from '../utils';
-import { Tag } from './schemas/tag.schema';
-import { CreateTagDto } from './dto/create-tag.dto';
-import { UpdateTagDto } from './dto/update-tag.dto';
+import { Tag } from './tag.schema';
 
 @Injectable()
 export class TagService extends CrudService<Tag, CreateTagDto, UpdateTagDto> {

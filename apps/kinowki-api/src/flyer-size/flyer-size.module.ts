@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { FlyerSize, FlyerSizeSchema } from './schemas/flyer-size.schema';
+import { FlyerSize, FlyerSizeSchema } from './flyer-size.schema';
 import { FlyerSizeService } from './flyer-size.service';
 import { FlyerSizeController } from './flyer-size.controller';
 

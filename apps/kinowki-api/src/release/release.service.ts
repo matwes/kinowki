@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { CreateReleaseDto, UpdateReleaseDto } from '@kinowki/shared';
 import { CrudService } from '../utils';
-import { Release } from './schemas/release.schema';
-import { CreateReleaseDto } from './dto/create-release.dto';
-import { UpdateReleaseDto } from './dto/update-release.dto';
+import { Release } from './release.schema';
 
 @Injectable()
 export class ReleaseService extends CrudService<Release, CreateReleaseDto, UpdateReleaseDto> {

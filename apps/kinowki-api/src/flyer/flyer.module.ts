@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { Flyer, FlyerSchema } from './schemas/flyer.schema';
+import { Flyer, FlyerSchema } from './flyer.schema';
 import { FlyerService } from './flyer.service';
 import { FlyerController } from './flyer.controller';
 

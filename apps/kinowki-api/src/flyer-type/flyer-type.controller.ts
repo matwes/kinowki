@@ -1,9 +1,8 @@
 import { Controller } from '@nestjs/common';
 
+import { CreateFlyerTypeDto, UpdateFlyerTypeDto } from '@kinowki/shared';
 import { CrudController } from '../utils';
-import { FlyerType } from './schemas/flyer-type.schema';
-import { CreateFlyerTypeDto } from './dto/create-flyer-type.dto';
-import { UpdateFlyerTypeDto } from './dto/update-flyer-type.dto';
+import { FlyerType } from './flyer-type.schema';
 import { FlyerTypeService } from './flyer-type.service';
 
 @Controller('flyer-type')

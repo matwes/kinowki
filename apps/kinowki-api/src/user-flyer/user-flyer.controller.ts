@@ -1,9 +1,8 @@
 import { Controller } from '@nestjs/common';
 
+import { CreateUserFlyerDto, UpdateUserFlyerDto } from '@kinowki/shared';
 import { CrudController } from '../utils';
-import { UserFlyer } from './schemas/user-flyer.schema';
-import { CreateUserFlyerDto } from './dto/create-user-flyer.dto';
-import { UpdateUserFlyerDto } from './dto/update-user-flyer.dto';
+import { UserFlyer } from './user-flyer.schema';
 import { UserFlyerService } from './user-flyer.service';
 
 @Controller('user-flyer')

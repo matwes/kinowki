@@ -1,9 +1,8 @@
 import { Controller } from '@nestjs/common';
 
+import { CreateFlyerSizeDto, UpdateFlyerSizeDto } from '@kinowki/shared';
 import { CrudController } from '../utils';
-import { FlyerSize } from './schemas/flyer-size.schema';
-import { CreateFlyerSizeDto } from './dto/create-flyer-size.dto';
-import { UpdateFlyerSizeDto } from './dto/update-flyer-size.dto';
+import { FlyerSize } from './flyer-size.schema';
 import { FlyerSizeService } from './flyer-size.service';
 
 @Controller('flyer-size')

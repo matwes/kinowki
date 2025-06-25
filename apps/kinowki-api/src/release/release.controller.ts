@@ -1,9 +1,8 @@
 import { Controller } from '@nestjs/common';
 
+import { CreateReleaseDto, UpdateReleaseDto } from '@kinowki/shared';
 import { CrudController } from '../utils';
-import { Release } from './schemas/release.schema';
-import { CreateReleaseDto } from './dto/create-release.dto';
-import { UpdateReleaseDto } from './dto/update-release.dto';
+import { Release } from './release.schema';
 import { ReleaseService } from './release.service';
 
 @Controller('release')

@@ -8,29 +8,29 @@
       <div class="flex gap-3">
         <p-iconfield>
           <p-inputicon styleClass="pi pi-search" />
-          <input
-            pInputText
-            type="text"
-            (input)="dt.filterGlobal($any($event.target)?.value ?? '', 'contains')"
-            placeholder="Szukaj..." />
+          <input pInputText type="text" placeholder="Szukaj..." />
         </p-iconfield>
         <p-button label="Dodaj" severity="primary" icon="pi pi-plus" (onClick)="openFilmDialog()" />
       </div>
     </ng-template>
   </p-toolbar>
   <p-table
-    #dt
     class="flex-auto overflow-hidden"
     dataKey="_id"
-    [value]="films"
-    [rows]="10"
+    stateStorage="local"
+    stateKey="films"
+    [value]="(films$ | async) ?? []"
+    [totalRecords]="(totalRecords$ | async) ?? 0"
+    [rows]="20"
+    [rowsPerPageOptions]="[10, 20, 50, 100]"
     scrollHeight="flex"
     [scrollable]="true"
     [rowHover]="true"
     [paginator]="true"
-    [globalFilterFields]="['title', 'originalTitle', 'genres', 'year']"
+    [lazy]="true"
     currentPageReportTemplate="Wyświetlam od {first} do {last} ze wszystkich {totalRecords} filmów"
-    [showCurrentPageReport]="true">
+    [showCurrentPageReport]="true"
+    (onLazyLoad)="lazyLoad($event)">
     <ng-template #header>
       <tr>
         <th pSortableColumn="title" [style.minWidth.rem]="16">
