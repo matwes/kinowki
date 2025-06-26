@@ -1,5 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 
 export abstract class CrudService<Schema, CreateDto, UpdateDto> {
   abstract name: string;
@@ -20,8 +20,8 @@ export abstract class CrudService<Schema, CreateDto, UpdateDto> {
     return existingItem;
   }
 
-  async getAll(params?: { first: number; rows: number }) {
-    let query = this.model.find();
+  async getAll(params?: { first: number; rows: number }, filters?: FilterQuery<Schema>) {
+    let query = this.model.find(filters);
 
     if (params) {
       query = query.limit(params.rows).skip(params.first);
@@ -50,7 +50,7 @@ export abstract class CrudService<Schema, CreateDto, UpdateDto> {
     return deletedItem;
   }
 
-  async count(): Promise<number> {
-    return await this.model.countDocuments();
+  async count(filters?: FilterQuery<Schema>): Promise<number> {
+    return await this.model.countDocuments(filters);
   }
 }

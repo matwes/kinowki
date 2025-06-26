@@ -6,16 +6,15 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogService } from 'primeng/dynamicdialog';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 import { filter, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
 
-import { FilmDto } from '@kinowki/shared';
+import { FilmDto, genres } from '@kinowki/shared';
 import { FilmService } from '../../services';
 import { GenreNamePipe, notEmpty } from '../../utils';
 import { FilmDialogComponent } from './film-dialog';
@@ -31,9 +30,8 @@ import { FilmDialogComponent } from './film-dialog';
     ConfirmDialogModule,
     FormsModule,
     GenreNamePipe,
-    IconFieldModule,
-    InputIconModule,
     InputTextModule,
+    MultiSelectModule,
     ReactiveFormsModule,
     TableModule,
     TagModule,
@@ -43,13 +41,14 @@ import { FilmDialogComponent } from './film-dialog';
   providers: [ConfirmationService, DialogService, FilmService, MessageService],
 })
 export class FilmsComponent {
+  genres = genres;
   films: FilmDto[] = [];
   totalRecords = 0;
   event?: TableLazyLoadEvent;
   lazyEvent = new Subject<TableLazyLoadEvent>();
 
   data$ = this.lazyEvent.pipe(
-    switchMap((lazyEvent) => this.filmService.getAll({ first: lazyEvent.first ?? 0, rows: lazyEvent.rows ?? 20 })),
+    switchMap((lazyEvent) => this.filmService.getAll(lazyEvent)),
     shareReplay(1)
   );
 

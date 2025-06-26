@@ -5,13 +5,7 @@
       <h1 class="m-0">Filmy</h1>
     </ng-template>
     <ng-template #end>
-      <div class="flex gap-3">
-        <p-iconfield>
-          <p-inputicon styleClass="pi pi-search" />
-          <input pInputText type="text" placeholder="Szukaj..." />
-        </p-iconfield>
-        <p-button label="Dodaj" severity="primary" icon="pi pi-plus" (onClick)="openFilmDialog()" />
-      </div>
+      <p-button label="Dodaj" severity="primary" icon="pi pi-plus" (onClick)="openFilmDialog()" />
     </ng-template>
   </p-toolbar>
   <p-table
@@ -33,27 +27,51 @@
     (onLazyLoad)="lazyLoad($event)">
     <ng-template #header>
       <tr>
-        <th pSortableColumn="title" [style.minWidth.rem]="16">
-          Tytuł
-          <p-sortIcon field="title" />
+        <th class="text-center">Rok</th>
+        <th [style.minWidth.rem]="16">
+          <div class="flex align-items-center gap-3">
+            Tytuł
+            <p-columnFilter type="text" field="title" [showMenu]="false" [showClearButton]="false" matchMode="contains">
+              <ng-template #filter let-value let-filter="filterCallback">
+                <input
+                  pInputText
+                  styleClass="w-20rem"
+                  type="text"
+                  placeholder="Szukaj..."
+                  [ngModel]="value"
+                  (ngModelChange)="filter($event)" />
+              </ng-template>
+            </p-columnFilter>
+          </div>
         </th>
-        <th pSortableColumn="originalTitle" [style.minWidth.rem]="16">
-          Tytuł oryginalny
-          <p-sortIcon field="originalTitle" />
+        <th [style.minWidth.rem]="12">
+          <div class="flex align-items-center gap-3">
+            Gatunek
+            <p-columnFilter field="genres" [showMenu]="false" [showClearButton]="false">
+              <ng-template #filter let-value let-filter="filterCallback">
+                <p-multiselect
+                  styleClass="w-20rem"
+                  [ngModel]="value"
+                  [options]="genres"
+                  placeholder="Szukaj..."
+                  [showClear]="false"
+                  (onChange)="filter($event.value)" />
+              </ng-template>
+            </p-columnFilter>
+          </div>
         </th>
-        <th pSortableColumn="year" [style.minWidth.rem]="3">
-          Rok
-          <p-sortIcon field="year" />
-        </th>
-        <th [style.minWidth.rem]="12">Gatunek</th>
         <th [style.minWidth.rem]="8"></th>
       </tr>
     </ng-template>
     <ng-template #body let-film>
       <tr class="table-row">
-        <td>{{ film.title }}</td>
-        <td>{{ film.originalTitle }}</td>
-        <td>{{ film.year }}</td>
+        <td class="text-center">{{ film.year }}</td>
+        <td>
+          <div>
+            <b>{{ film.title }}</b>
+          </div>
+          <div [style.opacity]="0.75">{{ film.originalTitle }}</div>
+        </td>
         <td>
           <div class="flex gap-2">
             @for (genre of film.genres; track genre) {

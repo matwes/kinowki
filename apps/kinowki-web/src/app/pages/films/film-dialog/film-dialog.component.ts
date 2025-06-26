@@ -8,7 +8,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 
-import { FilmDto, genres } from '@kinowki/shared';
+import { FilmDto, genreMap, genres } from '@kinowki/shared';
 
 @Component({
   selector: 'app-film-dialog',
@@ -99,7 +99,7 @@ export class FilmDialogComponent implements OnInit {
       title: this.title.value,
       originalTitle: this.originalTitle.value,
       year: this.year.value,
-      genres: this.genres.value,
+      genres: this.genres.value.sort((a, b) => genreMap[a].localeCompare(genreMap[b])),
       imdb: this.imdb.value,
     };
   }
