@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { Distributor, DistributorSchema } from './schemas/distributor.schema';
+import { Distributor, DistributorSchema } from './distributor.schema';
 import { DistributorService } from './distributor.service';
 import { DistributorController } from './distributor.controller';
 

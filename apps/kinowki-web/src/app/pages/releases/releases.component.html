@@ -1,1 +1,82 @@
-<p>releases works!</p>
+<div class="card flex flex-column overflow-hidden h-full p-5">
+  <p-toast />
+  <form [formGroup]="form">
+    <p-toolbar class="flex-none" styleClass="mb-6">
+      <ng-template #start>
+        <h1 class="flex align-items-center gap-2 m-0">
+          Premiery
+          <p-select
+            id="release-year"
+            class="border-none shadow-none"
+            [options]="options.years"
+            [formControl]="year"
+            appendTo="body" />
+        </h1>
+      </ng-template>
+      <ng-template #center>
+        <p-selectbutton [options]="options.months" [formControl]="month" />
+      </ng-template>
+      <ng-template #end><div [style.width.px]="224"></div></ng-template>
+    </p-toolbar>
+  </form>
+  <p-table
+    class="flex-auto overflow-hidden"
+    dataKey="_id"
+    stateStorage="local"
+    stateKey="releases"
+    rowGroupMode="subheader"
+    groupRowsBy="date"
+    [value]="(value$ | async) ?? []"
+    [totalRecords]="(totalRecords$ | async) ?? 0"
+    scrollHeight="flex"
+    [scrollable]="true"
+    [rowHover]="true"
+    [lazy]="true"
+    (onLazyLoad)="lazyLoad($event)">
+    <ng-template #header>
+      <tr>
+        <th [style.minWidth.rem]="12">Film</th>
+        <th [style.minWidth.rem]="12">Dystrybucja</th>
+        <th [style.minWidth.rem]="12">Rodzaj premiery</th>
+        <th [style.minWidth.rem]="12">Uwagi</th>
+        <th [style.minWidth.rem]="8"></th>
+      </tr>
+    </ng-template>
+    <ng-template #groupheader let-release>
+      <tr pRowGroupHeader>
+        <td colspan="5" class="text-center surface-200">
+          <span class="font-bold">{{ release.date | date : 'd MMMM' }}</span>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #body let-release let-rowgroup="rowgroup" let-rowspan="rowspan">
+      <tr class="table-row">
+        <td>
+          <div>
+            <b>{{ release.film.title }} ({{ release.film.year }})</b>
+          </div>
+          <div [style.opacity]="0.75">{{ release.film.originalTitle }}</div>
+        </td>
+        <td>
+          <div class="flex gap-2">
+            @for (distributor of release.distributors; track distributor) {
+            <p-tag [value]="distributor.name" severity="secondary" />
+            }
+          </div>
+        </td>
+        <td>{{ release.releaseType | releaseTypeName }}</td>
+        <td>{{ release.note }}</td>
+        <td class="text-right">
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            size="small"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="deleteRelease(release)" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-confirmDialog [style.width.rem]="28" />
+</div>

@@ -12,10 +12,17 @@ import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
-import { filter, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import { filter, forkJoin, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
 
-import { FilmDto, genres } from '@kinowki/shared';
-import { FilmService } from '../../services';
+import {
+  CreateReleaseDto,
+  DistributorDto,
+  FilmDto,
+  UpdateDistributorDto,
+  UpdateReleaseDto,
+  genres,
+} from '@kinowki/shared';
+import { DistributorService, FilmService, ReleaseService } from '../../services';
 import { GenreNamePipe, notEmpty } from '../../utils';
 import { FilmDialogComponent } from './film-dialog';
 
@@ -38,12 +45,10 @@ import { FilmDialogComponent } from './film-dialog';
     ToastModule,
     ToolbarModule,
   ],
-  providers: [ConfirmationService, DialogService, FilmService, MessageService],
+  providers: [ConfirmationService, DialogService, MessageService],
 })
 export class FilmsComponent {
   genres = genres;
-  films: FilmDto[] = [];
-  totalRecords = 0;
   event?: TableLazyLoadEvent;
   lazyEvent = new Subject<TableLazyLoadEvent>();
 
@@ -52,15 +57,20 @@ export class FilmsComponent {
     shareReplay(1)
   );
 
-  films$ = this.data$.pipe(map((res) => res.data));
+  value$ = this.data$.pipe(map((res) => res.data));
   totalRecords$ = this.data$.pipe(map((res) => res.totalRecords));
+  private distributors: DistributorDto[] = [];
 
   constructor(
     private readonly messageService: MessageService,
     private readonly confirmationService: ConfirmationService,
     private readonly dialogService: DialogService,
-    private readonly filmService: FilmService
-  ) {}
+    private readonly filmService: FilmService,
+    private readonly distributorService: DistributorService,
+    private readonly releaseService: ReleaseService
+  ) {
+    this.distributorService.getAll().subscribe((res) => (this.distributors = res.data));
+  }
 
   lazyLoad(event?: TableLazyLoadEvent) {
     if (event) {
@@ -71,32 +81,52 @@ export class FilmsComponent {
     }
   }
 
-  openFilmDialog(film?: FilmDto) {
+  openFilmDialog(item?: FilmDto) {
     this.dialogService
       .open(FilmDialogComponent, {
-        data: { item: film },
-        header: film ? 'Edytuj film' : 'Dodaj film',
-        width: '30%',
+        data: { item, distributors: this.distributors },
+        header: item ? 'Edytuj film' : 'Dodaj film',
+        width: '40%',
         closeOnEscape: false,
         modal: true,
       })
       .onClose.pipe(
         untilDestroyed(this),
         filter(notEmpty),
-        switchMap((data) => (film ? this.filmService.update(film._id, data) : this.filmService.create(data))),
+        switchMap((data) => {
+          const releases = data.releases as (CreateReleaseDto | UpdateReleaseDto)[];
+          const filmRequest = item ? this.filmService.update(item._id, data) : this.filmService.create(data);
+
+          return filmRequest.pipe(
+            switchMap((res) => {
+              const film = res.data;
+              return forkJoin(
+                releases
+                  .map((release) => ({ ...release, film: film._id }))
+                  .map((release) => {
+                    if (this.isCreateDto(release)) {
+                      return this.releaseService.create({ ...release });
+                    } else {
+                      return this.releaseService.update(release._id, release);
+                    }
+                  })
+              );
+            })
+          );
+        }),
         tap(() => this.lazyLoad())
       )
       .subscribe();
   }
 
-  deleteFilm(film: FilmDto) {
+  deleteFilm(item: FilmDto) {
     this.confirmationService.confirm({
-      message: `Czy na pewno chcesz usunąć film „${film.title}”?`,
+      message: `Czy na pewno chcesz usunąć film „${item.title}”?`,
       header: 'Usuń film',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.filmService
-          .delete(film._id)
+          .delete(item._id)
           .pipe(
             untilDestroyed(this),
             tap(() => this.lazyLoad())
@@ -105,11 +135,15 @@ export class FilmsComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Sukces',
-              detail: `Usunięto film „${film.title}”`,
+              detail: `Usunięto film „${item.title}”`,
               life: 3000,
             });
           });
       },
     });
+  }
+
+  private isCreateDto(dto: CreateReleaseDto | UpdateReleaseDto): dto is CreateReleaseDto {
+    return !(dto as UpdateDistributorDto)._id;
   }
 }

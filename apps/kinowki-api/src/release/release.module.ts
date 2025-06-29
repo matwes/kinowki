@@ -7,6 +7,7 @@ import { ReleaseController } from './release.controller';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Release.name, schema: ReleaseSchema }])],
+  exports: [ReleaseService],
   controllers: [ReleaseController],
   providers: [ReleaseService],
 })

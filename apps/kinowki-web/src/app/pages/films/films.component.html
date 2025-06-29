@@ -13,7 +13,7 @@
     dataKey="_id"
     stateStorage="local"
     stateKey="films"
-    [value]="(films$ | async) ?? []"
+    [value]="(value$ | async) ?? []"
     [totalRecords]="(totalRecords$ | async) ?? 0"
     [rows]="20"
     [rowsPerPageOptions]="[10, 20, 50, 100]"
@@ -60,6 +60,8 @@
             </p-columnFilter>
           </div>
         </th>
+        <th [style.minWidth.rem]="12">Premiery</th>
+        <th>IMDb</th>
         <th [style.minWidth.rem]="8"></th>
       </tr>
     </ng-template>
@@ -78,6 +80,22 @@
             <p-tag [value]="genre | genreName" severity="secondary" />
             }
           </div>
+        </td>
+        <td>
+          <div class="flex flex-column align-items-baseline gap-2">
+            @for (release of film.releases; track release) {
+            <p-tag
+              value="{{ release.date | date : 'dd-MM-YYYY' }} {{ release.distributors[0].name }}"
+              severity="secondary" />
+            }
+          </div>
+        </td>
+        <td>
+          @if(film.imdb) {
+          <a href="https://www.imdb.com/title/tt{{ film.imdb }}" target="_blank">
+            <img [style.width.rem]="2.5" src="imdb.svg" alt="logo" />
+          </a>
+          }
         </td>
         <td class="text-right">
           <p-button

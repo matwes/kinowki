@@ -1,30 +1,30 @@
 <form [formGroup]="form" (submit)="onSave()">
-  <div class="formgrid grid">
-    <div class="field col-12">
+  <div class="formgrid grid m-2">
+    <div class="field col-6">
       <p-iftalabel>
         <input pInputText fluid id="title" [formControl]="title" />
         <label for="title">Tytuł</label>
       </p-iftalabel>
     </div>
-    <div class="field col-12">
+    <div class="field col-6">
       <p-iftalabel>
         <input pInputText fluid id="originalTitle" [formControl]="originalTitle" />
         <label for="originalTitle">Tytuł oryginalny</label>
       </p-iftalabel>
     </div>
-    <div class="field col-6">
+    <div class="field col-3">
       <p-iftalabel>
         <p-inputNumber inputId="year" fluid [formControl]="year" [useGrouping]="false" />
         <label for="year">Rok</label>
       </p-iftalabel>
     </div>
-    <div class="field col-6">
+    <div class="field col-3">
       <p-iftalabel>
         <p-inputNumber inputId="imdb" fluid [formControl]="imdb" [useGrouping]="false" />
         <label for="imdb">IMDb</label>
       </p-iftalabel>
     </div>
-    <div class="field col-12">
+    <div class="field col-6">
       <p-iftalabel>
         <p-multiSelect
           id="genres"
@@ -38,6 +38,59 @@
         <label for="genres">Gatunek</label>
       </p-iftalabel>
     </div>
+    <div class="field col-12 flex align-items-center gap-2">
+      <h4>Premiery</h4>
+      <p-button icon="pi pi-plus" severity="success" rounded variant="outlined" (onClick)="addRelease()" />
+    </div>
+    @for(release of releases.controls; track $index) {
+    <div class="field col-2">
+      <p-iftalabel>
+        <p-datepicker
+          id="release-date-{{ $index }}"
+          dateFormat="dd.mm.yy"
+          fluid
+          [formControl]="release.controls.date"
+          appendTo="body" />
+        <label for="genres">Data</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-3">
+      <p-iftalabel>
+        <p-multiSelect
+          id="release-distributors-{{ $index }}"
+          fluid
+          scrollHeight="15rem"
+          [filter]="true"
+          filterBy="name"
+          optionValue="_id"
+          optionLabel="name"
+          [options]="options.distributors"
+          [formControl]="release.controls.distributors"
+          appendTo="body" />
+        <label for="genres">Dystrybutorzy</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-3">
+      <p-iftalabel>
+        <p-select
+          id="release-type-{{ $index }}"
+          fluid
+          [options]="options.releaseTypes"
+          [formControl]="release.controls.releaseType"
+          appendTo="body" />
+        <label for="genres">Typ premiery</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-3">
+      <p-iftalabel>
+        <input pInputText fluid id="release-note-{{ $index }}" [formControl]="release.controls.note" />
+        <label for="title">Notka</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-1 flex align-items-center justify-content-center">
+      <p-button icon="pi pi-trash" severity="danger" rounded variant="outlined" (onClick)="deleteRelease($index)" />
+    </div>
+    }
   </div>
   <div class="flex flex-row-reverse gap-3">
     <p-button label="Zapisz" severity="primary" type="submit" />

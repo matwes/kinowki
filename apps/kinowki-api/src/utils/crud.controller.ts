@@ -1,4 +1,4 @@
-import { Body, Delete, Get, HttpStatus, Param, Post, Put, Query, Res } from '@nestjs/common';
+import { Body, Delete, Get, HttpStatus, Param, ParseIntPipe, Post, Put, Query, Res } from '@nestjs/common';
 import { CrudService } from './crud.service';
 
 export abstract class CrudController<Schema, CreateDto, UpdateDto> {
@@ -33,7 +33,11 @@ export abstract class CrudController<Schema, CreateDto, UpdateDto> {
   }
 
   @Get()
-  async getAll(@Res() response, @Query('first') first?: number, @Query('rows') rows?: number) {
+  async getAll(
+    @Res() response,
+    @Query('first', new ParseIntPipe({ optional: true })) first?: number,
+    @Query('rows', new ParseIntPipe({ optional: true })) rows?: number
+  ) {
     try {
       const params = rows ? { first: first || 0, rows } : undefined;
       const [data, totalRecords] = await Promise.all([this.crudService.getAll(params), this.crudService.count()]);

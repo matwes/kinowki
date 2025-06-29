@@ -20,7 +20,7 @@ export class Film {
   @Prop({ required: true })
   genres: number[];
 
-  @Prop({ required: false })
+  @Prop({ required: false, unique: true })
   imdb?: number;
 }
 

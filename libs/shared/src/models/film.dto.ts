@@ -1,3 +1,5 @@
+import { DistributorDto } from './distributor.dto';
+
 export interface CreateFilmDto {
   title: string;
   originalTitle?: string;
@@ -13,4 +15,12 @@ export interface UpdateFilmDto extends Partial<CreateFilmDto> {
 
 export interface FilmDto extends CreateFilmDto {
   _id: string;
+  releases?: {
+    _id: string | undefined;
+    film: FilmDto;
+    date: string;
+    distributors: DistributorDto[];
+    releaseType: number;
+    note?: string;
+  }[];
 }

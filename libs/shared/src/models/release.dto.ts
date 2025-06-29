@@ -1,7 +1,8 @@
 export interface CreateReleaseDto {
   film: string;
   date: Date;
-  distributors: string[];
+  distributors: number[];
+  releaseType: number;
   note?: string;
 }
 

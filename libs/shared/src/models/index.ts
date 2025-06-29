@@ -1,3 +1,4 @@
+export * from './distributor.dto';
 export * from './film.dto';
 export * from './flyer-size.dto';
 export * from './flyer-type.dto';
