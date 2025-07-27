@@ -35,27 +35,35 @@
     (onLazyLoad)="lazyLoad($event)">
     <ng-template #header>
       <tr>
-        <th [style.minWidth.rem]="12">Film</th>
-        <th [style.minWidth.rem]="12">Dystrybucja</th>
-        <th [style.minWidth.rem]="12">Rodzaj premiery</th>
-        <th [style.minWidth.rem]="12">Uwagi</th>
-        <th [style.minWidth.rem]="8"></th>
+        <th [style.width]="'5%'" class="text-center">IMDb</th>
+        <th [style.width]="'25%'">Film</th>
+        <th [style.width]="'20%'">Dystrybucja</th>
+        <th [style.width]="'10%'">Rodzaj premiery</th>
+        <th [style.width]="'35%'">Ulotki</th>
+        <th [style.width]="'5%'"></th>
       </tr>
     </ng-template>
     <ng-template #groupheader let-release>
       <tr pRowGroupHeader>
-        <td colspan="5" class="text-center surface-200">
-          <span class="font-bold">{{ release.date | date : 'd MMMM' }}</span>
+        <td colspan="6" class="text-left">
+          <span class="group-header">{{ release.date | date : 'd MMMM' }}</span>
         </td>
       </tr>
     </ng-template>
     <ng-template #body let-release let-rowgroup="rowgroup" let-rowspan="rowspan">
-      <tr class="table-row">
+      <tr class="table-row" [class.no-flyer]="!release.flyers.length">
+        <td class="text-center">
+          @if(release.film?.imdb) {
+          <a [href]="release.film.imdb | imdb" target="_blank">
+            <img [style.width.rem]="2.5" src="imdb.svg" alt="logo" />
+          </a>
+          }
+        </td>
         <td>
-          <div>
-            <b>{{ release.film.title }} ({{ release.film.year }})</b>
+          <div class="flex gap-2">
+            <b>{{ release.film?.title }} ({{ release.film?.year }})</b>
           </div>
-          <div [style.opacity]="0.75">{{ release.film.originalTitle }}</div>
+          <div [style.opacity]="0.75">{{ release.film?.originalTitle }}</div>
         </td>
         <td>
           <div class="flex gap-2">
@@ -64,8 +72,17 @@
             }
           </div>
         </td>
-        <td>{{ release.releaseType | releaseTypeName }}</td>
-        <td>{{ release.note }}</td>
+        <td>
+          <div>{{ release.releaseType | releaseTypeName }}</div>
+          <div>{{ release.note }}</div>
+        </td>
+        <td>
+          <div class="flyers">
+            @for(flyer of release.flyers; track $index) {
+            <app-flyer [flyer]="flyer" [index]="$index + 1" />
+            } @empty { brak ulotek }
+          </div>
+        </td>
         <td class="text-right">
           <p-button
             icon="pi pi-trash"

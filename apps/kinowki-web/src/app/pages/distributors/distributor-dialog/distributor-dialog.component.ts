@@ -30,13 +30,8 @@ import { DistributorDto } from '@kinowki/shared';
 })
 export class DistributorDialogComponent implements OnInit {
   form = this.fb.group({
-    _id: [{ value: undefined as unknown as string, disabled: true }],
     name: [undefined as unknown as string, Validators.required],
   });
-
-  get _id() {
-    return this.form.controls._id;
-  }
 
   get name() {
     return this.form.controls.name;
@@ -53,7 +48,6 @@ export class DistributorDialogComponent implements OnInit {
       const distributor = this.config.data.item;
 
       if (distributor) {
-        this._id.setValue(distributor._id);
         this.name.setValue(distributor.name);
       }
     }
@@ -73,7 +67,6 @@ export class DistributorDialogComponent implements OnInit {
 
   private getFromForm(): Partial<DistributorDto> {
     return {
-      _id: this._id.value,
       name: this.name.value,
     };
   }

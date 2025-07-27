@@ -1,1 +1,101 @@
-<p>flyers works!</p>
+<div class="card flex flex-column overflow-hidden h-full p-5">
+  <p-toast />
+  <p-table
+    class="flex-auto overflow-hidden"
+    dataKey="_id"
+    stateStorage="local"
+    stateKey="flyers"
+    [value]="(value$ | async) ?? []"
+    [totalRecords]="(totalRecords$ | async) ?? 0"
+    [rows]="20"
+    [rowsPerPageOptions]="[10, 20, 50, 100]"
+    scrollHeight="flex"
+    [scrollable]="true"
+    [rowHover]="true"
+    [paginator]="true"
+    [lazy]="true"
+    currentPageReportTemplate="Wyświetlam od {first} do {last} ze wszystkich {totalRecords} ulotek"
+    [showCurrentPageReport]="true"
+    (onLazyLoad)="lazyLoad($event)">
+    <ng-template #header>
+      <tr>
+        <th [style.width]="'10%'" class="text-center">Skany</th>
+        <th [style.width]="'40%'">
+          <div class="flex align-items-center gap-3">
+            ID
+            <p-columnFilter type="text" field="id" [showMenu]="false" [showClearButton]="false" matchMode="contains">
+              <ng-template #filter let-value let-filter="filterCallback">
+                <input
+                  pInputText
+                  styleClass="w-20rem"
+                  type="text"
+                  placeholder="Szukaj..."
+                  [ngModel]="value"
+                  (ngModelChange)="filter($event)" />
+              </ng-template>
+            </p-columnFilter>
+          </div>
+        </th>
+        <th [style.width]="'15%'">Rozmiar i typ</th>
+        <th [style.width]="'15%'">Tagi</th>
+        <th [style.width]="'10%'">Notka</th>
+        <th [style.width]="'10%'" class="text-right">
+          <p-button severity="primary" icon="pi pi-plus" (onClick)="openFlyerDialog()" />
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-flyer>
+      <tr class="table-row">
+        <td>
+          <div class="flex justify-content-center">
+            <app-flyer [flyer]="flyer" />
+          </div>
+        </td>
+        <td>
+          @for(release of flyer.releases; track $index) {
+          <div class="my-1">
+            <p-tag value="{{ release.date | date : 'dd-MM-YYYY' }}" severity="secondary" />
+            <b class="mx-2">{{ release.film.title }}</b>
+            @if (release.film.originalTitle) {
+            <span [style.opacity]="0.75">({{ release.film.originalTitle }})</span>
+            }
+          </div>
+          } @empty {
+          <div class="text-xs">{{ flyer.id }}</div>
+          }
+        </td>
+        <td>
+          <div class="flex flex-column align-items-start gap-1">
+            <p-tag [value]="flyer.size | flyerSizeName" severity="secondary" />
+            <p-tag [value]="flyer.type | flyerTypeName" severity="secondary" />
+          </div>
+        </td>
+        <td>
+          <div class="flex flex-column align-items-start gap-1">
+            @for (tag of flyer.tags; track tag) {
+            <p-tag [value]="tag.name" severity="secondary" />
+            }
+          </div>
+        </td>
+        <td>{{ flyer.note }}</td>
+        <td class="text-right">
+          <p-button
+            icon="pi pi-pencil"
+            class="mr-2"
+            size="small"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="openFlyerDialog(flyer)" />
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            size="small"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="deleteFlyer(flyer)" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-confirmDialog [style.width.rem]="28" />
+</div>

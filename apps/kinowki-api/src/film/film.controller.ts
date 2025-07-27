@@ -2,8 +2,9 @@ import { Controller, Get, HttpStatus, ParseIntPipe, Query, Res } from '@nestjs/c
 import { FilterQuery } from 'mongoose';
 
 import { CreateFilmDto, UpdateFilmDto } from '@kinowki/shared';
+import { FlyerService } from '../flyer/flyer.service';
 import { ReleaseService } from '../release/release.service';
-import { CrudController } from '../utils';
+import { CrudController, getRegex } from '../utils';
 import { Film } from './film.schema';
 import { FilmService } from './film.service';
 
@@ -11,7 +12,11 @@ import { FilmService } from './film.service';
 export class FilmController extends CrudController<Film, CreateFilmDto, UpdateFilmDto> {
   name = 'film';
 
-  constructor(filmService: FilmService, private readonly releaseService: ReleaseService) {
+  constructor(
+    filmService: FilmService,
+    private readonly releaseService: ReleaseService,
+    private readonly flyerService: FlyerService
+  ) {
     super(filmService);
   }
 
@@ -29,8 +34,12 @@ export class FilmController extends CrudController<Film, CreateFilmDto, UpdateFi
         ...(title
           ? {
               $or: [
-                { title: { $regex: new RegExp(title, 'i') } },
-                { originalTitle: { $regex: new RegExp(title, 'i') } },
+                {
+                  title: { $regex: getRegex(title) },
+                },
+                {
+                  originalTitle: { $regex: getRegex(title) },
+                },
               ],
             }
           : {}),
@@ -43,10 +52,29 @@ export class FilmController extends CrudController<Film, CreateFilmDto, UpdateFi
       ]);
 
       const extendedData = await Promise.all(
-        data.map(async (film) => ({
-          ...film,
-          releases: await this.releaseService.getAll(undefined, { film: film._id }),
-        }))
+        data.map(async (film) => {
+          const releases = await this.releaseService.getAll(undefined, { film: film._id });
+
+          let flyerCount = 0;
+
+          const releasesWithFlyers = await Promise.all(
+            releases.map(async (release) => {
+              const flyers = await this.flyerService.getAll(undefined, { releases: release._id });
+              flyerCount += flyers.length;
+
+              return {
+                ...release,
+                flyers,
+              };
+            })
+          );
+
+          return {
+            ...film,
+            releases: releasesWithFlyers,
+            flyerCount,
+          };
+        })
       );
 
       return response.status(HttpStatus.OK).json({

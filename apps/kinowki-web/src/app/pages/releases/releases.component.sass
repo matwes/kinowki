@@ -1,5 +1,8 @@
-:host ::ng-deep #release-year .p-select-label
-  padding: 0
+:host ::ng-deep #release-year
+  background: inherit
+
+  .p-select-label
+    padding: 0
 
 .table-row
   &:hover p-button
@@ -7,3 +10,20 @@
 
   p-button
     visibility: hidden
+
+.group-header
+  font-weight: bold
+  color: var(--p-orange-500)
+  letter-spacing: 1px
+  text-transform: uppercase
+
+.no-flyer
+  opacity: 0.5
+
+.flyers
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  gap: 0.5rem
+  overflow: hidden
+  max-width: 50rem

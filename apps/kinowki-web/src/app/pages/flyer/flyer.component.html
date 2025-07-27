@@ -1,0 +1,18 @@
+@if (index(); as index) {
+<div class="title">#{{ index }}</div>
+}
+<div class="flyer shadow-2">
+  @for(image of flyer().images; track $index) { @if (image.original === 'blank') {
+  <div class="blank"></div>
+  }@else {
+  <p-image
+    width="50"
+    [imageStyle]="{ 'max-height': '7rem', 'object-fit': 'contain' }"
+    [previewImageSrc]="'/api/flyers' + image.original"
+    [src]="'/api/flyers' + (image.thumbnail || image.original)"
+    [alt]="image.thumbnail || image.original"
+    [preview]="true" />
+  } } @empty {
+  <span class="no-images">brak skanów</span>
+  }
+</div>

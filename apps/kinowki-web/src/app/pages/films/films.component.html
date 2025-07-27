@@ -1,13 +1,5 @@
 <div class="card flex flex-column overflow-hidden h-full p-5">
   <p-toast />
-  <p-toolbar class="flex-none" styleClass="mb-6">
-    <ng-template #start>
-      <h1 class="m-0">Filmy</h1>
-    </ng-template>
-    <ng-template #end>
-      <p-button label="Dodaj" severity="primary" icon="pi pi-plus" (onClick)="openFilmDialog()" />
-    </ng-template>
-  </p-toolbar>
   <p-table
     class="flex-auto overflow-hidden"
     dataKey="_id"
@@ -27,8 +19,8 @@
     (onLazyLoad)="lazyLoad($event)">
     <ng-template #header>
       <tr>
-        <th class="text-center">Rok</th>
-        <th [style.minWidth.rem]="16">
+        <th [style.width]="'5%'" class="text-center">IMDb</th>
+        <th [style.width]="'35%'">
           <div class="flex align-items-center gap-3">
             Tytuł
             <p-columnFilter type="text" field="title" [showMenu]="false" [showClearButton]="false" matchMode="contains">
@@ -44,7 +36,7 @@
             </p-columnFilter>
           </div>
         </th>
-        <th [style.minWidth.rem]="12">
+        <th [style.width]="'15%'">
           <div class="flex align-items-center gap-3">
             Gatunek
             <p-columnFilter field="genres" [showMenu]="false" [showClearButton]="false">
@@ -60,18 +52,23 @@
             </p-columnFilter>
           </div>
         </th>
-        <th [style.minWidth.rem]="12">Premiery</th>
-        <th>IMDb</th>
-        <th [style.minWidth.rem]="8"></th>
+        <th [style.width]="'35%'">Premiery</th>
+        <th [style.width]="'10%'" class="text-right">
+          <p-button severity="primary" icon="pi pi-plus" (onClick)="openFilmDialog()" />
+        </th>
       </tr>
     </ng-template>
     <ng-template #body let-film>
-      <tr class="table-row">
-        <td class="text-center">{{ film.year }}</td>
+      <tr class="table-row" [class.no-flyer]="!film.flyerCount">
+        <td class="text-center">
+          @if(film.imdb) {
+          <a [href]="film.imdb | imdb" target="_blank">
+            <img [style.width.rem]="2.5" src="imdb.svg" alt="logo" />
+          </a>
+          }
+        </td>
         <td>
-          <div>
-            <b>{{ film.title }}</b>
-          </div>
+          <b>{{ film.title }} ({{ film.year }})</b>
           <div [style.opacity]="0.75">{{ film.originalTitle }}</div>
         </td>
         <td>
@@ -84,18 +81,18 @@
         <td>
           <div class="flex flex-column align-items-baseline gap-2">
             @for (release of film.releases; track release) {
-            <p-tag
-              value="{{ release.date | date : 'dd-MM-YYYY' }} {{ release.distributors[0].name }}"
-              severity="secondary" />
+            <div class="release">
+              <p-tag
+                value="{{ release.date | date : 'dd-MM-YYYY' }} {{ release.distributors | join : ' + ' : 'name' }}"
+                severity="secondary" />
+              <div class="flyers">
+                @for(flyer of release.flyers; track $index) {
+                <app-flyer [flyer]="flyer" [index]="$index + 1" />
+                } @empty { brak ulotek }
+              </div>
+            </div>
             }
           </div>
-        </td>
-        <td>
-          @if(film.imdb) {
-          <a href="https://www.imdb.com/title/tt{{ film.imdb }}" target="_blank">
-            <img [style.width.rem]="2.5" src="imdb.svg" alt="logo" />
-          </a>
-          }
         </td>
         <td class="text-right">
           <p-button

@@ -1,0 +1,66 @@
+<div class="card flex flex-column overflow-hidden h-full p-5">
+  <p-toast />
+  <p-table
+    class="flex-auto overflow-hidden"
+    dataKey="_id"
+    stateStorage="local"
+    stateKey="tags"
+    [value]="(value$ | async) ?? []"
+    [totalRecords]="(totalRecords$ | async) ?? 0"
+    [rows]="20"
+    [rowsPerPageOptions]="[10, 20, 50, 100]"
+    scrollHeight="flex"
+    [scrollable]="true"
+    [rowHover]="true"
+    [paginator]="true"
+    [lazy]="true"
+    currentPageReportTemplate="Wyświetlam od {first} do {last} ze wszystkich {totalRecords} tagów"
+    [showCurrentPageReport]="true"
+    (onLazyLoad)="lazyLoad($event)">
+    <ng-template #header>
+      <tr>
+        <th [style.width]="'90%'">
+          <div class="flex align-items-center gap-3">
+            Nazwa
+            <p-columnFilter type="text" field="name" [showMenu]="false" [showClearButton]="false" matchMode="contains">
+              <ng-template #filter let-value let-filter="filterCallback">
+                <input
+                  pInputText
+                  styleClass="w-20rem"
+                  type="text"
+                  placeholder="Szukaj..."
+                  [ngModel]="value"
+                  (ngModelChange)="filter($event)" />
+              </ng-template>
+            </p-columnFilter>
+          </div>
+        </th>
+        <th [style.width]="'10%'" class="text-right">
+          <p-button severity="primary" icon="pi pi-plus" (onClick)="openTagDialog()" />
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-tag>
+      <tr class="table-row">
+        <td>{{ tag.name }}</td>
+        <td class="text-right">
+          <p-button
+            icon="pi pi-pencil"
+            class="mr-2"
+            size="small"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="openTagDialog(tag)" />
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            size="small"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="deleteTag(tag)" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-confirmDialog [style.width.rem]="28" />
+</div>

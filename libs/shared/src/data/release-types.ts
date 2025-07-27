@@ -4,6 +4,7 @@ export const releaseTypes = [
   { value: 3, label: 'Wideo' },
   { value: 4, label: 'Wznowienie' },
   { value: 5, label: 'Ograniczona' },
+  { value: 6, label: 'Wycofana' },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
 export const releaseTypeMap = releaseTypes.reduce(

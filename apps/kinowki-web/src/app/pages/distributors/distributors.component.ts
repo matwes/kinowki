@@ -9,7 +9,6 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { ToolbarModule } from 'primeng/toolbar';
 import { filter, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
 
 import { DistributorDto, genres } from '@kinowki/shared';
@@ -31,7 +30,6 @@ import { DistributorDialogComponent } from './distributor-dialog';
     ReactiveFormsModule,
     TableModule,
     ToastModule,
-    ToolbarModule,
   ],
   providers: [ConfirmationService, DialogService, MessageService],
 })

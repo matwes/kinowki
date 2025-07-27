@@ -36,7 +36,6 @@ export class FilmDialogComponent implements OnInit {
   } = { genres, releaseTypes, distributors: [] };
 
   form = this.fb.group({
-    _id: [{ value: undefined as unknown as string, disabled: true }],
     title: [undefined as unknown as string, Validators.required],
     originalTitle: undefined as string | undefined,
     year: [undefined as unknown as number, Validators.required],
@@ -52,10 +51,6 @@ export class FilmDialogComponent implements OnInit {
       }>[]
     ),
   });
-
-  get _id() {
-    return this.form.controls._id;
-  }
 
   get title() {
     return this.form.controls.title;
@@ -93,7 +88,6 @@ export class FilmDialogComponent implements OnInit {
       const film = this.config.data.item;
 
       if (film) {
-        this._id.setValue(film._id);
         this.title.setValue(film.title);
         this.originalTitle.setValue(film.originalTitle);
         this.year.setValue(film.year);
@@ -119,7 +113,7 @@ export class FilmDialogComponent implements OnInit {
     this.releases.push(
       this.fb.group({
         _id: undefined as string | undefined,
-        date: new Date(),
+        date: undefined as unknown as Date,
         distributors: [[] as string[]],
         releaseType: 1,
         note: '' as string | undefined,
@@ -148,7 +142,6 @@ export class FilmDialogComponent implements OnInit {
 
   private getFromForm(): Partial<FilmDto> {
     return {
-      _id: this._id.value,
       title: this.title.value.trim(),
       originalTitle: this.originalTitle.value?.trim(),
       year: this.year.value,

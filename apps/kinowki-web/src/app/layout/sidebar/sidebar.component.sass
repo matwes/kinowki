@@ -1,35 +1,53 @@
 .sidebar
   position: absolute
   display: flex
-  flex-direction: column
   align-items: center
   justify-content: center
   background: var(--p-orange-500)
   top: 0
   left: 0
-  bottom: 0
-  width: 10rem
+  right: 0
+  height: 5rem
   gap: 1rem
 
   .title
-    top: 1.625rem
-    left: 0
-    width: 10rem
-    text-align: center
-    overflow: hidden
+    display: flex
+    flex-direction: column
+    justify-content: center
+    top: 0
+    height: 5rem
+    left: 2.5rem
     position: fixed
-    padding: 0.75rem
+    color: black
+
+    .header
+      font-family: Roboto
+      font-weight: bold
+      font-size: 2.5rem
+      line-height: 2.5rem
+
+    .subheader
+      text-transform: uppercase
+      letter-spacing: 1px
+      line-height: 12px
+      font-size: 12px
 
   .page
     font-size: 1.125rem
     font-weight: bold
     text-transform: uppercase
     letter-spacing: 0.0625rem
+    padding: 0 10px
+    opacity: 0.7
 
     &.active
+      padding: 0
+      opacity: 1
+
       &::before, &::after
         content: "-"
         font-family: auto
+        font-weight: bold
 
       &::before
         margin-right: 0.25rem

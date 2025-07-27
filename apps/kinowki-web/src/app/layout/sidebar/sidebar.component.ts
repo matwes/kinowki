@@ -14,5 +14,6 @@ export class SidebarComponent {
     { label: 'Premiery', url: '/premiery' },
     { label: 'Ulotki', url: '/ulotki' },
     { label: 'Dystrybutorzy', url: '/dystrybutorzy' },
+    { label: 'Tagi', url: '/tagi' },
   ];
 }

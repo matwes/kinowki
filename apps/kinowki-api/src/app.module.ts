@@ -1,23 +1,23 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ServeStaticModule } from '@nestjs/serve-static';
+
 import { FilmModule } from './film/film.module';
 import { ReleaseModule } from './release/release.module';
 import { DistributorModule } from './distributor/distributor.module';
 import { FlyerModule } from './flyer/flyer.module';
 import { TagModule } from './tag/tag.module';
-import { FlyerTypeModule } from './flyer-type/flyer-type.module';
-import { FlyerSizeModule } from './flyer-size/flyer-size.module';
 import { UserModule } from './user/user.module';
 import { UserFlyerModule } from './user-flyer/user-flyer.module';
+import { join } from 'path';
 
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://localhost:27017/kinowki'),
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, '../../../../flyers'), serveRoot: '/api/flyers' }),
     DistributorModule,
     FilmModule,
     FlyerModule,
-    FlyerSizeModule,
-    FlyerTypeModule,
     ReleaseModule,
     TagModule,
     UserFlyerModule,

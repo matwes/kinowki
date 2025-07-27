@@ -1,0 +1,101 @@
+<form [formGroup]="form" (submit)="onSave()">
+  <div class="formgrid grid m-2">
+    <div class="field col-12">
+      <p-iftalabel>
+        <input pInputText fluid id="id" [formControl]="id" />
+        <label for="id">ID</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-12">
+      <p-iftalabel>
+        <p-multiSelect
+          id="releases"
+          fluid
+          display="chip"
+          scrollHeight="15rem"
+          [filter]="true"
+          filterBy="film.title"
+          optionValue="_id"
+          optionLabel="film.title"
+          [options]="(releases$ | async) ?? []"
+          [formControl]="releases"
+          (onFilter)="releaseSearch.next($event.filter)"
+          appendTo="body">
+          <ng-template #item let-release>
+            <span class="font-bold">{{ release.date | date : 'dd-MM-YYYY' }}</span>
+            <span>{{ release.film?.title }}</span>
+          </ng-template>
+        </p-multiSelect>
+        <label for="tags">Premiery</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-6">
+      <p-iftalabel>
+        <p-select id="type" fluid [options]="options.flyerTypes" [formControl]="type" appendTo="body" />
+        <label for="type">Typ ulotki</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-6">
+      <p-iftalabel>
+        <p-select
+          id="size"
+          [filter]="true"
+          [showClear]="true"
+          filterBy="label"
+          fluid
+          [options]="options.flyerSizes"
+          [formControl]="size"
+          appendTo="body" />
+        <label for="size">Rozmiar ulotki</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-6">
+      <p-iftalabel>
+        <p-multiSelect
+          id="tags"
+          fluid
+          scrollHeight="15rem"
+          [filter]="true"
+          [showClear]="true"
+          filterBy="name"
+          optionLabel="name"
+          optionValue="_id"
+          [options]="options.tags"
+          [formControl]="tags"
+          appendTo="body" />
+        <label for="tags">Tagi</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-6">
+      <p-iftalabel>
+        <input pInputText fluid id="note" [formControl]="note" />
+        <label for="note">Notka</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-12 flex align-items-center gap-2">
+      <h4>Skany</h4>
+      <p-button icon="pi pi-plus" severity="success" rounded variant="outlined" (onClick)="addImage()" />
+    </div>
+    @for(image of images.controls; track $index) {
+    <div class="field col-5">
+      <p-iftalabel>
+        <input pInputText fluid id="image-original-{{ $index }}" [formControl]="image.controls.original" />
+        <label for="image-original-{{ $index }}">Oryginał</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-5">
+      <p-iftalabel>
+        <input pInputText fluid id="image-thumbnail-{{ $index }}" [formControl]="image.controls.thumbnail" />
+        <label for="image-thumbnail-{{ $index }}">Thumbnail</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-2 flex align-items-center justify-content-center">
+      <p-button icon="pi pi-trash" severity="danger" rounded variant="outlined" (onClick)="deleteRelease($index)" />
+    </div>
+    }
+  </div>
+  <div class="flex flex-row-reverse gap-3">
+    <p-button label="Zapisz" severity="primary" type="submit" />
+    <p-button label="Anuluj" severity="secondary" (onClick)="onCancel()" />
+  </div>
+</form>

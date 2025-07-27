@@ -2,7 +2,7 @@ import { Controller, Get, HttpStatus, ParseIntPipe, Query, Res } from '@nestjs/c
 import { FilterQuery } from 'mongoose';
 
 import { CreateDistributorDto, UpdateDistributorDto } from '@kinowki/shared';
-import { CrudController } from '../utils';
+import { CrudController, getRegex } from '../utils';
 import { Distributor } from './distributor.schema';
 import { DistributorService } from './distributor.service';
 
@@ -24,7 +24,7 @@ export class DistributorController extends CrudController<Distributor, CreateDis
     try {
       const params = rows ? { first: Number(first) || 0, rows: Number(rows) } : undefined;
       const filters: FilterQuery<Distributor> = {
-        ...(name ? { name: { $regex: new RegExp(name, 'i') } } : {}),
+        ...(name ? { name: { $regex: getRegex(name) } } : {}),
       };
 
       const [data, totalRecords] = await Promise.all([

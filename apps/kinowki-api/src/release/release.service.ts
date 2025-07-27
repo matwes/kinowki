@@ -16,6 +16,23 @@ export class ReleaseService extends CrudService<Release, CreateReleaseDto, Updat
   }
 
   override async getAll(params?: { first: number; rows: number }, filters?: FilterQuery<Release>) {
+    let query = this.model.find(filters).populate('distributors');
+
+    if (params) {
+      query = query.limit(params.rows).skip(params.first);
+    }
+
+    const itemData = await query.sort({ date: 1 }).lean().exec();
+    if (!itemData) {
+      throw new NotFoundException(`${this.name} data not found!`);
+    }
+    return itemData;
+  }
+
+  async getAllWithFilms(params?: { first: number; rows: number }, filters?: FilterQuery<Release>) {
+    const filmFilter = filters?.['film.title'] ? { ['film.title']: filters?.['film.title'] } : undefined;
+    delete filters?.['film.title'];
+
     const itemData = await this.model
       .aggregate([
         ...(filters && Object.keys(filters).length > 0 ? [{ $match: filters }] : []),
@@ -28,6 +45,7 @@ export class ReleaseService extends CrudService<Release, CreateReleaseDto, Updat
           },
         },
         { $unwind: { path: '$film', preserveNullAndEmptyArrays: true } },
+        ...(filmFilter && Object.keys(filmFilter).length > 0 ? [{ $match: filmFilter }] : []),
         {
           $lookup: {
             from: 'distributors',

@@ -18,7 +18,8 @@ import { map, shareReplay, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { months, ReleaseDto } from '@kinowki/shared';
 import { ReleaseService } from '../../services';
-import { ReleaseTypeNamePipe } from '../../utils';
+import { ImdbPipe, ReleaseTypeNamePipe } from '../../utils';
+import { FlyerComponent } from '../flyer';
 
 const FIRST_YEAR = 1990;
 const LAST_YEAR = 2025;
@@ -32,7 +33,9 @@ const LAST_YEAR = 2025;
     ButtonModule,
     CommonModule,
     ConfirmDialogModule,
+    FlyerComponent,
     FormsModule,
+    ImdbPipe,
     InputTextModule,
     MultiSelectModule,
     ReactiveFormsModule,
@@ -125,9 +128,13 @@ export class ReleasesComponent {
     const filters = table.filters;
     if (filters['month']) {
       this.month.setValue((filters['month'] as FilterMetadata).value);
+    } else {
+      table.filter(this.month.value, 'month', '');
     }
     if (filters['year']) {
       this.year.setValue((filters['year'] as FilterMetadata).value);
+    } else {
+      table.filter(this.year.value, 'year', '');
     }
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((search) => {

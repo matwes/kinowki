@@ -11,7 +11,6 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { ToolbarModule } from 'primeng/toolbar';
 import { filter, forkJoin, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
 
 import {
@@ -23,7 +22,8 @@ import {
   genres,
 } from '@kinowki/shared';
 import { DistributorService, FilmService, ReleaseService } from '../../services';
-import { GenreNamePipe, notEmpty } from '../../utils';
+import { GenreNamePipe, ImdbPipe, JoinPipe, notEmpty } from '../../utils';
+import { FlyerComponent } from '../flyer';
 import { FilmDialogComponent } from './film-dialog';
 
 @UntilDestroy()
@@ -35,15 +35,17 @@ import { FilmDialogComponent } from './film-dialog';
     ButtonModule,
     CommonModule,
     ConfirmDialogModule,
+    FlyerComponent,
     FormsModule,
     GenreNamePipe,
+    ImdbPipe,
     InputTextModule,
+    JoinPipe,
     MultiSelectModule,
     ReactiveFormsModule,
     TableModule,
     TagModule,
     ToastModule,
-    ToolbarModule,
   ],
   providers: [ConfirmationService, DialogService, MessageService],
 })
@@ -86,7 +88,7 @@ export class FilmsComponent {
       .open(FilmDialogComponent, {
         data: { item, distributors: this.distributors },
         header: item ? 'Edytuj film' : 'Dodaj film',
-        width: '40%',
+        width: '45%',
         closeOnEscape: false,
         modal: true,
       })

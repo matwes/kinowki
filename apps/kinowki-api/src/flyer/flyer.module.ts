@@ -7,6 +7,7 @@ import { FlyerController } from './flyer.controller';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Flyer.name, schema: FlyerSchema }])],
+  exports: [FlyerService],
   controllers: [FlyerController],
   providers: [FlyerService],
 })
