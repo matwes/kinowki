@@ -1,12 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { notEmpty } from '../utils';
+import { environment } from '../../environments/environment';
 
 export abstract class CrudService<Model, CreateDto, UpdateDto> {
   abstract name: string;
 
   get url() {
-    return `/api/${this.name}`;
+    return `${environment.apiUrl}/${this.name}`;
   }
 
   constructor(protected readonly httpClient: HttpClient) {}
