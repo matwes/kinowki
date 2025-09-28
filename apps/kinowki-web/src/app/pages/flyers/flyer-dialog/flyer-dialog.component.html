@@ -31,7 +31,13 @@
     </div>
     <div class="field col-6">
       <p-iftalabel>
-        <p-select id="type" fluid [options]="options.flyerTypes" [formControl]="type" appendTo="body" />
+        <p-select
+          id="type"
+          fluid
+          [options]="options.flyerTypes"
+          [formControl]="type"
+          appendTo="body"
+          scrollHeight="30rem" />
         <label for="type">Typ ulotki</label>
       </p-iftalabel>
     </div>
@@ -45,7 +51,8 @@
           fluid
           [options]="options.flyerSizes"
           [formControl]="size"
-          appendTo="body" />
+          appendTo="body"
+          scrollHeight="30rem" />
         <label for="size">Rozmiar ulotki</label>
       </p-iftalabel>
     </div>
@@ -66,11 +73,14 @@
         <label for="tags">Tagi</label>
       </p-iftalabel>
     </div>
-    <div class="field col-6">
+    <div class="field col-5">
       <p-iftalabel>
         <input pInputText fluid id="note" [formControl]="note" />
         <label for="note">Notka</label>
       </p-iftalabel>
+    </div>
+    <div class="field col-1 align-self-center">
+      <p-button icon="pi pi-circle-off" severity="success" rounded variant="outlined" (onClick)="addSeparator()" />
     </div>
     <div class="field col-12 flex align-items-center gap-2">
       <h4>Skany</h4>

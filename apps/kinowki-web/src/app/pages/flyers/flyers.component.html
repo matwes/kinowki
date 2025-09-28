@@ -1,101 +1,108 @@
-<div class="card flex flex-column overflow-hidden h-full p-5">
+<div class="card flex flex-column overflow-hidden h-full">
   <p-toast />
-  <p-table
+  <p-dataview
+    #flyersView
     class="flex-auto overflow-hidden"
     dataKey="_id"
     stateStorage="local"
     stateKey="flyers"
+    emptyMessage="Nie znaleziono pasujących ulotek"
     [value]="(value$ | async) ?? []"
     [totalRecords]="(totalRecords$ | async) ?? 0"
-    [rows]="20"
-    [rowsPerPageOptions]="[10, 20, 50, 100]"
+    [rows]="10"
     scrollHeight="flex"
-    [scrollable]="true"
-    [rowHover]="true"
     [paginator]="true"
     [lazy]="true"
     currentPageReportTemplate="Wyświetlam od {first} do {last} ze wszystkich {totalRecords} ulotek"
     [showCurrentPageReport]="true"
     (onLazyLoad)="lazyLoad($event)">
     <ng-template #header>
-      <tr>
-        <th [style.width]="'10%'" class="text-center">Skany</th>
-        <th [style.width]="'40%'">
-          <div class="flex align-items-center gap-3">
-            ID
-            <p-columnFilter type="text" field="id" [showMenu]="false" [showClearButton]="false" matchMode="contains">
-              <ng-template #filter let-value let-filter="filterCallback">
-                <input
-                  pInputText
-                  styleClass="w-20rem"
-                  type="text"
-                  placeholder="Szukaj..."
-                  [ngModel]="value"
-                  (ngModelChange)="filter($event)" />
-              </ng-template>
-            </p-columnFilter>
-          </div>
-        </th>
-        <th [style.width]="'15%'">Rozmiar i typ</th>
-        <th [style.width]="'15%'">Tagi</th>
-        <th [style.width]="'10%'">Notka</th>
-        <th [style.width]="'10%'" class="text-right">
-          <p-button severity="primary" icon="pi pi-plus" (onClick)="openFlyerDialog()" />
-        </th>
-      </tr>
+      <div class="filter-bar">
+        <div class="filter-item">
+          <div class="search-label">Nazwa</div>
+          <input
+            pInputText
+            styleClass="w-20rem"
+            type="text"
+            placeholder="Szukaj..."
+            [ngModel]="flyerNameSearch"
+            (ngModelChange)="filter('id', $event)" />
+        </div>
+        <div class="filter-item">
+          <div class="search-label">Rozmiar</div>
+          <p-select
+            styleClass="w-10rem"
+            [ngModel]="flyerSizeSearch"
+            [options]="flyerSizes"
+            placeholder="Szukaj..."
+            [showClear]="true"
+            scrollHeight="30rem"
+            (onChange)="filter('flyerSize', $event.value)" />
+        </div>
+        <div class="filter-item">
+          <div class="search-label">Typ</div>
+          <p-select
+            styleClass="w-10rem"
+            [ngModel]="flyerTypesSearch"
+            [options]="flyerTypes"
+            placeholder="Szukaj..."
+            [showClear]="true"
+            scrollHeight="30rem"
+            (onChange)="filter('flyerType', $event.value)" />
+        </div>
+        <div class="filter-item">
+          <div class="search-label">Tag</div>
+          <p-select
+            styleClass="w-10rem"
+            [ngModel]="flyerTagSearch"
+            [options]="tags"
+            optionValue="_id"
+            optionLabel="name"
+            placeholder="Szukaj..."
+            [showClear]="true"
+            scrollHeight="30rem"
+            (onChange)="filter('flyerTags', $event.value)" />
+        </div>
+        <p-button class="absolute right-0" severity="primary" icon="pi pi-plus" (onClick)="openFlyerDialog()" />
+      </div>
     </ng-template>
-    <ng-template #body let-flyer>
-      <tr class="table-row">
-        <td>
-          <div class="flex justify-content-center">
-            <app-flyer [flyer]="flyer" />
+    <ng-template #list let-flyers>
+      <div class="grid grid-cols-12 p-3 pb-0 gap-4 grid-nogutter justify-content-center">
+        @for(flyer of flyers; track $index) {
+        <div class="flyer-cell shadow-3">
+          @if(flyer.releases.length) {
+          <div class="flyer-cell-title">
+            {{ flyer.releases[0].distributors | join : ' • ' : 'name' }}
+
+            @if (flyer.releases[0].note) { @if(flyer.releases[0].distributors.length) { • }
+            <i>{{ flyer.releases[0].note }}</i> }
           </div>
-        </td>
-        <td>
-          @for(release of flyer.releases; track $index) {
-          <div class="my-1">
-            <p-tag value="{{ release.date | date : 'dd-MM-YYYY' }}" severity="secondary" />
-            <b class="mx-2">{{ release.film.title }}</b>
-            @if (release.film.originalTitle) {
-            <span [style.opacity]="0.75">({{ release.film.originalTitle }})</span>
-            }
-          </div>
-          } @empty {
-          <div class="text-xs">{{ flyer.id }}</div>
           }
-        </td>
-        <td>
-          <div class="flex flex-column align-items-start gap-1">
-            <p-tag [value]="flyer.size | flyerSizeName" severity="secondary" />
-            <p-tag [value]="flyer.type | flyerTypeName" severity="secondary" />
-          </div>
-        </td>
-        <td>
-          <div class="flex flex-column align-items-start gap-1">
-            @for (tag of flyer.tags; track tag) {
-            <p-tag [value]="tag.name" severity="secondary" />
+          <app-flyer [flyer]="flyer" [big]="true" />
+          <div class="flyer-cell-footer">
+            @for(release of flyer.releases; track $index) {
+            <div class="text-center">
+              <div>
+                <b>{{ release.film.title }}</b>
+              </div>
+              <div [style.opacity]="0.75">
+                {{ release.date }}
+                @if (release.releaseType !== 1) { <span> ({{ release.releaseType | releaseTypeName }})</span> }
+              </div>
+            </div>
+            } @empty {
+            <div class="text-xs">{{ flyer.id }}</div>
             }
           </div>
-        </td>
-        <td>{{ flyer.note }}</td>
-        <td class="text-right">
-          <p-button
-            icon="pi pi-pencil"
-            class="mr-2"
-            size="small"
-            [rounded]="true"
-            [outlined]="true"
-            (click)="openFlyerDialog(flyer)" />
-          <p-button
-            icon="pi pi-trash"
-            severity="danger"
-            size="small"
-            [rounded]="true"
-            [outlined]="true"
-            (click)="deleteFlyer(flyer)" />
-        </td>
-      </tr>
+          <div class="flyer-actions">
+            <p-button icon="pi pi-pencil" class="mx-2" size="small" (click)="openFlyerDialog(flyer)" />
+            <p-button icon="pi pi-trash" severity="danger" size="small" (click)="deleteFlyer(flyer)" />
+          </div>
+        </div>
+
+        }
+      </div>
     </ng-template>
-  </p-table>
+  </p-dataview>
   <p-confirmDialog [style.width.rem]="28" />
 </div>

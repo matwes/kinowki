@@ -1,10 +1,10 @@
 export const releaseTypes = [
-  { value: 1, label: 'Kinowa' },
-  { value: 2, label: 'Festiwalowa' },
-  { value: 3, label: 'Wideo' },
-  { value: 4, label: 'Wznowienie' },
-  { value: 5, label: 'Ograniczona' },
-  { value: 6, label: 'Wycofana' },
+  { value: 1, label: 'kinowa' },
+  { value: 2, label: 'festiwalowa' },
+  { value: 3, label: 'wideo' },
+  { value: 4, label: 'wznowienie' },
+  { value: 5, label: 'ograniczona' },
+  { value: 6, label: 'wycofana' },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
 export const releaseTypeMap = releaseTypes.reduce(

@@ -59,7 +59,9 @@ export class FilmController extends CrudController<Film, CreateFilmDto, UpdateFi
 
           const releasesWithFlyers = await Promise.all(
             releases.map(async (release) => {
-              const flyers = await this.flyerService.getAll(undefined, { releases: release._id });
+              const flyers = (await this.flyerService.getAll(undefined, { releases: release._id })).sort((a, b) =>
+                a.type !== b.type ? a.type - b.type : a.size - b.size
+              );
               flyerCount += flyers.length;
 
               return {

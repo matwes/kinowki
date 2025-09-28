@@ -37,7 +37,6 @@ import { TagDialogComponent } from './tag-dialog';
 })
 export class TagsComponent {
   genres = genres;
-  totalRecords = 0;
   event?: TableLazyLoadEvent;
   lazyEvent = new Subject<TableLazyLoadEvent>();
 

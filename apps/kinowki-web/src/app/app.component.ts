@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { PrimeNG } from 'primeng/config';
 import { SidebarComponent } from './layout';
@@ -10,11 +11,12 @@ import { SidebarComponent } from './layout';
   styleUrl: './app.component.sass',
 })
 export class AppComponent implements OnInit {
-  title = 'kinowki-web';
-
-  constructor(private primengConfig: PrimeNG) {}
+  private readonly primengConfig = inject(PrimeNG);
+  private readonly title = inject(Title);
 
   ngOnInit() {
+    this.title.setTitle('Kinówki');
+
     this.primengConfig.setTranslation({
       dayNames: ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'],
       dayNamesShort: ['niedz.', 'pon.', 'wt.', 'śr.', 'czw.', 'pt.', 'sob.'],

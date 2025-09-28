@@ -1,4 +1,4 @@
-import { registerLocaleData } from '@angular/common';
+import { DatePipe, registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import localePl from '@angular/common/locales/pl';
 import { ApplicationConfig, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
@@ -17,7 +17,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(appRoutes),
     provideHttpClient(),
     provideAnimationsAsync(),
-    providePrimeNG({ theme: { preset: Aura } }),
+    providePrimeNG({ theme: { preset: Aura, options: { darkModeSelector: '.darkmode' } } }),
     { provide: LOCALE_ID, useValue: 'pl' },
+    DatePipe,
   ],
 };

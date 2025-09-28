@@ -1,22 +1,23 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, FilterMetadata, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DataViewModule, DataView } from 'primeng/dataview';
 import { DialogService } from 'primeng/dynamicdialog';
 import { ImageModule } from 'primeng/image';
 import { InputTextModule } from 'primeng/inputtext';
-import { MultiSelectModule } from 'primeng/multiselect';
+import { SelectModule } from 'primeng/select';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { filter, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, filter, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
 
-import { CreateReleaseDto, FlyerDto, TagDto, UpdateDistributorDto, UpdateReleaseDto, genres } from '@kinowki/shared';
+import { FlyerDto, TagDto, flyerSizes, flyerTypes, genres, releaseTypes } from '@kinowki/shared';
 import { FlyerService, TagService } from '../../services';
-import { FlyerSizeNamePipe, FlyerTypeNamePipe, notEmpty } from '../../utils';
+import { JoinPipe, notEmpty, ReleaseTypeNamePipe } from '../../utils';
 import { FlyerComponent } from '../flyer/flyer.component';
 import { FlyerDialogComponent } from './flyer-dialog';
 
@@ -29,33 +30,53 @@ import { FlyerDialogComponent } from './flyer-dialog';
     ButtonModule,
     CommonModule,
     ConfirmDialogModule,
+    DataViewModule,
     FlyerComponent,
-    FlyerSizeNamePipe,
-    FlyerTypeNamePipe,
     FormsModule,
     ImageModule,
     InputTextModule,
-    MultiSelectModule,
+    JoinPipe,
     ReactiveFormsModule,
+    ReleaseTypeNamePipe,
+    SelectModule,
     TableModule,
     TagModule,
     ToastModule,
   ],
   providers: [ConfirmationService, DialogService, MessageService],
 })
-export class FlyersComponent {
+export class FlyersComponent implements AfterViewInit {
+  @ViewChild('flyersView', { static: true }) flyersView!: DataView;
+
   genres = genres;
+  flyerTypes = flyerTypes;
+  flyerSizes = flyerSizes;
+  releaseTypes = releaseTypes;
   event?: TableLazyLoadEvent;
+  restoredEvent?: TableLazyLoadEvent;
   lazyEvent = new Subject<TableLazyLoadEvent>();
 
-  data$ = this.lazyEvent.pipe(
-    switchMap((lazyEvent) => this.flyerService.getAll(lazyEvent)),
+  filters$ = new BehaviorSubject<{ [s: string]: FilterMetadata | FilterMetadata[] | undefined } | undefined>({});
+
+  data$ = combineLatest([this.lazyEvent, this.filters$]).pipe(
+    debounceTime(300),
+    map(([lazyEvent, filters]) => {
+      const event = { ...lazyEvent, filters };
+      localStorage.setItem('flyer-table', JSON.stringify(event));
+      return event;
+    }),
+    switchMap((event) => this.flyerService.getAll(event)),
     shareReplay(1)
   );
 
   value$ = this.data$.pipe(map((res) => res.data));
   totalRecords$ = this.data$.pipe(map((res) => res.totalRecords));
-  private tags: TagDto[] = [];
+  tags: TagDto[] = [];
+
+  flyerSizeSearch = '';
+  flyerTypesSearch = '';
+  flyerNameSearch = '';
+  flyerTagSearch = '';
 
   constructor(
     private readonly messageService: MessageService,
@@ -65,6 +86,26 @@ export class FlyersComponent {
     private readonly tagService: TagService
   ) {
     this.tagService.getAll().subscribe((res) => (this.tags = res.data));
+    const event = localStorage.getItem('flyer-table');
+    if (event) {
+      this.restoredEvent = JSON.parse(event);
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.restoredEvent) {
+      const filters = this.restoredEvent.filters;
+      this.lazyLoad(this.restoredEvent);
+      this.filters$.next(filters);
+
+      this.flyerSizeSearch = (filters?.['flyerSize'] as FilterMetadata | undefined)?.value || undefined;
+      this.flyerTypesSearch = (filters?.['flyerType'] as FilterMetadata | undefined)?.value || undefined;
+      this.flyerNameSearch = (filters?.['id'] as FilterMetadata | undefined)?.value || undefined;
+      this.flyerTagSearch = (filters?.['flyerTags'] as FilterMetadata | undefined)?.value || undefined;
+
+      this.flyersView.first = this.restoredEvent.first;
+      this.flyersView.rows = this.restoredEvent.rows ?? 20;
+    }
   }
 
   lazyLoad(event?: TableLazyLoadEvent) {
@@ -76,12 +117,31 @@ export class FlyersComponent {
     }
   }
 
+  filter(field: string, value: string | number) {
+    let filters = this.filters$.value;
+    if (!filters) {
+      filters = {};
+    }
+    if (value === undefined || value === null || value === '') {
+      delete filters[field];
+    } else {
+      filters[field] = { value };
+    }
+    this.filters$.next(filters);
+
+    if (this.event) {
+      this.event.first = 0;
+      this.lazyEvent.next(this.event);
+      this.flyersView.first = 0;
+    }
+  }
+
   openFlyerDialog(item?: FlyerDto) {
     this.dialogService
       .open(FlyerDialogComponent, {
         data: { item, tags: this.tags },
         header: item ? 'Edytuj ulotkę' : 'Dodaj ulotkę',
-        width: '45%',
+        width: '90vw',
         closeOnEscape: false,
         modal: true,
       })
@@ -116,9 +176,5 @@ export class FlyersComponent {
           });
       },
     });
-  }
-
-  private isCreateDto(dto: CreateReleaseDto | UpdateReleaseDto): dto is CreateReleaseDto {
-    return !(dto as UpdateDistributorDto)._id;
   }
 }

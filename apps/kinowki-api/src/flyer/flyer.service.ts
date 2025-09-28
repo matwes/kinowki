@@ -16,16 +16,30 @@ export class FlyerService extends CrudService<Flyer, CreateFlyerDto, UpdateFlyer
   }
 
   override async getAll(params?: { first: number; rows: number }, filters?: FilterQuery<Flyer>) {
-    let query = this.model
-      .find(filters)
-      .populate('tags')
-      .populate({ path: 'releases', populate: { path: 'film' } });
+    let query = this.model.find(filters);
 
     if (params) {
       query = query.limit(params.rows).skip(params.first);
     }
 
-    const itemData = await query.sort({ createdAt: -1 }).collation({ locale: 'pl', strength: 2 }).lean().exec();
+    const itemData = await query.sort({ createdAt: -1 }).collation({ locale: 'pl', strength: 1 }).lean().exec();
+    if (!itemData) {
+      throw new NotFoundException(`${this.name} data not found!`);
+    }
+    return itemData;
+  }
+
+  async getAllWithReleases(params?: { first: number; rows: number }, filters?: FilterQuery<Flyer>) {
+    let query = this.model
+      .find(filters)
+      .populate('tags')
+      .populate({ path: 'releases', populate: [{ path: 'film' }, { path: 'distributors' }] });
+
+    if (params) {
+      query = query.limit(params.rows).skip(params.first);
+    }
+
+    const itemData = await query.sort({ createdAt: -1 }).collation({ locale: 'pl', strength: 1 }).lean().exec();
     if (!itemData) {
       throw new NotFoundException(`${this.name} data not found!`);
     }

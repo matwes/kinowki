@@ -26,5 +26,5 @@ export class Film {
 
 export const FilmSchema = SchemaFactory.createForClass(Film).index(
   { title: 1 },
-  { unique: false, collation: { locale: 'pl', strength: 2 } }
+  { unique: false, collation: { locale: 'pl', strength: 1 } }
 );

@@ -22,7 +22,7 @@ import {
   genres,
 } from '@kinowki/shared';
 import { DistributorService, FilmService, ReleaseService } from '../../services';
-import { GenreNamePipe, ImdbPipe, JoinPipe, notEmpty } from '../../utils';
+import { DistributorBadgeComponent, GenreNamePipe, ImdbPipe, notEmpty } from '../../utils';
 import { FlyerComponent } from '../flyer';
 import { FilmDialogComponent } from './film-dialog';
 
@@ -35,12 +35,12 @@ import { FilmDialogComponent } from './film-dialog';
     ButtonModule,
     CommonModule,
     ConfirmDialogModule,
+    DistributorBadgeComponent,
     FlyerComponent,
     FormsModule,
     GenreNamePipe,
     ImdbPipe,
     InputTextModule,
-    JoinPipe,
     MultiSelectModule,
     ReactiveFormsModule,
     TableModule,
@@ -88,7 +88,7 @@ export class FilmsComponent {
       .open(FilmDialogComponent, {
         data: { item, distributors: this.distributors },
         header: item ? 'Edytuj film' : 'Dodaj film',
-        width: '45%',
+        width: '90%',
         closeOnEscape: false,
         modal: true,
       })

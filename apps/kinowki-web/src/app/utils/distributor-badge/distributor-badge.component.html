@@ -1,0 +1,20 @@
+@if ( { name: name(), flyerProbability: flyerProbability(), date: date(), showReleaseDate: showReleaseDate(),
+showFlyerProbability: showFlyerProbability(), styleClass: styleClass(), releaseTypeIcon: releaseTypeIcon(), releaseNote:
+releaseNote()}; as data) {
+<div class="badge">
+  <i class="mr-2" [ngClass]="data.releaseTypeIcon"></i>
+  @if (data.showReleaseDate) {
+  <span class="badge-date">{{ data.date }}</span>
+  @if (data.name) {
+  <span> | </span>
+  } } @if (data.name) {
+  <span class="badge-name">{{ data.name }}</span>
+  } @if (data.releaseNote) { @if (data.showReleaseDate || data.name) {
+  <span> | </span>
+  }
+  <i class="badge-note">{{ data.releaseNote }}</i>
+  } @if (data.showFlyerProbability) {
+  <span class="badge-probability" [ngClass]="data.styleClass">{{ data.flyerProbability }}%</span>
+  }
+</div>
+}

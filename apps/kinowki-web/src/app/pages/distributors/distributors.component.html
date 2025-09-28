@@ -1,25 +1,29 @@
-<div class="card flex flex-column overflow-hidden h-full p-5">
+<div class="card flex flex-row overflow-hidden h-full p-5">
   <p-toast />
   <p-table
-    class="flex-auto overflow-hidden"
+    class="flex-none overflow-hidden"
+    [style.width.%]="40"
     dataKey="_id"
     stateStorage="local"
     stateKey="distributors"
+    selectionMode="single"
     [value]="(value$ | async) ?? []"
     [totalRecords]="(totalRecords$ | async) ?? 0"
     [rows]="20"
-    [rowsPerPageOptions]="[10, 20, 50, 100]"
     scrollHeight="flex"
     [scrollable]="true"
     [rowHover]="true"
     [paginator]="true"
     [lazy]="true"
-    currentPageReportTemplate="Wyświetlam od {first} do {last} ze wszystkich {totalRecords} dystrybutorów"
+    currentPageReportTemplate="od {first} do {last} ze {totalRecords} dystrybutorów"
     [showCurrentPageReport]="true"
+    [(selection)]="selection"
+    (selectionChange)="onDistributorSelected($event)"
     (onLazyLoad)="lazyLoad($event)">
     <ng-template #header>
       <tr>
-        <th [style.width]="'90%'">
+        <th [style.width]="'10%'"></th>
+        <th [style.width]="'60%'">
           <div class="flex align-items-center gap-3">
             Nazwa
             <p-columnFilter type="text" field="name" [showMenu]="false" [showClearButton]="false" matchMode="contains">
@@ -35,14 +39,36 @@
             </p-columnFilter>
           </div>
         </th>
-        <th [style.width]="'10%'" class="text-right">
+        <th [style.width]="'10%'">Premiery</th>
+        <th [style.width]="'20%'" class="text-right">
           <p-button severity="primary" icon="pi pi-plus" (onClick)="openDistributorDialog()" />
         </th>
       </tr>
     </ng-template>
     <ng-template #body let-distributor>
-      <tr class="table-row">
-        <td>{{ distributor.name }}</td>
+      <tr class="table-row" [pSelectableRow]="distributor">
+        <td>
+          <div
+            class="percent"
+            [ngClass]="
+              distributor.pastReleasesWithFlyersPercent < 30
+                ? 'low-probability'
+                : distributor.pastReleasesWithFlyersPercent < 70
+                ? 'medium-probability'
+                : 'high-probability'
+            ">
+            {{ distributor.pastReleasesWithFlyersPercent }}%
+          </div>
+        </td>
+        <td>
+          <b>{{ distributor.name }}</b>
+          <div class="last-10">
+            @if (distributor.lastYear <currentYear) {
+            {{ distributor.firstYear }} - {{ distributor.lastYear }} } @else { Ostatnie 10 filmów:
+            <b>{{ distributor.flyerProbability }}%</b> }
+          </div>
+        </td>
+        <td class="text-right">{{ distributor.releasesCount }}</td>
         <td class="text-right">
           <p-button
             icon="pi pi-pencil"
@@ -62,5 +88,66 @@
       </tr>
     </ng-template>
   </p-table>
-  <p-confirmDialog [style.width.rem]="28" />
+  <div class="w-2rem flex-none"></div>
+  <p-table
+    #flyersTable
+    class="flex-none overflow-hidden"
+    [style.width.%]="60"
+    dataKey="_id"
+    stateStorage="local"
+    stateKey="distributor-releases"
+    [value]="(releases$ | async) ?? []"
+    [totalRecords]="(releasesTotalRecords$ | async) ?? 0"
+    [rows]="10"
+    scrollHeight="flex"
+    [scrollable]="true"
+    [rowHover]="true"
+    [paginator]="true"
+    [lazy]="true"
+    currentPageReportTemplate="Wyświetlam od {first} do {last} ze wszystkich {totalRecords} premier"
+    [showCurrentPageReport]="true"
+    (onLazyLoad)="lazyLoadReleases($event)">
+    <ng-template #header>
+      <tr [style.height.px]="53">
+        <th [style.width]="'15%'" class="text-center">Data premiery</th>
+        <th [style.width]="'10%'" class="text-center">IMDb</th>
+        <th [style.width]="'30%'">Film</th>
+        <th [style.width]="'45%'">Ulotki</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-release let-rowgroup="rowgroup" let-rowspan="rowspan">
+      @let passed = release.date < today;
+      <tr class="table-row" [class.no-flyer]="!release.flyers?.length && passed">
+        <td class="text-center">
+          <div class="badge">
+            <i class="mr-2" [ngClass]="release.releaseType | releaseTypeIcon"></i>
+            <span class="badge-date">{{ release.date }}</span>
+          </div>
+        </td>
+        <td class="text-center">
+          @if(release.film?.imdb) {
+          <a [href]="release.film.imdb | imdb" target="_blank">
+            <img [style.width.rem]="2.5" src="imdb.svg" alt="logo" />
+          </a>
+          }
+        </td>
+        <td>
+          <div class="flex gap-2">
+            <b>{{ release.film?.title }} ({{ release.film?.year }})</b>
+          </div>
+          <div [style.opacity]="0.75">{{ release.film?.originalTitle }}</div>
+        </td>
+        <td [style.padding]="'0.25rem 1rem'">
+          <div class="flyers">
+            @for(flyer of release.flyers; track $index) {
+            <app-flyer [flyer]="flyer" />
+            } @empty {
+            <span class="ml-1"> @if (passed) { brak ulotek } @else { na razie brak ulotek }</span>
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-confirmDialog class="absolute" [style.width.rem]="28" />
 </div>

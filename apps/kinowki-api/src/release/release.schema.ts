@@ -6,7 +6,7 @@ export type ReleaseDocument = HydratedDocument<Release>;
 @Schema()
 export class Release {
   @Prop({ required: true, index: true })
-  date: Date;
+  date: string;
 
   @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'Film' })
   film: Types.ObjectId;

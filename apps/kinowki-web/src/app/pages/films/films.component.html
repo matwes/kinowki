@@ -7,8 +7,7 @@
     stateKey="films"
     [value]="(value$ | async) ?? []"
     [totalRecords]="(totalRecords$ | async) ?? 0"
-    [rows]="20"
-    [rowsPerPageOptions]="[10, 20, 50, 100]"
+    [rows]="10"
     scrollHeight="flex"
     [scrollable]="true"
     [rowHover]="true"
@@ -72,23 +71,27 @@
           <div [style.opacity]="0.75">{{ film.originalTitle }}</div>
         </td>
         <td>
-          <div class="flex gap-2">
+          <div class="flex flex-wrap gap-2">
             @for (genre of film.genres; track genre) {
             <p-tag [value]="genre | genreName" severity="secondary" />
             }
           </div>
         </td>
-        <td>
+        <td [style.padding]="'0.25rem 1rem'">
           <div class="flex flex-column align-items-baseline gap-2">
             @for (release of film.releases; track release) {
             <div class="release">
-              <p-tag
-                value="{{ release.date | date : 'dd-MM-YYYY' }} {{ release.distributors | join : ' + ' : 'name' }}"
-                severity="secondary" />
+              <app-distributor-badge
+                [distributors]="release.distributors"
+                [releaseType]="release.releaseType"
+                [hasFlyers]="release.flyers.length"
+                [releaseDate]="release.date"
+                [releaseNote]="release.note"
+                [showReleaseDate]="true" />
               <div class="flyers">
                 @for(flyer of release.flyers; track $index) {
-                <app-flyer [flyer]="flyer" [index]="$index + 1" />
-                } @empty { brak ulotek }
+                <app-flyer [flyer]="flyer" />
+                }
               </div>
             </div>
             }

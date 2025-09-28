@@ -4,3 +4,78 @@
 
   p-button
     visibility: hidden
+
+:host ::ng-deep p-dataview
+  .p-dataview
+    display: flex
+    flex-direction: column
+    overflow: hidden
+    height: 100%
+
+  .p-dataview-content
+    overflow-x: hidden
+    overflow-y: auto
+    flex: auto
+
+  .p-paginator-bottom
+    flex: none
+
+  .p-dataview-emptymessage
+    text-align: center
+
+.flyer-cell
+  display: flex
+  flex-direction: column
+  position: relative
+  width: 21rem
+  overflow: hidden
+  border-radius: 0.5rem
+  background: var(--p-surface-800)
+  justify-content: space-between
+
+  &:hover .flyer-actions
+    visibility: visible
+
+.flyer-actions
+  visibility: hidden
+  position: absolute
+  bottom: 0.5rem
+  right: 0.5rem
+
+.flyer-cell-title
+  text-align: center
+  text-transform: uppercase
+  font-weight: bold
+  font-size: 0.75rem
+  letter-spacing: 1px
+  padding: 0.5rem
+  color: var(--p-text-muted-color)
+
+.flyer-cell-footer
+  background: var(--p-surface-700)
+  padding: 0.25rem 0.5rem
+  margin-top: 0.5rem
+  font-size: 0.875rem
+
+.filter-bar
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  justify-content: center
+  position: relative
+  column-gap: 1.5rem
+  row-gap: 0.5rem
+
+.filter-item
+  display: flex
+  gap: 1.5rem
+  align-items: center
+  justify-content: center
+
+.search-label
+  text-align: center
+  text-transform: uppercase
+  font-weight: bold
+  font-size: 0.75rem
+  letter-spacing: 1px
+  color: var(--p-text-muted-color)

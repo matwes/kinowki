@@ -3,7 +3,7 @@
   display: flex
   align-items: center
   justify-content: center
-  background: var(--p-orange-500)
+  background: #660F28
   top: 0
   left: 0
   right: 0
@@ -18,7 +18,6 @@
     height: 5rem
     left: 2.5rem
     position: fixed
-    color: black
 
     .header
       font-family: Roboto
@@ -29,20 +28,20 @@
     .subheader
       text-transform: uppercase
       letter-spacing: 1px
-      line-height: 12px
-      font-size: 12px
+      line-height: 0.75rem
+      font-size: 0.75rem
 
   .page
     font-size: 1.125rem
     font-weight: bold
     text-transform: uppercase
     letter-spacing: 0.0625rem
-    padding: 0 10px
-    opacity: 0.7
+    padding: 0 0.625rem
+    color: var(--p-text-muted-color)
 
     &.active
       padding: 0
-      opacity: 1
+      color: var(--p-text-color)
 
       &::before, &::after
         content: "-"
@@ -57,3 +56,16 @@
 
     &:hover:not(.active)
       text-decoration: underline
+
+@media (max-width: 1050px)
+  .sidebar
+    justify-content: flex-end
+    padding-right: 1rem
+
+@media (max-width: 600px)
+  .sidebar
+    justify-content: center
+    padding-right: 0
+
+    .title
+      display: none

@@ -11,18 +11,17 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
-import { map, shareReplay, startWith, Subject, switchMap, tap } from 'rxjs';
+import { map, shareReplay, Subject, switchMap, tap } from 'rxjs';
 
 import { months, ReleaseDto } from '@kinowki/shared';
 import { ReleaseService } from '../../services';
-import { ImdbPipe, ReleaseTypeNamePipe } from '../../utils';
+import { DistributorBadgeComponent, ImdbPipe, ReleaseDatePipe } from '../../utils';
 import { FlyerComponent } from '../flyer';
 
 const FIRST_YEAR = 1990;
-const LAST_YEAR = 2025;
+const LAST_YEAR = new Date().getFullYear() + 1;
 
 @UntilDestroy()
 @Component({
@@ -33,17 +32,17 @@ const LAST_YEAR = 2025;
     ButtonModule,
     CommonModule,
     ConfirmDialogModule,
+    DistributorBadgeComponent,
     FlyerComponent,
     FormsModule,
     ImdbPipe,
     InputTextModule,
     MultiSelectModule,
     ReactiveFormsModule,
-    ReleaseTypeNamePipe,
+    ReleaseDatePipe,
     SelectButtonModule,
     SelectModule,
     TableModule,
-    TagModule,
     ToastModule,
     ToolbarModule,
   ],
@@ -82,14 +81,14 @@ export class ReleasesComponent {
     return this.form.controls.month;
   }
 
+  today = this.getToday();
+
   constructor(
     private readonly messageService: MessageService,
     private readonly confirmationService: ConfirmationService,
     private readonly releaseService: ReleaseService,
     private readonly fb: NonNullableFormBuilder
-  ) {
-    this.form.valueChanges.pipe(startWith(this.form));
-  }
+  ) {}
 
   lazyLoad(event?: TableLazyLoadEvent) {
     if (event) {
@@ -141,5 +140,13 @@ export class ReleasesComponent {
       table.filter(search.month, 'month', '');
       table.filter(search.year, 'year', '');
     });
+  }
+
+  getToday() {
+    const date = new Date();
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
   }
 }

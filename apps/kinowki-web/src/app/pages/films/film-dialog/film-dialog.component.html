@@ -54,6 +54,14 @@
         <label for="genres">Data</label>
       </p-iftalabel>
     </div>
+    <div class="field-checkbox col-1">
+      <p-checkbox
+        id="release-noDay-{{ $index }}"
+        [formControl]="release.controls.noDay"
+        appendTo="body"
+        [binary]="true" />
+      <label for="noDay">No day</label>
+    </div>
     <div class="field col-3">
       <p-iftalabel>
         <p-multiSelect
@@ -77,11 +85,12 @@
           fluid
           [options]="options.releaseTypes"
           [formControl]="release.controls.releaseType"
+          scrollHeight="30rem"
           appendTo="body" />
         <label for="genres">Typ premiery</label>
       </p-iftalabel>
     </div>
-    <div class="field col-3">
+    <div class="field col-2">
       <p-iftalabel>
         <input pInputText fluid id="release-note-{{ $index }}" [formControl]="release.controls.note" />
         <label for="title">Notka</label>

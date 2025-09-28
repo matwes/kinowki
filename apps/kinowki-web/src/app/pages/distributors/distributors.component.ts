@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,14 +7,26 @@ import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogService } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { filter, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  debounceTime,
+  filter,
+  map,
+  of,
+  shareReplay,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
 
-import { DistributorDto, genres } from '@kinowki/shared';
-import { DistributorService } from '../../services';
-import { notEmpty } from '../../utils';
+import { DistributorDto, genres, ReleaseDto } from '@kinowki/shared';
+import { DistributorService, ReleaseService } from '../../services';
+import { ImdbPipe, notEmpty, ReleaseTypeIconPipe } from '../../utils';
 import { DistributorDialogComponent } from './distributor-dialog';
+import { FlyerComponent } from '../flyer';
 
 @UntilDestroy()
 @Component({
@@ -25,21 +37,25 @@ import { DistributorDialogComponent } from './distributor-dialog';
     ButtonModule,
     CommonModule,
     ConfirmDialogModule,
+    FlyerComponent,
     FormsModule,
+    ImdbPipe,
     InputTextModule,
     ReactiveFormsModule,
+    ReleaseTypeIconPipe,
     TableModule,
     ToastModule,
   ],
   providers: [ConfirmationService, DialogService, MessageService],
 })
 export class DistributorsComponent {
+  @ViewChild('flyersTable', { static: true }) flyersTable!: Table;
+
   genres = genres;
-  totalRecords = 0;
   event?: TableLazyLoadEvent;
   lazyEvent = new Subject<TableLazyLoadEvent>();
 
-  data$ = this.lazyEvent.pipe(
+  private data$ = this.lazyEvent.pipe(
     switchMap((lazyEvent) => this.distributorService.getAll(lazyEvent)),
     shareReplay(1)
   );
@@ -47,12 +63,52 @@ export class DistributorsComponent {
   value$ = this.data$.pipe(map((res) => res.data));
   totalRecords$ = this.data$.pipe(map((res) => res.totalRecords));
 
+  selection: DistributorDto[] = [];
+  selectedDistributor$ = new BehaviorSubject<DistributorDto | null>(null);
+
+  // releases
+
+  releasesEvent?: TableLazyLoadEvent;
+  releasesLazyEvent = new Subject<TableLazyLoadEvent>();
+
+  private releaseData$ = combineLatest([
+    this.releasesLazyEvent,
+    this.selectedDistributor$.pipe(filter((distributor) => !!distributor)),
+  ]).pipe(
+    debounceTime(500),
+    switchMap(([, distributor]) => {
+      const lazyEvent = this.releasesEvent;
+      if (!lazyEvent) {
+        return of<{ data: ReleaseDto[]; totalRecords: number }>({ data: [], totalRecords: 0 });
+      }
+      if (!lazyEvent.filters) {
+        lazyEvent.filters = {};
+      }
+      lazyEvent.filters['distributor'] = { value: distributor._id };
+      return this.releaseService.getAll(lazyEvent);
+    })
+  );
+  releases$ = this.releaseData$.pipe(map((res) => res.data));
+  releasesTotalRecords$ = this.releaseData$.pipe(map((res) => res.totalRecords));
+
+  today = this.getToday();
+  currentYear = new Date().getFullYear();
+
   constructor(
     private readonly messageService: MessageService,
     private readonly confirmationService: ConfirmationService,
     private readonly dialogService: DialogService,
-    private readonly distributorService: DistributorService
+    private readonly distributorService: DistributorService,
+    private readonly releaseService: ReleaseService
   ) {}
+
+  onDistributorSelected(distributor: DistributorDto) {
+    if (this.selectedDistributor$.value) {
+      this.flyersTable.first = 0;
+      this.flyersTable.reset();
+    }
+    this.selectedDistributor$.next(distributor);
+  }
 
   lazyLoad(event?: TableLazyLoadEvent) {
     if (event) {
@@ -60,6 +116,15 @@ export class DistributorsComponent {
     }
     if (this.event) {
       this.lazyEvent.next(this.event);
+    }
+  }
+
+  lazyLoadReleases(releasesEvent?: TableLazyLoadEvent) {
+    if (releasesEvent) {
+      this.releasesEvent = releasesEvent;
+    }
+    if (this.releasesEvent) {
+      this.releasesLazyEvent.next(this.releasesEvent);
     }
   }
 
@@ -105,5 +170,13 @@ export class DistributorsComponent {
           });
       },
     });
+  }
+
+  getToday() {
+    const date = new Date();
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
   }
 }

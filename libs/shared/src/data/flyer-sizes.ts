@@ -1,10 +1,10 @@
 export const flyerSizes = [
-  { value: 1, label: '105×148 mm (A6 pionowa)' },
-  { value: 2, label: '148×105 mm (A6 pozioma)' },
-  { value: 3, label: '148×210 mm (A5 pionowa)' },
-  { value: 4, label: '210×148 mm (A5 pozioma)' },
-  { value: 5, label: '210×297 mm (A4 pionowa)' },
-  { value: 6, label: '297×210 mm (A4 pozioma)' },
+  { value: 1, label: 'A6 pionowa', size: '105×148 mm' },
+  { value: 2, label: 'A6 pozioma', size: '148×105 mm' },
+  { value: 3, label: 'A5 pionowa', size: '148×210 mm' },
+  { value: 4, label: 'A5 pozioma', size: '210×148 mm' },
+  { value: 5, label: 'A4 pionowa', size: '210×297 mm' },
+  { value: 6, label: 'A4 pozioma', size: '297×210 mm' },
   { value: 7, label: '60×60 mm' },
   { value: 8, label: '180×180 mm' },
   { value: 9, label: '65×65 mm' },
@@ -38,53 +38,52 @@ export const flyerSizes = [
   { value: 37, label: '100×100 mm' },
   { value: 38, label: '90×45 mm' },
   { value: 39, label: '52×49 mm' },
-].sort(sortSizes);
+  { value: 40, label: '75×105 mm' },
+  { value: 41, label: '74×210 mm' },
+  { value: 42, label: '138×200 mm' },
+  { value: 43, label: '150×147 mm' },
+  { value: 44, label: '123×175 mm' },
+  { value: 45, label: '105×177 mm' },
+  { value: 46, label: '208×108 mm' },
+  { value: 47, label: '115×183 mm' },
+  { value: 48, label: '115×217 mm' },
+  { value: 49, label: '115×175 mm' },
+  { value: 50, label: '150×150 mm' },
+  { value: 51, label: '90×175 mm' },
+  { value: 52, label: '100×200 mm' },
+  { value: 53, label: '115×170 mm' },
+  { value: 54, label: '108×208 mm' },
+  { value: 55, label: '55×80 mm' },
+  { value: 56, label: '95×200 mm' },
+  { value: 57, label: '200×45 mm' },
+  { value: 58, label: '75×150 mm' },
+  { value: 59, label: '105×200 mm' },
+  { value: 60, label: '210×95 mm' },
+  { value: 61, label: '75×100 mm' },
+  { value: 62, label: '105×195 mm' },
+  { value: 63, label: '105×168 mm' },
+  { value: 64, label: '200×40 mm' },
+  { value: 65, label: '300×300 mm' },
+  { value: 66, label: '70×100 mm' },
+  { value: 67, label: '56×86 mm' },
+  { value: 68, label: '150×185 mm' },
+  { value: 69, label: '130×190 mm' },
+  { value: 70, label: '192×103 mm' },
+].sort((a, b) => {
+  const aStartsWithA = a.label.startsWith('A');
+  const bStartsWithA = b.label.startsWith('A');
+
+  if (aStartsWithA && !bStartsWithA) {
+    return -1;
+  }
+  if (!aStartsWithA && bStartsWithA) {
+    return 1;
+  }
+
+  return a.label.localeCompare(b.label, 'pl', { numeric: true });
+});
 
 export const flyerSizeMap = flyerSizes.reduce(
   (map, genre) => ({ ...map, [genre.value]: genre.label }),
   {} as Record<number, string>
 );
-
-function sortSizes(a: { label: string }, b: { label: string }): number {
-  const sizeA = parseDimensions(a.label);
-  const sizeB = parseDimensions(b.label);
-
-  const isVerticalA = sizeA.width < sizeA.height;
-  const isVerticalB = sizeB.width < sizeB.height;
-  const isHorizontalA = sizeA.width > sizeA.height;
-  const isHorizontalB = sizeB.width > sizeB.height;
-
-  const areaA = sizeA.width * sizeA.height;
-  const areaB = sizeB.width * sizeB.height;
-
-  if (isVerticalA && !isVerticalB) {
-    return -1;
-  }
-  if (!isVerticalA && isVerticalB) {
-    return 1;
-  }
-
-  if (isHorizontalA && !isHorizontalB) {
-    return -1;
-  }
-  if (!isHorizontalA && isHorizontalB) {
-    return 1;
-  }
-
-  if (areaA !== areaB) {
-    return areaA - areaB;
-  }
-
-  return sizeA.height - sizeB.height;
-}
-
-function parseDimensions(label: string): { width: number; height: number } {
-  const match = label.match(/(\d+)×(\d+)/);
-  if (!match) {
-    throw new Error(`Invalid label format: ${label}`);
-  }
-  return {
-    width: parseInt(match[1], 10),
-    height: parseInt(match[2], 10),
-  };
-}

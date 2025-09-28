@@ -4,6 +4,7 @@ import { FilterQuery, Model } from 'mongoose';
 export abstract class CrudService<Schema, CreateDto, UpdateDto> {
   abstract name: string;
   abstract sortKey: string;
+  sortOrder: 1 | -1 = 1;
 
   constructor(protected model: Model<Schema>) {}
 
@@ -27,7 +28,11 @@ export abstract class CrudService<Schema, CreateDto, UpdateDto> {
       query = query.limit(params.rows).skip(params.first);
     }
 
-    const itemData = await query.sort(this.sortKey).collation({ locale: 'pl', strength: 2 }).lean().exec();
+    const itemData = await query
+      .sort({ [this.sortKey]: this.sortOrder })
+      .collation({ locale: 'pl', strength: 1 })
+      .lean()
+      .exec();
     if (!itemData) {
       throw new NotFoundException(`${this.name} data not found!`);
     }

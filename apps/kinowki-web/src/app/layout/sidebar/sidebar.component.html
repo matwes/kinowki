@@ -1,7 +1,7 @@
 <div class="sidebar shadow-3">
   <div class="title">
     <div class="header">Kinówki</div>
-    <div class="subheader">Polskie ulotki filmowe</div>
+    <div class="subheader">Polskie ulotki filmowe od 1990</div>
   </div>
   @for(page of pages; track page.url) {
   <a class="page" [routerLink]="page.url" routerLinkActive="active">{{ page.label }}</a>

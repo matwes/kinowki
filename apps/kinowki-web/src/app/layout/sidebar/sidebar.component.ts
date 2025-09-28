@@ -10,10 +10,11 @@ import { RouterModule } from '@angular/router';
 })
 export class SidebarComponent {
   readonly pages = [
+    { label: 'Ulotki', url: '/ulotki' },
     { label: 'Filmy', url: '/filmy' },
     { label: 'Premiery', url: '/premiery' },
-    { label: 'Ulotki', url: '/ulotki' },
     { label: 'Dystrybutorzy', url: '/dystrybutorzy' },
     { label: 'Tagi', url: '/tagi' },
+    { label: 'Kontakt', url: '/kontakt' },
   ];
 }

@@ -40,6 +40,7 @@ export class FlyerDialogComponent implements OnInit {
 
   releaseSearch = new BehaviorSubject<string>('');
   releases$: Nullable<Observable<ReleaseDto[]>>;
+  private releaseMap = new Map<string, ReleaseDto>();
 
   form = this.fb.group({
     id: undefined as unknown as string,
@@ -120,16 +121,18 @@ export class FlyerDialogComponent implements OnInit {
     }
 
     this.releases$ = this.releaseSearch.pipe(
-      filter((search) => search?.length > 2),
+      filter((search) => !!search),
       debounceTime(300),
       switchMap((search) => this.releaseService.getAll({ filters: { film: { value: search } } })),
       map((res) => res.data),
       startWith(initialReleases),
       scan((releases, newReleases) => {
         const allReleases = [...releases, ...newReleases];
-        const uniqueReleasesMap = new Map();
+        const uniqueReleasesMap = new Map<string, ReleaseDto>();
+
         for (const release of allReleases) {
           uniqueReleasesMap.set(release._id, release);
+          this.releaseMap.set(release._id, release);
         }
 
         return Array.from(uniqueReleasesMap.values());
@@ -148,14 +151,14 @@ export class FlyerDialogComponent implements OnInit {
     this.images.push(
       this.fb.group({
         original,
-        thumbnail: original as string | undefined,
+        thumbnail: '' as string | undefined,
       })
     );
 
     this.images.push(
       this.fb.group({
-        original,
-        thumbnail: original as string | undefined,
+        original: '',
+        thumbnail: '' as string | undefined,
       })
     );
   }
@@ -176,10 +179,27 @@ export class FlyerDialogComponent implements OnInit {
     }
   }
 
+  addSeparator() {
+    this.note.setValue(this.note.value + ' • ');
+  }
+
   private getFromForm(): Partial<UpdateFlyerDto> {
     return {
       id: this.id.value,
-      releases: this.releases.value,
+      releases: this.releases.value.sort((a, b) => {
+        const releaseA = this.releaseMap.get(a);
+        const releaseB = this.releaseMap.get(b);
+
+        if (!releaseA || !releaseB) {
+          return 0;
+        }
+
+        if (releaseA.date !== releaseB.date) {
+          return releaseA.date.localeCompare(releaseB.date);
+        }
+
+        return releaseA.film.title.localeCompare(releaseB.film.title);
+      }),
       type: this.type.value,
       size: this.size.value,
       tags: this.tags.value,

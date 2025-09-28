@@ -4,3 +4,49 @@
 
   p-button
     visibility: hidden
+
+.no-flyer
+  opacity: 0.5
+
+.flyers
+  display: flex
+  flex-wrap: wrap
+  align-items: flex-start
+  gap: 0.5rem
+  overflow: hidden
+  max-width: 50rem
+
+.badge
+  display: flex
+  align-items: center
+  justify-content: center
+  padding: 0.25rem 0.5rem
+  border-radius: 0.25rem
+  background-color: var(--p-surface-800)
+  color: var(--p-tag-secondary-color)
+
+.percent
+  background: black
+  border-radius: 50%
+  width: 2rem
+  height: 2rem
+  overflow: hidden
+  font-size: 10px
+  display: flex
+  align-items: center
+  justify-content: center
+  justify-self: center
+  font-weight: bold
+
+  &.low-probability
+    background: var(--p-red-700)
+
+  &.medium-probability
+    background: var(--p-orange-600)
+
+  &.high-probability
+    background: var(--p-green-800)
+
+.last-10
+  font-size: 12px
+  color: var(--p-text-muted-color)

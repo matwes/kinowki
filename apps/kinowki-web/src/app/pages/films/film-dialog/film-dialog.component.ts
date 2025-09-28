@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { IftaLabelModule } from 'primeng/iftalabel';
@@ -18,6 +19,7 @@ import { DistributorDto, FilmDto, genreMap, genres, releaseTypes } from '@kinowk
   styleUrl: './film-dialog.component.sass',
   imports: [
     ButtonModule,
+    CheckboxModule,
     CommonModule,
     DatePickerModule,
     IftaLabelModule,
@@ -45,6 +47,7 @@ export class FilmDialogComponent implements OnInit {
       [] as FormGroup<{
         _id: FormControl<string | undefined>;
         date: FormControl<Date>;
+        noDay: FormControl<boolean>;
         distributors: FormControl<string[]>;
         releaseType: FormControl<number>;
         note: FormControl<string | undefined>;
@@ -95,10 +98,13 @@ export class FilmDialogComponent implements OnInit {
         this.imdb.setValue(film.imdb);
 
         film.releases?.forEach((release) => {
+          const date = release.date.endsWith('-00') ? release.date.slice(0, -2) + '01' : release.date;
+
           this.releases.push(
             this.fb.group({
               _id: release._id,
-              date: new Date(release.date),
+              date: new Date(date),
+              noDay: [release.date.endsWith('00')],
               distributors: [release.distributors.map((d) => d._id)],
               releaseType: release.releaseType,
               note: release.note,
@@ -114,6 +120,7 @@ export class FilmDialogComponent implements OnInit {
       this.fb.group({
         _id: undefined as string | undefined,
         date: undefined as unknown as Date,
+        noDay: [false],
         distributors: [[] as string[]],
         releaseType: 1,
         note: '' as string | undefined,
@@ -151,14 +158,22 @@ export class FilmDialogComponent implements OnInit {
   }
 
   private getReleases() {
-    return this.releases.controls.map((release) => {
-      return {
-        _id: release.controls._id.value || undefined,
-        date: release.controls.date.value,
-        distributors: release.controls.distributors.value,
-        releaseType: release.controls.releaseType.value,
-        note: release.controls.note.value,
-      };
-    });
+    return this.releases.controls
+      .map((release) => {
+        const date = new Date(release.controls.date.value);
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = release.controls.noDay.value ? '00' : String(date.getDate()).padStart(2, '0');
+        const dateStr = `${yyyy}-${mm}-${dd}`;
+
+        return {
+          _id: release.controls._id.value || undefined,
+          date: dateStr,
+          distributors: release.controls.distributors.value,
+          releaseType: release.controls.releaseType.value,
+          note: release.controls.note.value,
+        };
+      })
+      .sort((a, b) => a.date.localeCompare(b.date));
   }
 }

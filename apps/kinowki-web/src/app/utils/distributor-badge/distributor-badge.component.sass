@@ -1,0 +1,25 @@
+:host
+  display: inline-flex
+
+.badge
+  font-weight: bold
+  padding: 0.25rem 0.5rem
+  border-radius: 0.25rem
+  background-color: var(--p-surface-800)
+  color: var(--p-tag-secondary-color)
+
+  .badge-probability
+    padding: 0 0.25rem
+    text-align: center
+    border-radius: 0.125rem
+    margin-right: -0.25rem
+    margin-left: 0.5rem
+
+    &.low-probability
+      background: var(--p-red-700)
+
+    &.medium-probability
+      background: var(--p-orange-600)
+
+    &.high-probability
+      background: var(--p-green-800)

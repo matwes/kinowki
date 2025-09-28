@@ -1,18 +1,34 @@
-@if (index(); as index) {
-<div class="title">#{{ index }}</div>
-}
-<div class="flyer shadow-2">
-  @for(image of flyer().images; track $index) { @if (image.original === 'blank') {
-  <div class="blank"></div>
-  }@else {
-  <p-image
-    width="50"
-    [imageStyle]="{ 'max-height': '7rem', 'object-fit': 'contain' }"
-    [previewImageSrc]="'/api/flyers' + image.original"
-    [src]="'/api/flyers' + (image.thumbnail || image.original)"
-    [alt]="image.thumbnail || image.original"
-    [preview]="true" />
-  } } @empty {
-  <span class="no-images">brak skanów</span>
-  }
+@if ({flyer: flyer(), big: big(), blankWidth: blankWidth() }; as data) { @if (data.flyer) {
+<div class="badge">
+  <div class="flyer" [class.big]="data.big">
+    @for(image of data.flyer.images; track $index) { @if (image.original === 'blank') {
+    <div class="blank" [style.width.px]="data.blankWidth"></div>
+    }@else {
+    <div class="relative">
+      <p-image
+        width="auto"
+        [imageStyle]="{
+          'max-width': data.big ? '9.375rem' : '3.125rem',
+          'max-height': data.big ? '13.375rem' : '4.5rem',
+          'object-fit': 'contain',
+          'object-position': $index % 2 === 0 ? 'right' : 'left'
+        }"
+        [previewImageSrc]="'/api/flyers' + image.original"
+        [src]="'/api/flyers' + (image.thumbnail || image.original)"
+        [alt]="image.thumbnail || image.original"
+        [preview]="true"></p-image>
+
+      @if(data.big && image.thumbnail) {
+      <div class="quality-badge">HQ</div>
+      }
+    </div>
+    } } @empty {
+    <div class="no-images">
+      <i class="pi pi-image"></i>
+      <span>brak skanów</span>
+    </div>
+    }
+  </div>
 </div>
+<div class="note" [class.big]="data.big">{{ data.flyer | flyerNote }}</div>
+} }
