@@ -30,10 +30,10 @@ export class FlyerComponent implements AfterViewInit {
   images = computed(() =>
     this.flyer().images.map((image) => {
       if (image.original && image.original !== 'blank') {
-        image.original = `${OBJECT_STORAGE}/${image.original}`;
+        image.original = `${OBJECT_STORAGE}${image.original}`;
       }
       if (image.thumbnail) {
-        image.thumbnail = `${OBJECT_STORAGE}/${image.thumbnail}`;
+        image.thumbnail = `${OBJECT_STORAGE}${image.thumbnail}`;
       } else {
         image.thumbnail = image.original;
       }
