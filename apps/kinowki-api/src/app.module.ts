@@ -13,7 +13,7 @@ import { join } from 'path';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/kinowki'),
+    MongooseModule.forRoot(process.env.MONGODB_URL, { dbName: 'kinowki' }),
     ServeStaticModule.forRoot({ rootPath: join(__dirname, '../../../../flyers'), serveRoot: '/api/flyers' }),
     DistributorModule,
     FilmModule,
