@@ -2,7 +2,10 @@
   "name": "@kinowki/source",
   "version": "0.0.1",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "build:api": "nx build kinowki-api --configuration=production",
+    "start:api": "node dist/apps/kinowki-api/main.js"
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "~19.0.0",
