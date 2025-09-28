@@ -13,7 +13,7 @@ import { UserFlyerModule } from './user-flyer/user-flyer.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.MONGODB_URL, { dbName: 'kinowki' }),
+    MongooseModule.forRoot(process.env.MONGO_URL, { dbName: 'kinowki' }),
     // ServeStaticModule.forRoot({ rootPath: join(__dirname, '../../../../flyers'), serveRoot: '/api/flyers' }),
     DistributorModule,
     FilmModule,
