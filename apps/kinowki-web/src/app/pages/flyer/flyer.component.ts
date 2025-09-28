@@ -15,6 +15,8 @@ export class FlyerComponent implements AfterViewInit {
   big = input(false);
   blankWidth = signal(175);
 
+  objectStorage = 'https://pub-8a8f04577dee47a2a13d9a52562d4c46.r2.dev/';
+
   @ViewChildren(Image, { read: ElementRef }) imageEls!: QueryList<ElementRef<HTMLElement>>;
 
   constructor() {

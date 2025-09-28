@@ -13,8 +13,8 @@
           'object-fit': 'contain',
           'object-position': $index % 2 === 0 ? 'right' : 'left'
         }"
-        [previewImageSrc]="'/api/flyers' + image.original"
-        [src]="'/api/flyers' + (image.thumbnail || image.original)"
+        [previewImageSrc]="`${objectStorage}${image.original}`"
+        [src]="`${objectStorage}${(image.thumbnail || image.original)}`"
         [alt]="image.thumbnail || image.original"
         [preview]="true"></p-image>
 
