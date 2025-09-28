@@ -6,7 +6,7 @@
     "build:api": "nx build kinowki-api --configuration=production",
     "start:api": "node dist/apps/kinowki-api/main.js",
     "build:web": "nx build kinowki-web --configuration=production",
-    "start:web": "npx serve dist/apps/kinowki-web"
+    "start:web": "npx serve dist/apps/kinowki-web/browser"
   },
   "private": true,
   "dependencies": {
