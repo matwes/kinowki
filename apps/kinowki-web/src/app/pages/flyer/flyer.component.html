@@ -13,8 +13,8 @@
           'object-position': $index % 2 === 0 ? 'right' : 'left'
         }"
         [previewImageSrc]="image.original"
-        [src]="image.thumbnail"
-        [alt]="image.thumbnail"
+        [src]="image.thumbnail || image.original"
+        alt="skan ulotki"
         [preview]="true"></p-image>
 
       @if(big() && image.thumbnail) {
