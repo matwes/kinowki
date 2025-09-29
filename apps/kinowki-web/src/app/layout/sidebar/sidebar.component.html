@@ -1,9 +1,41 @@
 <div class="sidebar shadow-3">
-  <div class="title">
+  <div class="title cursor-pointer" routerLink="/ulotki">
     <div class="header">Kinówki</div>
     <div class="subheader">Polskie ulotki filmowe od 1990</div>
   </div>
-  @for(page of pages; track page.url) {
-  <a class="page" [routerLink]="page.url" routerLinkActive="active">{{ page.label }}</a>
-  }
+  <div class="top-bar-menu">
+    @for(page of pages; track page.url) {
+    <a class="page" [routerLink]="page.url" routerLinkActive="active">
+      {{ page.label }}
+    </a>
+    }
+  </div>
+  <div class="hamburger">
+    <p-button
+      id="hamburger-button"
+      (click)="showDrawer = true"
+      icon="pi pi-bars"
+      [rounded]="true"
+      [text]="true"
+      size="large" />
+  </div>
 </div>
+<p-drawer #drawerRef [(visible)]="showDrawer">
+  <ng-template #headless>
+    <div class="drawer">
+      <div class="drawer-header shadow-3">
+        <div class="title">
+          <div class="header">Kinówki</div>
+          <div class="subheader">Polskie ulotki filmowe od 1990</div>
+        </div>
+      </div>
+      @for(page of pages; track page.url) {
+      <a class="drawer-item" [routerLink]="page.url" routerLinkActive="active" (click)="showDrawer = false">
+        <i class="mr-2" [ngClass]="page.icon"></i>
+        {{ page.label }}
+      </a>
+      }
+      <div class="copyright">Copyright © 2025 Software Tailor</div>
+    </div>
+  </ng-template>
+</p-drawer>

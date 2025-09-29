@@ -1,4 +1,4 @@
-<div class="card flex flex-row overflow-hidden h-full p-5">
+<div class="card flex flex-row overflow-hidden h-full">
   <p-toast />
   <p-table
     class="flex-none overflow-hidden"
@@ -9,7 +9,7 @@
     selectionMode="single"
     [value]="(value$ | async) ?? []"
     [totalRecords]="(totalRecords$ | async) ?? 0"
-    [rows]="20"
+    [rows]="10"
     scrollHeight="flex"
     [scrollable]="true"
     [rowHover]="true"
@@ -104,7 +104,7 @@
     [rowHover]="true"
     [paginator]="true"
     [lazy]="true"
-    currentPageReportTemplate="Wyświetlam od {first} do {last} ze wszystkich {totalRecords} premier"
+    currentPageReportTemplate="Od {first} do {last} z {totalRecords} premier"
     [showCurrentPageReport]="true"
     (onLazyLoad)="lazyLoadReleases($event)">
     <ng-template #header>

@@ -13,7 +13,7 @@
     scrollHeight="flex"
     [paginator]="true"
     [lazy]="true"
-    currentPageReportTemplate="Wyświetlam od {first} do {last} ze wszystkich {totalRecords} ulotek"
+    currentPageReportTemplate="Od {first} do {last} z {totalRecords} ulotek"
     [showCurrentPageReport]="true"
     (onLazyLoad)="lazyLoad($event)">
     <ng-template #header>

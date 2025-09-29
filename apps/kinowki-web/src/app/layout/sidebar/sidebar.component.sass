@@ -2,37 +2,20 @@
   position: absolute
   display: flex
   align-items: center
-  justify-content: center
+  justify-content: right
   background: #660F28
   top: 0
   left: 0
   right: 0
   height: 5rem
-  gap: 1rem
+  padding: 0 2rem
 
-  .title
-    display: flex
-    flex-direction: column
-    justify-content: center
-    top: 0
-    height: 5rem
-    left: 2.5rem
-    position: fixed
-
-    .header
-      font-family: Roboto
-      font-weight: bold
-      font-size: 2.5rem
-      line-height: 2.5rem
-
-    .subheader
-      text-transform: uppercase
-      letter-spacing: 1px
-      line-height: 0.75rem
-      font-size: 0.75rem
+.top-bar-menu
+  display: flex
+  gap: 0.5rem
 
   .page
-    font-size: 1.125rem
+    font-size: 1rem
     font-weight: bold
     text-transform: uppercase
     letter-spacing: 0.0625rem
@@ -57,15 +40,73 @@
     &:hover:not(.active)
       text-decoration: underline
 
-@media (max-width: 1050px)
-  .sidebar
-    justify-content: flex-end
-    padding-right: 1rem
+.title
+  display: flex
+  flex-direction: column
+  justify-content: center
+  top: 0
+  height: 5rem
+  left: 2.5rem
+  position: fixed
 
-@media (max-width: 600px)
-  .sidebar
-    justify-content: center
-    padding-right: 0
+  .header
+    font-family: Roboto
+    font-weight: bold
+    font-size: 2.5rem
+    line-height: 2.5rem
+    font-style: italic
 
-    .title
-      display: none
+  .subheader
+    text-transform: uppercase
+    letter-spacing: 1px
+    line-height: 0.75rem
+    font-size: 0.75rem
+
+@media (max-width: 990px)
+  .top-bar-menu
+    display: none
+
+  .hamburger
+    display: block
+
+@media (min-width: 991px)
+  .top-bar-menu
+    display: flex
+
+  .hamburger
+    display: none
+
+:host ::ng-deep #hamburger-button .p-button
+  color: var(--p-text-color)
+
+  &:hover
+    color: var(--p-text-hover-color)
+
+.drawer
+  display: flex
+  flex-direction: column
+  height: 100%
+
+  .drawer-header
+    height: 5rem
+    background: #660F28
+    margin-bottom: 2rem
+
+  .drawer-item
+    padding: 1rem 2rem
+    font-size: 1.25rem
+    letter-spacing: 1px
+    color: var(--p-text-muted-color)
+
+    &.active
+      color: var(--p-text-color)
+
+    &.active, &:hover
+      background: var(--p-surface-800)
+
+.copyright
+  font-size: 0.625rem
+  opacity: 0.5
+  margin-top: auto
+  margin-left: 0.5rem
+  margin-bottom: 0.5rem

@@ -17,10 +17,10 @@
     visibility: hidden
 
 .group-header
-  font-weight: bold
-  color: var(--p-orange-500)
+  color: var(--p-text-muted-color)
   letter-spacing: 1px
   text-transform: uppercase
+  margin-left: 0.5rem
 
 .no-flyer
   opacity: 0.5
@@ -32,3 +32,30 @@
   gap: 0.5rem
   overflow: hidden
   max-width: 50rem
+
+.releases-header
+  display: flex
+  align-items: center
+  justify-content: center
+  flex-wrap: wrap
+  background: var(--p-content-background)
+  color: var(--p-content-color)
+  border-color: var(--p-content-border-color)
+  border-width: 0 0 1px 0
+  border-style: solid
+  padding: 0.75rem 1rem
+  gap: 1rem
+
+@media (max-width: 1249px)
+  #select-button-month
+    display: none
+
+  #select-month
+    display: flex
+
+@media (min-width: 1250px)
+  #select-button-month
+    display: flex
+
+  #select-month
+    display: none

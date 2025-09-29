@@ -56,6 +56,7 @@ export class DistributorsComponent {
   lazyEvent = new Subject<TableLazyLoadEvent>();
 
   private data$ = this.lazyEvent.pipe(
+    debounceTime(500),
     switchMap((lazyEvent) => this.distributorService.getAll(lazyEvent)),
     shareReplay(1)
   );

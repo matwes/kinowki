@@ -11,7 +11,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { filter, forkJoin, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import { debounceTime, filter, forkJoin, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
 
 import {
   CreateReleaseDto,
@@ -55,6 +55,7 @@ export class FilmsComponent {
   lazyEvent = new Subject<TableLazyLoadEvent>();
 
   data$ = this.lazyEvent.pipe(
+    debounceTime(500),
     switchMap((lazyEvent) => this.filmService.getAll(lazyEvent)),
     shareReplay(1)
   );

@@ -1,4 +1,4 @@
-<div class="card flex flex-column overflow-hidden h-full p-5">
+<div class="card flex flex-column overflow-hidden h-full">
   <p-toast />
   <p-table
     class="flex-auto overflow-hidden"
@@ -13,7 +13,7 @@
     [rowHover]="true"
     [paginator]="true"
     [lazy]="true"
-    currentPageReportTemplate="Wyświetlam od {first} do {last} ze wszystkich {totalRecords} filmów"
+    currentPageReportTemplate="Od {first} do {last} z {totalRecords} filmów"
     [showCurrentPageReport]="true"
     (onLazyLoad)="lazyLoad($event)">
     <ng-template #header>

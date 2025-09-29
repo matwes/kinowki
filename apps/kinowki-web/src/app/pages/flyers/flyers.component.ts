@@ -59,7 +59,7 @@ export class FlyersComponent implements AfterViewInit {
   filters$ = new BehaviorSubject<{ [s: string]: FilterMetadata | FilterMetadata[] | undefined } | undefined>({});
 
   data$ = combineLatest([this.lazyEvent, this.filters$]).pipe(
-    debounceTime(300),
+    debounceTime(500),
     map(([lazyEvent, filters]) => {
       const event = { ...lazyEvent, filters };
       localStorage.setItem('flyer-table', JSON.stringify(event));
