@@ -1,4 +1,4 @@
-<div class="card flex flex-column overflow-hidden h-full">
+<div class="card max-w-max">
   <p-toast />
   <p-dataview
     #flyersView
@@ -13,7 +13,7 @@
     scrollHeight="flex"
     [paginator]="true"
     [lazy]="true"
-    currentPageReportTemplate="Od {first} do {last} z {totalRecords} ulotek"
+    currentPageReportTemplate="{first}-{last} z {totalRecords}"
     [showCurrentPageReport]="true"
     (onLazyLoad)="lazyLoad($event)">
     <ng-template #header>

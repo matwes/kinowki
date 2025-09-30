@@ -1,4 +1,4 @@
-<div class="card flex flex-column overflow-hidden h-full">
+<div class="card">
   <p-toast />
   <p-table
     class="flex-auto overflow-hidden"
@@ -13,22 +13,21 @@
     [rowHover]="true"
     [paginator]="true"
     [lazy]="true"
-    currentPageReportTemplate="Od {first} do {last} z {totalRecords} filmów"
+    currentPageReportTemplate="{first}-{last} z {totalRecords}"
     [showCurrentPageReport]="true"
     (onLazyLoad)="lazyLoad($event)">
     <ng-template #header>
       <tr>
-        <th [style.width]="'5%'" class="text-center">IMDb</th>
+        <th [style.width]="'5%'"></th>
         <th [style.width]="'35%'">
           <div class="flex align-items-center gap-3">
-            Tytuł
             <p-columnFilter type="text" field="title" [showMenu]="false" [showClearButton]="false" matchMode="contains">
               <ng-template #filter let-value let-filter="filterCallback">
                 <input
                   pInputText
                   styleClass="w-20rem"
                   type="text"
-                  placeholder="Szukaj..."
+                  placeholder="Szukaj wg tytułu..."
                   [ngModel]="value"
                   (ngModelChange)="filter($event)" />
               </ng-template>
@@ -37,14 +36,13 @@
         </th>
         <th [style.width]="'15%'">
           <div class="flex align-items-center gap-3">
-            Gatunek
             <p-columnFilter field="genres" [showMenu]="false" [showClearButton]="false">
               <ng-template #filter let-value let-filter="filterCallback">
                 <p-multiselect
                   styleClass="w-20rem"
                   [ngModel]="value"
                   [options]="genres"
-                  placeholder="Szukaj..."
+                  placeholder="Szukaj wg gatunku..."
                   [showClear]="false"
                   (onChange)="filter($event.value)" />
               </ng-template>

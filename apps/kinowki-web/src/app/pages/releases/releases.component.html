@@ -1,6 +1,5 @@
-<div class="card flex flex-column overflow-hidden h-full">
+<div class="card">
   <p-toast />
-
   <form [formGroup]="form" class="releases-header">
     <h1 class="flex align-items-center gap-2 m-0">
       <p-select
@@ -39,18 +38,9 @@
     [rowHover]="true"
     [lazy]="true"
     (onLazyLoad)="lazyLoad($event)">
-    <ng-template #header>
-      <tr>
-        <th [style.width]="'5%'" class="text-center">IMDb</th>
-        <th [style.width]="'30%'">Film</th>
-        <th [style.width]="'25%'">Dystrybucja</th>
-        <th [style.width]="'35%'">Ulotki</th>
-        <th [style.width]="'5%'"></th>
-      </tr>
-    </ng-template>
     <ng-template #groupheader let-release>
       <tr pRowGroupHeader>
-        <td colspan="6" class="text-left">
+        <td colspan="6" class="text-center">
           <span class="group-header">{{ release | releaseDate }}</span>
         </td>
       </tr>
@@ -58,20 +48,20 @@
     <ng-template #body let-release let-rowgroup="rowgroup" let-rowspan="rowspan">
       @let passed = release.date < today;
       <tr class="table-row" [class.no-flyer]="!release.flyers?.length && passed">
-        <td class="text-center">
+        <td class="text-center" [style.width]="'5%'">
           @if(release.film?.imdb) {
           <a [href]="release.film.imdb | imdb" target="_blank">
             <img [style.width.rem]="2.5" src="imdb.svg" alt="logo" />
           </a>
           }
         </td>
-        <td>
+        <td [style.width]="'30%'">
           <div class="flex gap-2">
             <b>{{ release.film?.title }} ({{ release.film?.year }})</b>
           </div>
           <div [style.opacity]="0.75">{{ release.film?.originalTitle }}</div>
         </td>
-        <td>
+        <td [style.width]="'30%'">
           <app-distributor-badge
             [distributors]="release.distributors"
             [releaseType]="release.releaseType"
@@ -79,7 +69,7 @@
             [releaseDate]="release.date"
             [releaseNote]="release.note" />
         </td>
-        <td [style.padding]="'0.25rem 1rem'">
+        <td [style.width]="'30%'" [style.padding]="'0.25rem 1rem'">
           <div class="flyers">
             @for(flyer of release.flyers; track $index) {
             <app-flyer [flyer]="flyer" />
@@ -88,7 +78,7 @@
             }
           </div>
         </td>
-        <td class="text-right">
+        <td [style.width]="'5%'" class="text-right">
           <p-button
             icon="pi pi-trash"
             severity="danger"

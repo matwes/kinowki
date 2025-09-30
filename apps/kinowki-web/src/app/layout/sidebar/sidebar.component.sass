@@ -1,14 +1,20 @@
 .sidebar
   position: absolute
-  display: flex
-  align-items: center
-  justify-content: right
-  background: #660F28
+  background: #660f28
   top: 0
   left: 0
   right: 0
   height: 5rem
-  padding: 0 2rem
+  padding: 0 1.5rem
+
+.sidebar-content
+  display: flex
+  justify-content: space-between
+  align-items: center
+  overflow: hidden
+  flex-wrap: nowrap
+  margin: 0 auto
+  max-width: 1440px
 
 .top-bar-menu
   display: flex
@@ -39,15 +45,13 @@
 
     &:hover:not(.active)
       text-decoration: underline
+      color: var(--p-text-hover-muted-color)
 
 .title
   display: flex
   flex-direction: column
   justify-content: center
-  top: 0
   height: 5rem
-  left: 2.5rem
-  position: fixed
   user-select: none
 
   .header
@@ -62,6 +66,7 @@
     letter-spacing: 1px
     line-height: 0.75rem
     font-size: 0.75rem
+    color: var(--p-text-hover-muted-color)
 
 @media (max-width: 990px)
   .top-bar-menu
@@ -92,6 +97,7 @@
     height: 5rem
     background: #660F28
     margin-bottom: 2rem
+    padding: 0 1.5rem
 
   .drawer-item
     padding: 1rem 2rem

@@ -1,22 +1,24 @@
 <div class="sidebar shadow-3">
-  <div class="title cursor-pointer" routerLink="/ulotki">
-    <ng-template [ngTemplateOutlet]="logo" />
-  </div>
-  <div class="top-bar-menu">
-    @for(page of pages; track page.url) {
-    <a class="page" [routerLink]="page.url" routerLinkActive="active">
-      {{ page.label }}
-    </a>
-    }
-  </div>
-  <div class="hamburger">
-    <p-button
-      id="hamburger-button"
-      (click)="showDrawer = true"
-      icon="pi pi-bars"
-      [rounded]="true"
-      [text]="true"
-      size="large" />
+  <div class="sidebar-content">
+    <div class="title cursor-pointer" routerLink="/ulotki">
+      <ng-template [ngTemplateOutlet]="logo" />
+    </div>
+    <div class="top-bar-menu">
+      @for(page of pages; track page.url) {
+      <a class="page" [routerLink]="page.url" routerLinkActive="active">
+        {{ page.label }}
+      </a>
+      }
+    </div>
+    <div class="hamburger">
+      <p-button
+        id="hamburger-button"
+        (click)="showDrawer = true"
+        icon="pi pi-bars"
+        [rounded]="true"
+        [text]="true"
+        size="large" />
+    </div>
   </div>
 </div>
 <p-drawer #drawerRef [(visible)]="showDrawer">

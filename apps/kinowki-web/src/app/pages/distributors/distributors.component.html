@@ -1,8 +1,8 @@
-<div class="card flex flex-row overflow-hidden h-full">
+<div class="card wide flex-row">
   <p-toast />
   <p-table
     class="flex-none overflow-hidden"
-    [style.width.%]="40"
+    [style.width.%]="30"
     dataKey="_id"
     stateStorage="local"
     stateKey="distributors"
@@ -15,31 +15,28 @@
     [rowHover]="true"
     [paginator]="true"
     [lazy]="true"
-    currentPageReportTemplate="od {first} do {last} ze {totalRecords} dystrybutorów"
+    currentPageReportTemplate="{first}-{last} z {totalRecords}"
     [showCurrentPageReport]="true"
     [(selection)]="selection"
     (selectionChange)="onDistributorSelected($event)"
     (onLazyLoad)="lazyLoad($event)">
     <ng-template #header>
       <tr>
-        <th [style.width]="'10%'"></th>
-        <th [style.width]="'60%'">
+        <th [style.width]="'80%'">
           <div class="flex align-items-center gap-3">
-            Nazwa
             <p-columnFilter type="text" field="name" [showMenu]="false" [showClearButton]="false" matchMode="contains">
               <ng-template #filter let-value let-filter="filterCallback">
                 <input
                   pInputText
                   styleClass="w-20rem"
                   type="text"
-                  placeholder="Szukaj..."
+                  placeholder="Szukaj dystrybutora..."
                   [ngModel]="value"
                   (ngModelChange)="filter($event)" />
               </ng-template>
             </p-columnFilter>
           </div>
         </th>
-        <th [style.width]="'10%'">Premiery</th>
         <th [style.width]="'20%'" class="text-right">
           <p-button severity="primary" icon="pi pi-plus" (onClick)="openDistributorDialog()" />
         </th>
@@ -48,27 +45,30 @@
     <ng-template #body let-distributor>
       <tr class="table-row" [pSelectableRow]="distributor">
         <td>
-          <div
-            class="percent"
-            [ngClass]="
-              distributor.pastReleasesWithFlyersPercent < 30
-                ? 'low-probability'
-                : distributor.pastReleasesWithFlyersPercent < 70
-                ? 'medium-probability'
-                : 'high-probability'
-            ">
-            {{ distributor.pastReleasesWithFlyersPercent }}%
+          <div class="flex gap-2 justify-content-between">
+            <div
+              class="percent"
+              [ngClass]="
+                distributor.pastReleasesWithFlyersPercent < 30
+                  ? 'low-probability'
+                  : distributor.pastReleasesWithFlyersPercent < 70
+                  ? 'medium-probability'
+                  : 'high-probability'
+              ">
+              <div>{{ distributor.pastReleasesWithFlyersPercent }}%</div>
+            </div>
+            <div class="flex-auto">
+              <b>{{ distributor.name }}</b>
+              <div class="flex">
+                <span> </span>
+                <div class="last-10">
+                  {{ distributor.releasesCount }} premier • @if (distributor.lastYear <currentYear) {
+                  {{ distributor.firstYear }} - {{ distributor.lastYear }} } @else { od {{ distributor.firstYear }} }
+                </div>
+              </div>
+            </div>
           </div>
         </td>
-        <td>
-          <b>{{ distributor.name }}</b>
-          <div class="last-10">
-            @if (distributor.lastYear <currentYear) {
-            {{ distributor.firstYear }} - {{ distributor.lastYear }} } @else { Ostatnie 10 filmów:
-            <b>{{ distributor.flyerProbability }}%</b> }
-          </div>
-        </td>
-        <td class="text-right">{{ distributor.releasesCount }}</td>
         <td class="text-right">
           <p-button
             icon="pi pi-pencil"
@@ -88,11 +88,11 @@
       </tr>
     </ng-template>
   </p-table>
-  <div class="w-2rem flex-none"></div>
+  <div class="flex-none" [style.width.%]="2"></div>
   <p-table
     #flyersTable
     class="flex-none overflow-hidden"
-    [style.width.%]="60"
+    [style.width.%]="68"
     dataKey="_id"
     stateStorage="local"
     stateKey="distributor-releases"
@@ -104,7 +104,7 @@
     [rowHover]="true"
     [paginator]="true"
     [lazy]="true"
-    currentPageReportTemplate="Od {first} do {last} z {totalRecords} premier"
+    currentPageReportTemplate="{first}-{last} z {totalRecords}"
     [showCurrentPageReport]="true"
     (onLazyLoad)="lazyLoadReleases($event)">
     <ng-template #header>
