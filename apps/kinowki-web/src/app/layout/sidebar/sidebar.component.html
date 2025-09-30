@@ -1,7 +1,6 @@
 <div class="sidebar shadow-3">
   <div class="title cursor-pointer" routerLink="/ulotki">
-    <div class="header">Kinówki</div>
-    <div class="subheader">Polskie ulotki filmowe od 1990</div>
+    <ng-template [ngTemplateOutlet]="logo" />
   </div>
   <div class="top-bar-menu">
     @for(page of pages; track page.url) {
@@ -25,8 +24,7 @@
     <div class="drawer">
       <div class="drawer-header shadow-3">
         <div class="title">
-          <div class="header">Kinówki</div>
-          <div class="subheader">Polskie ulotki filmowe od 1990</div>
+          <ng-template [ngTemplateOutlet]="logo" />
         </div>
       </div>
       @for(page of pages; track page.url) {
@@ -39,3 +37,7 @@
     </div>
   </ng-template>
 </p-drawer>
+<ng-template #logo>
+  <div class="header">Kin<img class="logo" src="logo.png" alt="logo" />wki</div>
+  <div class="subheader">Polskie ulotki filmowe od 1990</div>
+</ng-template>
