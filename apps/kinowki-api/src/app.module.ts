@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-// import { ServeStaticModule } from '@nestjs/serve-static';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { FilmModule } from './film/film.module';
 import { ReleaseModule } from './release/release.module';
@@ -9,12 +9,11 @@ import { FlyerModule } from './flyer/flyer.module';
 import { TagModule } from './tag/tag.module';
 import { UserModule } from './user/user.module';
 import { UserFlyerModule } from './user-flyer/user-flyer.module';
-// import { join } from 'path';
 
 @Module({
   imports: [
     MongooseModule.forRoot(process.env.MONGO_URL, { dbName: 'kinowki' }),
-    // ServeStaticModule.forRoot({ rootPath: join(__dirname, '../../../../flyers'), serveRoot: '/api/flyers' }),
+    ScheduleModule.forRoot(),
     DistributorModule,
     FilmModule,
     FlyerModule,
