@@ -63,7 +63,12 @@
             scrollHeight="30rem"
             (onChange)="filter('flyerTags', $event.value)" />
         </div>
-        <p-button class="absolute right-0" severity="primary" icon="pi pi-plus" (onClick)="openFlyerDialog()" />
+        <p-button
+          *appShowIfAdmin
+          class="absolute right-0"
+          severity="primary"
+          icon="pi pi-plus"
+          (onClick)="openFlyerDialog()" />
       </div>
     </ng-template>
     <ng-template #list let-flyers>
@@ -73,7 +78,6 @@
           @if(flyer.releases.length) {
           <div class="flyer-cell-title">
             {{ flyer.releases[0].distributors | join : ' • ' : 'name' }}
-
             @if (flyer.releases[0].note) { @if(flyer.releases[0].distributors.length) { • }
             <i>{{ flyer.releases[0].note }}</i> }
           </div>
@@ -94,12 +98,11 @@
             <div class="text-xs">{{ flyer.id }}</div>
             }
           </div>
-          <div class="flyer-actions">
+          <div class="flyer-actions" *appShowIfAdmin>
             <p-button icon="pi pi-pencil" class="mx-2" size="small" (click)="openFlyerDialog(flyer)" />
             <p-button icon="pi pi-trash" severity="danger" size="small" (click)="deleteFlyer(flyer)" />
           </div>
         </div>
-
         }
       </div>
     </ng-template>

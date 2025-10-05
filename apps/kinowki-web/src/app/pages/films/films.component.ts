@@ -22,7 +22,7 @@ import {
   genres,
 } from '@kinowki/shared';
 import { DistributorService, FilmService, ReleaseService } from '../../services';
-import { DistributorBadgeComponent, GenreNamePipe, ImdbPipe, notEmpty } from '../../utils';
+import { DistributorBadgeComponent, GenreNamePipe, ImdbPipe, notEmpty, ShowIfAdminDirective } from '../../utils';
 import { FlyerComponent } from '../flyer';
 import { FilmDialogComponent } from './film-dialog';
 
@@ -43,6 +43,7 @@ import { FilmDialogComponent } from './film-dialog';
     InputTextModule,
     MultiSelectModule,
     ReactiveFormsModule,
+    ShowIfAdminDirective,
     TableModule,
     TagModule,
     ToastModule,

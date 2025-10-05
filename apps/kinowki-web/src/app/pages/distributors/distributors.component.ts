@@ -24,7 +24,7 @@ import {
 
 import { DistributorDto, genres, ReleaseDto } from '@kinowki/shared';
 import { DistributorService, ReleaseService } from '../../services';
-import { ImdbPipe, notEmpty, ReleaseTypeIconPipe } from '../../utils';
+import { ImdbPipe, notEmpty, ReleaseTypeIconPipe, ShowIfAdminDirective } from '../../utils';
 import { DistributorDialogComponent } from './distributor-dialog';
 import { FlyerComponent } from '../flyer';
 
@@ -43,6 +43,7 @@ import { FlyerComponent } from '../flyer';
     InputTextModule,
     ReactiveFormsModule,
     ReleaseTypeIconPipe,
+    ShowIfAdminDirective,
     TableModule,
     ToastModule,
   ],

@@ -17,7 +17,7 @@ import { BehaviorSubject, combineLatest, debounceTime, filter, map, shareReplay,
 
 import { FlyerDto, TagDto, flyerSizes, flyerTypes, genres, releaseTypes } from '@kinowki/shared';
 import { FlyerService, TagService } from '../../services';
-import { JoinPipe, notEmpty, ReleaseTypeNamePipe } from '../../utils';
+import { JoinPipe, notEmpty, ReleaseTypeNamePipe, ShowIfAdminDirective } from '../../utils';
 import { FlyerComponent } from '../flyer/flyer.component';
 import { FlyerDialogComponent } from './flyer-dialog';
 
@@ -42,6 +42,7 @@ import { FlyerDialogComponent } from './flyer-dialog';
     TableModule,
     TagModule,
     ToastModule,
+    ShowIfAdminDirective,
   ],
   providers: [ConfirmationService, DialogService, MessageService],
 })

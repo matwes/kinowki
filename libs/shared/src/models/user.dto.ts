@@ -1,6 +1,9 @@
 export interface CreateUserDto {
+  email: string;
   name: string;
-  flyers: string[];
+  password: string;
+  role: string;
+  isActive: boolean;
 }
 
 export interface UpdateUserDto extends Partial<CreateUserDto> {

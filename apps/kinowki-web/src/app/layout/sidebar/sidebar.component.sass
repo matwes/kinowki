@@ -15,58 +15,37 @@
   flex-wrap: nowrap
   margin: 0 auto
   max-width: 1440px
+  gap: 1rem
 
 .top-bar-menu
   display: flex
-  gap: 0.5rem
+  gap: 1.25rem
+  overflow: hidden
 
   .page
     font-size: 1rem
     font-weight: bold
     text-transform: uppercase
     letter-spacing: 0.0625rem
-    padding: 0 0.625rem
     color: var(--p-text-muted-color)
 
     &.active
-      padding: 0
       color: var(--p-text-color)
 
-      &::before, &::after
-        content: "-"
-        font-family: auto
-        font-weight: bold
-
-      &::before
-        margin-right: 0.25rem
-
-      &::after
-        margin-left: 0.25rem
-
     &:hover:not(.active)
-      text-decoration: underline
       color: var(--p-text-hover-muted-color)
 
-.title
-  display: flex
-  flex-direction: column
-  justify-content: center
-  height: 5rem
-  user-select: none
+    &.login, &.user
+      padding-left: 1rem
+      background: transparent
+      border: none
+      border-left: 1px solid var(--p-text-muted-color)
+      cursor: pointer
 
-  .header
-    font-family: Roboto
-    font-weight: bold
-    font-size: 2.5rem
-    line-height: 2.5rem
-    font-style: italic
-
-  .subheader
-    text-transform: uppercase
-    letter-spacing: 1px
-    line-height: 0.75rem
-    font-size: 0.75rem
-    color: var(--p-text-hover-muted-color)
+    &.user
+      overflow: hidden
+      text-overflow: ellipsis
+      white-space: nowrap
 
 @media (max-width: 990px)
   .top-bar-menu
@@ -104,6 +83,10 @@
     font-size: 1.25rem
     letter-spacing: 1px
     color: var(--p-text-muted-color)
+    text-align: left
+    background: transparent
+    border: none
+    cursor: pointer
 
     &.active
       color: var(--p-text-color)
@@ -111,13 +94,24 @@
     &.active, &:hover
       background: var(--p-surface-800)
 
-.copyright
-  font-size: 0.625rem
-  opacity: 0.5
+.drawer-footer
   margin-top: auto
-  margin-left: 0.5rem
   margin-bottom: 0.5rem
 
-.logo
-  width: 1.5rem
-  margin-bottom: -0.125rem
+  .copyright
+    font-size: 0.625rem
+    opacity: 0.5
+    text-align: center
+
+  .username
+    color: var(--p-text-muted-color)
+    font-size: 1.25rem
+    padding: 1rem 1.5rem
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+    margin-bottom: 2rem
+    background: var(--p-surface-700)
+    margin: 1rem
+    border-radius: 0.5rem
+    

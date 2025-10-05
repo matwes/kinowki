@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
 
+import { AuthModule } from './auth/auth.module';
 import { FilmModule } from './film/film.module';
 import { ReleaseModule } from './release/release.module';
 import { DistributorModule } from './distributor/distributor.module';
@@ -14,6 +15,7 @@ import { UserFlyerModule } from './user-flyer/user-flyer.module';
   imports: [
     MongooseModule.forRoot(process.env.MONGO_URL, { dbName: 'kinowki' }),
     ScheduleModule.forRoot(),
+    AuthModule,
     DistributorModule,
     FilmModule,
     FlyerModule,

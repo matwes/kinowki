@@ -1,7 +1,7 @@
 <div class="card wide flex-row">
   <p-toast />
   <p-table
-    class="flex-none overflow-hidden"
+    class="flex-none border-round-2xl overflow-hidden"
     [style.width.%]="30"
     dataKey="_id"
     stateStorage="local"
@@ -37,7 +37,7 @@
             </p-columnFilter>
           </div>
         </th>
-        <th [style.width]="'20%'" class="text-right">
+        <th [style.width]="'20%'" class="text-right" *appShowIfAdmin>
           <p-button severity="primary" icon="pi pi-plus" (onClick)="openDistributorDialog()" />
         </th>
       </tr>
@@ -69,7 +69,7 @@
             </div>
           </div>
         </td>
-        <td class="text-right">
+        <td class="text-right" *appShowIfAdmin>
           <p-button
             icon="pi pi-pencil"
             class="mr-2"
@@ -91,7 +91,7 @@
   <div class="flex-none" [style.width.%]="2"></div>
   <p-table
     #flyersTable
-    class="flex-none overflow-hidden"
+    class="flex-none border-round-2xl overflow-hidden"
     [style.width.%]="68"
     dataKey="_id"
     stateStorage="local"

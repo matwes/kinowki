@@ -1,0 +1,72 @@
+<form class="p-1" [formGroup]="form" (submit)="onSubmit()">
+  <app-logo class="block ml-3" />
+  <div class="formgrid grid m-2">
+    <div class="field col-12">
+      <p-iftalabel>
+        <input pInputText fluid id="name" [formControl]="name" />
+        <label for="name">Nazwa użytkownika</label>
+      </p-iftalabel>
+    </div>
+    @if (email.touched && email.invalid) {
+    <div class="field col-12 text-center text-red-500">
+      @if(email.errors?.['required']) { Nazwa użytkownika jest wymagane }
+    </div>
+    }
+    <div class="field col-12">
+      <p-iftalabel>
+        <input pInputText fluid id="email" [formControl]="email" />
+        <label for="email">E-mail</label>
+      </p-iftalabel>
+    </div>
+    @if (email.touched && email.invalid) {
+    <div class="field col-12 text-center text-red-500">
+      @if(email.errors?.['required']) { E-mail jest wymagane } @if(password.errors?.['pattern']) {Niepoprawny e-mail}
+    </div>
+    }
+    <div class="field col-12">
+      <p-iftalabel>
+        <p-password
+          fluid
+          inputId="password"
+          [formControl]="password"
+          [toggleMask]="true"
+          weakLabel="Słabe"
+          mediumLabel="Średnie"
+          strongLabel="Mocne" />
+        <label for="password">Hasło</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-12">
+      <p-iftalabel>
+        <p-password
+          fluid
+          inputId="confirmPassword"
+          [formControl]="confirmPassword"
+          [feedback]="false"
+          [toggleMask]="true" />
+        <label for="confirmPassword">Powtórz hasło</label>
+      </p-iftalabel>
+    </div>
+    @if (password.touched && password.invalid) {
+    <div class="field col-12 text-center text-red-500">
+      @if(password.errors?.['required']) {
+      <div>Hasło jest wymagane</div>
+      } @if(password.errors?.['minlength']) {
+      <div>Hasło musi mieć co najmniej 8 znaków</div>
+      } @if(password.errors?.['pattern']) {
+      <div>Hasło musi zawierać przynajmniej jedną cyfrę</div>
+      }
+    </div>
+    } @if (form.errors?.['passwordsMismatch'] && password.touched && confirmPassword.touched) {
+    <div class="field col-12 text-center text-red-500">Hasła nie są identyczne</div>
+    } @if (error(); as error) {
+    <div class="field col-12 text-center text-red-500">
+      {{ error }}
+    </div>
+    }
+  </div>
+  <div class="flex flex-row-reverse gap-3">
+    <p-button label="Zarejestruj się" severity="primary" type="submit" [disabled]="form.invalid || disableButton()" />
+    <p-button label="Anuluj" severity="secondary" (onClick)="closeDialog()" />
+  </div>
+</form>

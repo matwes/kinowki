@@ -5,6 +5,9 @@ export type UserFlyerDocument = HydratedDocument<UserFlyer>;
 
 @Schema()
 export class UserFlyer {
+  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'User' })
+  user: Types.ObjectId;
+
   @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'Flyer' })
   flyer: Types.ObjectId;
 

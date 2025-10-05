@@ -1,13 +1,21 @@
 <div class="sidebar shadow-3">
   <div class="sidebar-content">
-    <div class="title cursor-pointer" routerLink="/ulotki">
-      <ng-template [ngTemplateOutlet]="logo" />
-    </div>
+    <app-logo class="cursor-pointer" routerLink="/ulotki" />
     <div class="top-bar-menu">
       @for(page of pages; track page.url) {
       <a class="page" [routerLink]="page.url" routerLinkActive="active">
         {{ page.label }}
       </a>
+      } @if (authService.isLoggedIn()) {
+      <button class="page user" type="button" (click)="menu.toggle($event)">
+        <i class="pi pi-user mr-1" pButtonIcon></i>
+        {{ authService.userName() }}
+      </button>
+      } @else {
+      <button class="page login" type="button" (click)="openLoginDialog()">
+        <i class="pi pi-sign-in mr-1" pButtonIcon></i>
+        Zaloguj się
+      </button>
       }
     </div>
     <div class="hamburger">
@@ -25,21 +33,35 @@
   <ng-template #headless>
     <div class="drawer">
       <div class="drawer-header shadow-3">
-        <div class="title">
-          <ng-template [ngTemplateOutlet]="logo" />
-        </div>
+        <app-logo />
       </div>
       @for(page of pages; track page.url) {
       <a class="drawer-item" [routerLink]="page.url" routerLinkActive="active" (click)="showDrawer = false">
         <i class="mr-2" [ngClass]="page.icon"></i>
         {{ page.label }}
       </a>
+      } @if (authService.isLoggedIn()) {
+      <button class="drawer-item" type="button" (click)="logout()">
+        <i class="pi pi-sign-out mr-1" pButtonIcon></i>
+        Wyloguj się
+      </button>
+      } @else {
+      <button class="drawer-item" type="button" (click)="openLoginDialog()">
+        <i class="pi pi-sign-in mr-1" pButtonIcon></i>
+        Zaloguj się
+      </button>
       }
-      <div class="copyright">Copyright © 2025 Software Tailor</div>
+      <div class="drawer-footer">
+        @if (authService.isLoggedIn()) {
+        <div class="username shadow-3">
+          <i class="pi pi-user mr-1"></i>
+          {{ authService.userName() }}
+        </div>
+        }
+        <div class="copyright">Copyright © 2025 Software Tailor</div>
+      </div>
     </div>
   </ng-template>
 </p-drawer>
-<ng-template #logo>
-  <div class="header">Kin<img class="logo" src="logo.png" alt="logo" />wki</div>
-  <div class="subheader">Polskie ulotki filmowe od 1990</div>
-</ng-template>
+<p-toast />
+<p-menu #menu [model]="items" [popup]="true" />

@@ -17,7 +17,7 @@ import { map, shareReplay, Subject, switchMap, tap } from 'rxjs';
 
 import { months, ReleaseDto } from '@kinowki/shared';
 import { ReleaseService } from '../../services';
-import { DistributorBadgeComponent, ImdbPipe, ReleaseDatePipe } from '../../utils';
+import { DistributorBadgeComponent, ImdbPipe, ReleaseDatePipe, ShowIfAdminDirective } from '../../utils';
 import { FlyerComponent } from '../flyer';
 
 const FIRST_YEAR = 1990;
@@ -42,6 +42,7 @@ const LAST_YEAR = new Date().getFullYear() + 1;
     ReleaseDatePipe,
     SelectButtonModule,
     SelectModule,
+    ShowIfAdminDirective,
     TableModule,
     ToastModule,
     ToolbarModule,

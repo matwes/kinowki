@@ -1,0 +1,33 @@
+<form class="p-1" [formGroup]="form" (submit)="onSubmit()">
+  <app-logo class="block ml-3" />
+  <div class="formgrid grid m-2">
+    <div class="field col-12">
+      <p-iftalabel>
+        <input pInputText fluid id="email" [formControl]="email" />
+        <label for="email">E-mail</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-12">
+      <p-iftalabel>
+        <p-password fluid inputId="password" [formControl]="password" [feedback]="false" [toggleMask]="true" />
+        <label for="password">Hasło</label>
+      </p-iftalabel>
+    </div>
+    @if (error(); as error) {
+    <div class="field col-12 text-center text-red-500">
+      {{ error }}
+    </div>
+    }
+    <!-- <div class="field col-12 text-right text-300">
+      <p-button label="Zapomniałem hasła" variant="text" />
+    </div> -->
+    <div class="field col-12 text-center text-300 my-3">
+      Nie masz jeszcze konta?
+      <p-button label="Zarejestruj się" variant="text" (onClick)="register()" />
+    </div>
+  </div>
+  <div class="flex flex-row-reverse gap-3">
+    <p-button label="Zaloguj się" severity="primary" type="submit" />
+    <p-button label="Anuluj" severity="secondary" (onClick)="closeDialog()" />
+  </div>
+</form>

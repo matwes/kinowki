@@ -1,4 +1,5 @@
 export interface CreateUserFlyerDto {
+  user: string;
   flyer: string;
   collection: boolean;
   exchange: boolean;

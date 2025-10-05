@@ -1,0 +1,9 @@
+<div class="flex w-full h-full align-items-center justify-content-center text-4xl">
+  @if (loading) {
+  <p>⏳ Aktywowanie konta...</p>
+  }@if (success) {
+  <p class="text-green-600">✅ Konto zostało aktywowane!</p>
+  } @if (error) {
+  <p class="text-red-600">❌ {{ error }}</p>
+  }
+</div>

@@ -5,13 +5,12 @@ import { CreateDistributorDto, UpdateDistributorDto } from '@kinowki/shared';
 import { CrudController, getRegex } from '../utils';
 import { Distributor } from './distributor.schema';
 import { DistributorService } from './distributor.service';
-import { ReleaseService } from '../release/release.service';
 
 @Controller('distributor')
 export class DistributorController extends CrudController<Distributor, CreateDistributorDto, UpdateDistributorDto> {
   name = 'distributor';
 
-  constructor(distributorService: DistributorService, private readonly releaseService: ReleaseService) {
+  constructor(distributorService: DistributorService) {
     super(distributorService);
   }
 

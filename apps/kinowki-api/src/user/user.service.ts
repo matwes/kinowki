@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 
 import { CreateUserDto, UpdateUserDto } from '@kinowki/shared';
 import { CrudService } from '../utils';
-import { User } from './user.schema';
+import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class UserService extends CrudService<User, CreateUserDto, UpdateUserDto> {
@@ -13,5 +13,9 @@ export class UserService extends CrudService<User, CreateUserDto, UpdateUserDto>
 
   constructor(@InjectModel(User.name) model: Model<User>) {
     super(model);
+  }
+
+  findByEmail(email: string) {
+    return this.model.findOne({ email }).lean<UserDocument>().exec();
   }
 }

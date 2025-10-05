@@ -50,7 +50,7 @@
           </div>
         </th>
         <th [style.width]="'35%'">Premiery</th>
-        <th [style.width]="'10%'" class="text-right">
+        <th [style.width]="'10%'" class="text-right" *appShowIfAdmin>
           <p-button severity="primary" icon="pi pi-plus" (onClick)="openFilmDialog()" />
         </th>
       </tr>
@@ -95,7 +95,7 @@
             }
           </div>
         </td>
-        <td class="text-right">
+        <td class="text-right" *appShowIfAdmin>
           <p-button
             icon="pi pi-pencil"
             class="mr-2"

@@ -1,11 +1,13 @@
-import { Body, Delete, Get, HttpStatus, Param, ParseIntPipe, Post, Put, Query, Res } from '@nestjs/common';
+import { Body, Delete, Get, HttpStatus, Param, ParseIntPipe, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
 import { CrudService } from './crud.service';
+import { AdminGuard } from './admin.guard';
 
 export abstract class CrudController<Schema, CreateDto, UpdateDto> {
   abstract name: string;
 
   constructor(protected readonly crudService: CrudService<Schema, CreateDto, UpdateDto>) {}
 
+  @UseGuards(AdminGuard)
   @Post()
   async create(@Res() response, @Body() createDto: CreateDto) {
     try {
@@ -19,6 +21,7 @@ export abstract class CrudController<Schema, CreateDto, UpdateDto> {
     }
   }
 
+  @UseGuards(AdminGuard)
   @Put('/:id')
   async update(@Res() response, @Param('id') id: string, @Body() updateDto: UpdateDto) {
     try {
@@ -64,6 +67,7 @@ export abstract class CrudController<Schema, CreateDto, UpdateDto> {
     }
   }
 
+  @UseGuards(AdminGuard)
   @Delete('/:id')
   async delete(@Res() response, @Param('id') id: string) {
     try {

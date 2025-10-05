@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
 import {
+  ActivateComponent,
   ContactComponent,
   DistributorsComponent,
   FilmsComponent,
@@ -15,5 +16,6 @@ export const appRoutes: Route[] = [
   { path: 'dystrybutorzy', component: DistributorsComponent },
   { path: 'tagi', component: TagsComponent },
   { path: 'kontakt', component: ContactComponent },
+  { path: 'activate', component: ActivateComponent },
   { path: '**', redirectTo: '/ulotki' },
 ];
