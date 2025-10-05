@@ -3,6 +3,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { tap } from 'rxjs';
 
 import { UserDto } from '@kinowki/shared';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +36,7 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
-    return this.http.post<{ user: UserDto; token: string }>('/api/auth/login', { email, password }).pipe(
+    return this.http.post<{ user: UserDto; token: string }>(`${environment.apiUrl}/auth/login`, { email, password }).pipe(
       tap(({ user, token }) => {
         this.userSignal.set(user);
         this.tokenSignal.set(token);
@@ -51,6 +52,6 @@ export class AuthService {
   }
 
   register(email: string, password: string, name: string) {
-    return this.http.post<{ message: string }>('/api/auth/register', { email, password, name });
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/register`, { email, password, name });
   }
 }

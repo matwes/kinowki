@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-activate',
@@ -24,7 +25,7 @@ export class ActivateComponent implements OnInit {
       return;
     }
 
-    this.http.get(`/api/auth/activate?token=${token}`).subscribe({
+    this.http.get(`${environment.apiUrl}/auth/activate?token=${token}`).subscribe({
       next: () => {
         this.success = true;
         this.loading = false;
