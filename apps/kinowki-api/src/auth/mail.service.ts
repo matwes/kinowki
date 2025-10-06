@@ -5,8 +5,8 @@ import { Resend } from 'resend';
 export class MailService {
   private resend = new Resend(process.env.RESEND_API_KEY);
 
-  async sendActivationEmail(email: string, link: string) {
-    this.resend.emails.send({
+  sendActivationEmail(email: string, link: string) {
+    return this.resend.emails.send({
       from: process.env.RESEND_FROM,
       to: email,
       subject: 'Aktywacja konta Kinówki',
