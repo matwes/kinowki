@@ -1,20 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { EmailParams, MailerSend, Recipient, Sender } from 'mailersend';
+import { Resend } from 'resend';
 
 @Injectable()
 export class MailService {
-  async sendActivationEmail(email: string, name: string, link: string) {
-    const mailerSend = new MailerSend({ apiKey: process.env.MAILERSEND_API_KEY });
+  private resend = new Resend(process.env.RESEND_API_KEY);
 
-    const sentFrom = new Sender(process.env.MAILERSEND_FROM, 'Kinówki');
-
-    const emailParams = new EmailParams()
-      .setFrom(sentFrom)
-      .setTo([new Recipient(email, name)])
-      .setReplyTo(sentFrom)
-      .setSubject('Aktywacja konta Kinówki')
-      .setHtml(`<p>Kliknij <a href="${link}">tutaj</a> aby aktywować konto.</p>`);
-
-    await mailerSend.email.send(emailParams);
+  async sendActivationEmail(email: string, link: string) {
+    this.resend.emails.send({
+      from: process.env.RESEND_FROM,
+      to: email,
+      subject: 'Aktywacja konta Kinówki',
+      html: `<p>Kliknij <a href="${link}">tutaj</a> aby aktywować konto.</p>`,
+    });
   }
 }

@@ -45,7 +45,7 @@ export class AuthService {
     );
 
     const activationLink = `${process.env.FRONTEND_URL}/activate?token=${token}`;
-    await this.mailService.sendActivationEmail(user.email, user.name, activationLink);
+    await this.mailService.sendActivationEmail(user.email, activationLink);
 
     return { message: 'Activation email sent' };
   }
