@@ -9,7 +9,13 @@
     </div>
     <div class="field col-12">
       <p-iftalabel>
-        <p-password fluid inputId="password" [formControl]="password" [feedback]="false" [toggleMask]="true" />
+        <p-password
+          fluid
+          autocomplete="current-password"
+          inputId="password"
+          [formControl]="password"
+          [feedback]="false"
+          [toggleMask]="true" />
         <label for="password">Hasło</label>
       </p-iftalabel>
     </div>

@@ -1,24 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
+import { EmailParams, MailerSend, Recipient, Sender } from 'mailersend';
 
 @Injectable()
 export class MailService {
-  private transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT),
-    secure: process.env.SMTP_SECURE === 'true',
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
+  async sendActivationEmail(email: string, name: string, link: string) {
+    const mailerSend = new MailerSend({ apiKey: process.env.MAILERSEND_API_KEY });
 
-  async sendActivationEmail(email: string, link: string) {
-    await this.transporter.sendMail({
-      from: process.env.SMTP_USER,
-      to: email,
-      subject: 'Aktywacja konta Kinówki',
-      html: `<p>Kliknij <a href="${link}">tutaj</a> aby aktywować konto.</p>`,
-    });
+    const sentFrom = new Sender(process.env.MAILERSEND_FROM, 'Kinówki');
+
+    const emailParams = new EmailParams()
+      .setFrom(sentFrom)
+      .setTo([new Recipient(email, name)])
+      .setReplyTo(sentFrom)
+      .setSubject('Aktywacja konta Kinówki')
+      .setHtml(`<p>Kliknij <a href="${link}">tutaj</a> aby aktywować konto.</p>`);
+
+    await mailerSend.email.send(emailParams);
   }
 }

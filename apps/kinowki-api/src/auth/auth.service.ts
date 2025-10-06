@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
@@ -44,7 +45,7 @@ export class AuthService {
     );
 
     const activationLink = `${process.env.FRONTEND_URL}/activate?token=${token}`;
-    await this.mailService.sendActivationEmail(user.email, activationLink);
+    await this.mailService.sendActivationEmail(user.email, user.name, activationLink);
 
     return { message: 'Activation email sent' };
   }
@@ -59,6 +60,10 @@ export class AuthService {
     const valid = await bcrypt.compare(pass, user.password);
     if (!valid) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (!user.isActive) {
+      throw new ForbiddenException('Account not activated. Please check your email.');
     }
 
     const token = this.jwtService.sign({

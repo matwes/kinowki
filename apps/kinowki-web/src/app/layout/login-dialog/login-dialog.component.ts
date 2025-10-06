@@ -46,6 +46,8 @@ export class LoginDialogComponent {
         console.error(err);
         if (err.status === 401) {
           this.error.set('Niepoprawny e-mail lub hasło');
+        } else if (err.status === 403) {
+          this.error.set('Konto nie zostało aktywowane. Sprawdź swoją skrzynkę mailową');
         } else {
           this.error.set('Wystąpił błąd podczas logowania');
         }
