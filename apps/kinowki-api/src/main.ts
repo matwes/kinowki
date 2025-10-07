@@ -9,9 +9,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
 
-  app.setGlobalPrefix(globalPrefix);
   app.enableCors({
     origin: process.env.FRONTEND_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -21,7 +19,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
 
   await app.listen(port);
-  Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`);
+  Logger.log(`🚀 Application is running on ${process.env.RAILWAY_PUBLIC_DOMAIN}`);
 }
 
 bootstrap();
