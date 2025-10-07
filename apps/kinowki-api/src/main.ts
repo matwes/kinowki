@@ -10,8 +10,11 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const url = new URL(process.env.FRONTEND_URL);
+  const origin = [process.env.FRONTEND_URL, `${url.protocol}//www.${url.hostname}`];
+
   app.enableCors({
-    origin: process.env.FRONTEND_URL,
+    origin,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
