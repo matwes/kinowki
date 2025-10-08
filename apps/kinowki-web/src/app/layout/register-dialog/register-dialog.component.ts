@@ -67,7 +67,7 @@ export class RegisterDialogComponent {
 
   onSubmit() {
     this.disableButton.set(true);
-    this.authService.register(this.email.value, this.password.value, this.name.value).subscribe({
+    this.authService.register(this.email.value.trim(), this.password.value, this.name.value.trim()).subscribe({
       next: () => {
         this.error.set(undefined);
         this.ref.close({ registered: true });
