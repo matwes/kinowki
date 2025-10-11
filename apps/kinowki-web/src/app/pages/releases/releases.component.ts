@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -50,6 +50,11 @@ const LAST_YEAR = new Date().getFullYear() + 1;
   providers: [ConfirmationService, DialogService, ReleaseService, MessageService],
 })
 export class ReleasesComponent {
+  private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly releaseService = inject(ReleaseService);
+  private readonly fb = inject(NonNullableFormBuilder);
+
   @ViewChild(Table, { static: true }) set primengTable(table: Table) {
     setTimeout(() => this.subscribeToSearchForm(table));
   }
@@ -83,13 +88,6 @@ export class ReleasesComponent {
   }
 
   today = this.getToday();
-
-  constructor(
-    private readonly messageService: MessageService,
-    private readonly confirmationService: ConfirmationService,
-    private readonly releaseService: ReleaseService,
-    private readonly fb: NonNullableFormBuilder
-  ) {}
 
   lazyLoad(event?: TableLazyLoadEvent) {
     if (event) {

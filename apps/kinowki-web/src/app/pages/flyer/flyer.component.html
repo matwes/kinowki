@@ -1,5 +1,6 @@
-<div class="badge">
-  <div class="flyer" [class.big]="big()">
+@if (flyer(); as flyer) {
+<div class="badge" [appUserFlyerStatusClass]="flyer.userFlyer">
+  <div class="flyer">
     @for(image of images(); track $index) { @if (image.original === 'blank') {
     <div class="blank" [style.width.px]="blankWidth()"></div>
     }@else {
@@ -7,19 +8,16 @@
       <p-image
         width="auto"
         [imageStyle]="{
-          'max-width': big() ? '9.375rem' : '3.125rem',
-          'max-height': big() ? '13.375rem' : '4.5rem',
+          'max-width': '3.125rem',
+          'max-height': '4.5rem',
           'object-fit': 'contain',
           'object-position': $index % 2 === 0 ? 'right' : 'left'
         }"
         [previewImageSrc]="image.original"
         [src]="image.thumbnail || image.original"
         alt="skan ulotki"
-        [preview]="true"></p-image>
-
-      @if(big() && image.thumbnail) {
-      <div class="quality-badge">HQ</div>
-      }
+        [preview]="true">
+      </p-image>
     </div>
     } } @empty {
     <div class="no-images">
@@ -28,5 +26,11 @@
     </div>
     }
   </div>
+  <app-user-flyer-status-button
+    *appShowIfLogged
+    [flyer]="flyer"
+    [small]="true"
+    (statusChanged)="flyer.userFlyer = $event" />
 </div>
-<div class="note" [class.big]="big()">{{ flyer() | flyerNote }}</div>
+<div class="note">{{ flyer | flyerNote }}</div>
+}

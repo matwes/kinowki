@@ -1,9 +1,13 @@
+import { PrimeNG } from 'primeng/config';
 import { Component, inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { PrimeNG } from 'primeng/config';
-import { SidebarComponent } from './layout';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+import { SidebarComponent } from './layout';
+import { AuthService } from './services';
+
+@UntilDestroy()
 @Component({
   imports: [RouterModule, SidebarComponent],
   selector: 'app-root',
@@ -11,6 +15,7 @@ import { SidebarComponent } from './layout';
   styleUrl: './app.component.sass',
 })
 export class AppComponent implements OnInit {
+  private readonly authService = inject(AuthService);
   private readonly primengConfig = inject(PrimeNG);
   private readonly title = inject(Title);
 
@@ -42,5 +47,17 @@ export class AppComponent implements OnInit {
       firstDayOfWeek: 1,
       dateFormat: 'dd.mm.yy',
     });
+
+    this.authService
+      .checkToken()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (user) => this.authService.updateUser(user),
+        error: (err) => {
+          if (err.status === 401) {
+            this.authService.logout();
+          }
+        },
+      });
   }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -51,6 +51,13 @@ import { FilmDialogComponent } from './film-dialog';
   providers: [ConfirmationService, DialogService, MessageService],
 })
 export class FilmsComponent {
+  private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly dialogService = inject(DialogService);
+  private readonly filmService = inject(FilmService);
+  private readonly distributorService = inject(DistributorService);
+  private readonly releaseService = inject(ReleaseService);
+
   genres = genres;
   event?: TableLazyLoadEvent;
   lazyEvent = new Subject<TableLazyLoadEvent>();
@@ -65,14 +72,7 @@ export class FilmsComponent {
   totalRecords$ = this.data$.pipe(map((res) => res.totalRecords));
   private distributors: DistributorDto[] = [];
 
-  constructor(
-    private readonly messageService: MessageService,
-    private readonly confirmationService: ConfirmationService,
-    private readonly dialogService: DialogService,
-    private readonly filmService: FilmService,
-    private readonly distributorService: DistributorService,
-    private readonly releaseService: ReleaseService
-  ) {
+  constructor() {
     this.distributorService.getAll().subscribe((res) => (this.distributors = res.data));
   }
 

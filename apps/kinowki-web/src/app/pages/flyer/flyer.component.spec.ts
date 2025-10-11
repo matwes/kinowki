@@ -19,4 +19,3 @@ describe('FlyerComponent', () => {
     expect(component).toBeTruthy();
   });
 });
-w;

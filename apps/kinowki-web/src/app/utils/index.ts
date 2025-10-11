@@ -12,3 +12,5 @@ export * from './release-type-icon';
 export * from './release-type-name';
 export * from './show-if-admin';
 export * from './show-if-logged';
+export * from './user-flyer-status-button';
+export * from './user-flyer-status-color';

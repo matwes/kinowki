@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
+import * as XLSX from 'xlsx';
 
-import { CreateFlyerDto, UpdateFlyerDto } from '@kinowki/shared';
+import { CreateFlyerDto, CreateUserFlyerDto, FlyerDto, UpdateFlyerDto, UserFlyerStatus } from '@kinowki/shared';
 import { CrudService } from '../utils';
 import { Flyer } from './flyer.schema';
 
 @Injectable()
-export class FlyerService extends CrudService<Flyer, CreateFlyerDto, UpdateFlyerDto> {
+export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, UpdateFlyerDto> {
   name = 'flyer';
   sortKey = '_id';
 
@@ -22,7 +23,11 @@ export class FlyerService extends CrudService<Flyer, CreateFlyerDto, UpdateFlyer
       query = query.limit(params.rows).skip(params.first);
     }
 
-    const itemData = await query.sort({ createdAt: -1 }).collation({ locale: 'pl', strength: 1 }).lean().exec();
+    const itemData = await query
+      .sort({ createdAt: -1 })
+      .collation({ locale: 'pl', strength: 1 })
+      .lean<FlyerDto[]>()
+      .exec();
     if (!itemData) {
       throw new NotFoundException(`${this.name} data not found!`);
     }
@@ -39,10 +44,87 @@ export class FlyerService extends CrudService<Flyer, CreateFlyerDto, UpdateFlyer
       query = query.limit(params.rows).skip(params.first);
     }
 
-    const itemData = await query.sort({ createdAt: -1 }).collation({ locale: 'pl', strength: 1 }).lean().exec();
+    const itemData = await query
+      .sort({ createdAt: -1 })
+      .collation({ locale: 'pl', strength: 1 })
+      .lean<FlyerDto[]>()
+      .exec();
     if (!itemData) {
       throw new NotFoundException(`${this.name} data not found!`);
     }
     return itemData;
+  }
+
+  async importFromXlsx(buffer: Buffer) {
+    const workbook = XLSX.read(buffer, { type: 'buffer', cellStyles: true });
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+
+    const rows = XLSX.utils
+      .sheet_to_json<
+        [
+          number | undefined,
+          string | undefined,
+          number | undefined,
+          string | undefined,
+          string | undefined,
+          string | undefined
+        ]
+      >(sheet, { header: 1, raw: true })
+      .filter((row) => !!row.length);
+
+    const userFlyers: CreateUserFlyerDto[] = [];
+
+    const allFlyers = await this.model.find({}, '_id id').lean();
+    const flyerMap = new Map(allFlyers.map((flyer) => [flyer.id, flyer._id.toString()]));
+
+    for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+      const row = rows[rowIndex];
+      const [count, date, year, title, orgTitle, comment] = row;
+
+      const flyerId = `${date ?? ''}${year ?? ''}${title ?? ''}${orgTitle ?? ''}`.trim();
+
+      const cellAddress = `A${rowIndex + 1}`;
+      const cell = sheet[cellAddress];
+      const color = cell?.s?.fgColor?.rgb ? `#${cell.s.fgColor.rgb}`.toLowerCase() : null;
+
+      const status = this.mapColorToStatus(color);
+      if (status !== null) {
+        const noteParts: (string | number)[] = [];
+        if (count) {
+          noteParts.push(count);
+        }
+        if (comment?.trim()) {
+          noteParts.push(comment?.trim());
+        }
+        const note = noteParts.join('\n');
+
+        const flyer_id = flyerMap.get(flyerId);
+        if (flyer_id) {
+          userFlyers.push({ flyer: flyer_id, status, note });
+        } else {
+          console.error('Flyer missing!', flyerId);
+        }
+      }
+    }
+
+    return userFlyers;
+  }
+
+  private mapColorToStatus(color?: string): UserFlyerStatus | null {
+    if (!color) return null;
+    const normalized = color.toLowerCase();
+    switch (normalized) {
+      case '#d70909':
+        return UserFlyerStatus.WANT;
+      case '#2ba32b':
+        return UserFlyerStatus.TRADE;
+      case '#c8d221':
+        return UserFlyerStatus.HAVE;
+      case '#464646':
+        return UserFlyerStatus.UNWANTED;
+      default:
+        return null;
+    }
   }
 }

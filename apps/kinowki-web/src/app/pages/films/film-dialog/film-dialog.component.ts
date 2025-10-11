@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -31,6 +31,13 @@ import { DistributorDto, FilmDto, genreMap, genres, releaseTypes } from '@kinowk
   ],
 })
 export class FilmDialogComponent implements OnInit {
+  private readonly ref = inject(DynamicDialogRef);
+  private readonly config: DynamicDialogConfig<{
+    item: FilmDto;
+    distributors: DistributorDto[];
+  }> = inject(DynamicDialogConfig);
+  private readonly fb = inject(NonNullableFormBuilder);
+
   options: {
     genres: { value: number; label: string }[];
     releaseTypes: { value: number; label: string }[];
@@ -78,12 +85,6 @@ export class FilmDialogComponent implements OnInit {
   get releases() {
     return this.form.controls.releases;
   }
-
-  constructor(
-    private readonly ref: DynamicDialogRef,
-    private readonly config: DynamicDialogConfig<{ item: FilmDto; distributors: DistributorDto[] }>,
-    private readonly fb: NonNullableFormBuilder
-  ) {}
 
   ngOnInit(): void {
     if (this.config.data) {

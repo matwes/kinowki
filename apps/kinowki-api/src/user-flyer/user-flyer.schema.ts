@@ -1,3 +1,4 @@
+import { UserFlyerStatus } from '@kinowki/shared';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, SchemaTypes, Types } from 'mongoose';
 
@@ -5,26 +6,19 @@ export type UserFlyerDocument = HydratedDocument<UserFlyer>;
 
 @Schema()
 export class UserFlyer {
-  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'User' })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: true, index: true })
   user: Types.ObjectId;
 
-  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'Flyer' })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Flyer', required: true, index: true })
   flyer: Types.ObjectId;
 
-  @Prop({ required: true })
-  collection: boolean;
+  @Prop({ type: Number, enum: UserFlyerStatus, default: UserFlyerStatus.UNWANTED })
+  status: UserFlyerStatus;
 
-  @Prop({ required: true })
-  exchange: boolean;
-
-  @Prop({ required: true })
-  wanted: boolean;
-
-  @Prop({ required: true })
-  notInterested: boolean;
-
-  @Prop({ required: true })
-  count: number;
+  @Prop()
+  note?: string;
 }
 
-export const UserSchema = SchemaFactory.createForClass(UserFlyer);
+export const UserSchema = SchemaFactory.createForClass(UserFlyer)
+  .index({ user: 1, flyer: 1 }, { unique: true })
+  .index({ flyer: 1, status: 1 });

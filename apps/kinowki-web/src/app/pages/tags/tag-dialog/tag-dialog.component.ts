@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -29,6 +29,10 @@ import { TagDto } from '@kinowki/shared';
   ],
 })
 export class TagDialogComponent implements OnInit {
+  private readonly ref = inject(DynamicDialogRef);
+  private readonly config = inject(DynamicDialogConfig<{ item: TagDto }>);
+  private readonly fb = inject(NonNullableFormBuilder);
+
   form = this.fb.group({
     name: [undefined as unknown as string, Validators.required],
   });
@@ -36,12 +40,6 @@ export class TagDialogComponent implements OnInit {
   get name() {
     return this.form.controls.name;
   }
-
-  constructor(
-    private readonly ref: DynamicDialogRef,
-    private readonly config: DynamicDialogConfig<{ item: TagDto }>,
-    private readonly fb: NonNullableFormBuilder
-  ) {}
 
   ngOnInit(): void {
     if (this.config.data) {

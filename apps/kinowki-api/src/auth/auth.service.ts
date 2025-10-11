@@ -11,7 +11,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { UserService } from '../user/user.service';
-import { UserDocument } from '../user/user.schema';
 import { MailService } from './mail.service';
 
 @Injectable()
@@ -31,13 +30,13 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = (await this.userService.create({
+    const user = await this.userService.create({
       email,
       password: hashedPassword,
       name,
       role: 'user',
       isActive: false,
-    })) as UserDocument;
+    });
 
     const token = this.jwtService.sign(
       { sub: user._id, email: user.email },
@@ -96,5 +95,11 @@ export class AuthService {
       this.logger.error(`Error while activating user`, err);
       throw new BadRequestException('Invalid or expired activation link');
     }
+  }
+
+  async getUser(userId: string) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...user } = await this.userService.get(userId);
+    return user;
   }
 }

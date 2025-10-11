@@ -1,33 +1,41 @@
-import { Controller, Get, HttpStatus, ParseIntPipe, Query, Res } from '@nestjs/common';
+import { Controller, Get, HttpStatus, ParseIntPipe, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
 import { FilterQuery } from 'mongoose';
 
-import { CreateFilmDto, UpdateFilmDto } from '@kinowki/shared';
+import { CreateFilmDto, FilmDto, UpdateFilmDto } from '@kinowki/shared';
+import { UserData } from '../auth/jwt-strategy';
 import { FlyerService } from '../flyer/flyer.service';
 import { ReleaseService } from '../release/release.service';
-import { CrudController, getRegex } from '../utils';
+import { UserFlyerService } from '../user-flyer/user-flyer.service';
+import { CrudController, getRegex, OptionalJwtAuthGuard } from '../utils';
 import { Film } from './film.schema';
 import { FilmService } from './film.service';
 
 @Controller('film')
-export class FilmController extends CrudController<Film, CreateFilmDto, UpdateFilmDto> {
+export class FilmController extends CrudController<Film, FilmDto, CreateFilmDto, UpdateFilmDto> {
   name = 'film';
 
   constructor(
     filmService: FilmService,
     private readonly releaseService: ReleaseService,
-    private readonly flyerService: FlyerService
+    private readonly flyerService: FlyerService,
+    private readonly userFlyerService: UserFlyerService
   ) {
     super(filmService);
   }
 
   @Get()
+  @UseGuards(OptionalJwtAuthGuard)
   override async getAll(
-    @Res() response,
+    @Req() req,
+    @Res() res: Response,
     @Query('first', new ParseIntPipe({ optional: true })) first?: number,
     @Query('rows', new ParseIntPipe({ optional: true })) rows?: number,
     @Query('title') title?: string,
     @Query('genres') genres?: string
   ) {
+    const userData = req.user as UserData | null;
+
     try {
       const params = rows ? { first: first || 0, rows } : undefined;
       const filters: FilterQuery<Film> = {
@@ -64,6 +72,10 @@ export class FilmController extends CrudController<Film, CreateFilmDto, UpdateFi
               );
               flyerCount += flyers.length;
 
+              if (userData?.userId && flyers.length) {
+                await this.userFlyerService.addUserStatus(userData.userId, flyers);
+              }
+
               return {
                 ...release,
                 flyers,
@@ -79,13 +91,13 @@ export class FilmController extends CrudController<Film, CreateFilmDto, UpdateFi
         })
       );
 
-      return response.status(HttpStatus.OK).json({
+      res.status(HttpStatus.OK).json({
         message: `All ${this.name} data found successfully`,
         data: extendedData,
         totalRecords,
       });
     } catch (err) {
-      return response.status(err.status).json(err.response);
+      res.status(err.status).json(err.response);
     }
   }
 }

@@ -9,5 +9,6 @@ import { UserFlyerController } from './user-flyer.controller';
   imports: [MongooseModule.forFeature([{ name: UserFlyer.name, schema: UserSchema }])],
   controllers: [UserFlyerController],
   providers: [UserFlyerService],
+  exports: [UserFlyerService],
 })
 export class UserFlyerModule {}

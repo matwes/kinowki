@@ -1,7 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { FilterQuery, Model } from 'mongoose';
 
-export abstract class CrudService<Schema, CreateDto, UpdateDto> {
+export abstract class CrudService<Schema, BaseDto, CreateDto, UpdateDto> {
   abstract name: string;
   abstract sortKey: string;
   sortOrder: 1 | -1 = 1;
@@ -10,11 +10,11 @@ export abstract class CrudService<Schema, CreateDto, UpdateDto> {
 
   async create(createDto: CreateDto) {
     const newItem = new this.model(createDto);
-    return newItem.save();
+    return (await newItem.save()).toObject<BaseDto>();
   }
 
   async update(id: string, updateDto: UpdateDto) {
-    const existingItem = await this.model.findByIdAndUpdate(id, updateDto, { new: true }).lean().exec();
+    const existingItem = await this.model.findByIdAndUpdate(id, updateDto, { new: true }).lean<BaseDto>().exec();
     if (!existingItem) {
       throw new NotFoundException(`${this.name} #${id} not found`);
     }
@@ -31,7 +31,7 @@ export abstract class CrudService<Schema, CreateDto, UpdateDto> {
     const itemData = await query
       .sort({ [this.sortKey]: this.sortOrder })
       .collation({ locale: 'pl', strength: 1 })
-      .lean()
+      .lean<BaseDto[]>()
       .exec();
     if (!itemData) {
       throw new NotFoundException(`${this.name} data not found!`);
@@ -40,7 +40,7 @@ export abstract class CrudService<Schema, CreateDto, UpdateDto> {
   }
 
   async get(id: string) {
-    const existingItem = await this.model.findById(id).lean().exec();
+    const existingItem = await this.model.findById(id).lean<BaseDto>().exec();
     if (!existingItem) {
       throw new NotFoundException(`${this.name} #${id} not found`);
     }
@@ -48,7 +48,7 @@ export abstract class CrudService<Schema, CreateDto, UpdateDto> {
   }
 
   async delete(id: string) {
-    const deletedItem = await this.model.findByIdAndDelete(id).lean().exec();
+    const deletedItem = await this.model.findByIdAndDelete(id).lean<BaseDto>().exec();
     if (!deletedItem) {
       throw new NotFoundException(`${this.name} #${id} not found`);
     }

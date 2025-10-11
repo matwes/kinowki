@@ -82,8 +82,8 @@
             <i>{{ flyer.releases[0].note }}</i> }
           </div>
           }
-          <app-flyer [flyer]="flyer" [big]="true" />
-          <div class="flyer-cell-footer">
+          <app-big-flyer [flyer]="flyer" />
+          <div class="flyer-cell-footer" [appUserFlyerStatusClass]="flyer.userFlyer">
             @for(release of flyer.releases; track $index) {
             <div class="text-center">
               <div>
@@ -97,10 +97,23 @@
             } @empty {
             <div class="text-xs">{{ flyer.id }}</div>
             }
-          </div>
-          <div class="flyer-actions" *appShowIfAdmin>
-            <p-button icon="pi pi-pencil" class="mx-2" size="small" (click)="openFlyerDialog(flyer)" />
-            <p-button icon="pi pi-trash" severity="danger" size="small" (click)="deleteFlyer(flyer)" />
+            <div class="flyer-actions left" *appShowIfLogged>
+              <app-user-flyer-status-button [flyer]="flyer" (statusChanged)="flyer.userFlyer = $event" />
+            </div>
+            <div class="flyer-actions right" *appShowIfAdmin>
+              <p-button
+                icon="pi pi-pencil"
+                class="mx-2"
+                size="small"
+                [rounded]="true"
+                (click)="openFlyerDialog(flyer)" />
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                size="small"
+                [rounded]="true"
+                (click)="deleteFlyer(flyer)" />
+            </div>
           </div>
         </div>
         }

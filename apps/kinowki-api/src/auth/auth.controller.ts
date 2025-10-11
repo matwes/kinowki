@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../utils';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -18,5 +19,11 @@ export class AuthController {
   @Get('activate')
   activate(@Query('token') token: string) {
     return this.authService.activate(token);
+  }
+
+  @Get('check')
+  @UseGuards(JwtAuthGuard)
+  checkToken(@Req() req) {
+    return this.authService.getUser(req.user.userId);
   }
 }

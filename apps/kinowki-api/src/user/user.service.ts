@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { CreateUserDto, UpdateUserDto } from '@kinowki/shared';
+import { CreateUserDto, UpdateUserDto, UserDto } from '@kinowki/shared';
 import { CrudService } from '../utils';
 import { User, UserDocument } from './user.schema';
 
 @Injectable()
-export class UserService extends CrudService<User, CreateUserDto, UpdateUserDto> {
+export class UserService extends CrudService<User, UserDto, CreateUserDto, UpdateUserDto> {
   name = 'user';
   sortKey = 'name';
 

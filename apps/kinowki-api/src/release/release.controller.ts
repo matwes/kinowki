@@ -1,23 +1,32 @@
-import { Controller, Get, HttpStatus, ParseIntPipe, Query, Res } from '@nestjs/common';
+import { Controller, Get, HttpStatus, ParseIntPipe, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
 import { FilterQuery, Types } from 'mongoose';
 
-import { CreateReleaseDto, UpdateReleaseDto } from '@kinowki/shared';
+import { CreateReleaseDto, ReleaseDto, UpdateReleaseDto } from '@kinowki/shared';
 import { FlyerService } from '../flyer/flyer.service';
-import { CrudController, getRegex } from '../utils';
+import { CrudController, getRegex, OptionalJwtAuthGuard } from '../utils';
 import { Release } from './release.schema';
 import { ReleaseService } from './release.service';
+import { UserData } from '../auth/jwt-strategy';
+import { UserFlyerService } from '../user-flyer/user-flyer.service';
 
 @Controller('release')
-export class ReleaseController extends CrudController<Release, CreateReleaseDto, UpdateReleaseDto> {
+export class ReleaseController extends CrudController<Release, ReleaseDto, CreateReleaseDto, UpdateReleaseDto> {
   name = 'release';
 
-  constructor(protected releaseService: ReleaseService, private readonly flyerService: FlyerService) {
+  constructor(
+    protected releaseService: ReleaseService,
+    private readonly flyerService: FlyerService,
+    private readonly userFlyerService: UserFlyerService
+  ) {
     super(releaseService);
   }
 
   @Get()
+  @UseGuards(OptionalJwtAuthGuard)
   override async getAll(
-    @Res() response,
+    @Req() req,
+    @Res() response: Response,
     @Query('first', new ParseIntPipe({ optional: true })) first?: number,
     @Query('rows', new ParseIntPipe({ optional: true })) rows?: number,
     @Query('year', new ParseIntPipe({ optional: true })) year?: number,
@@ -25,6 +34,8 @@ export class ReleaseController extends CrudController<Release, CreateReleaseDto,
     @Query('film') film?: string,
     @Query('distributor') distributor?: string
   ) {
+    const userData = req.user as UserData | null;
+
     try {
       const params = rows ? { first: first || 0, rows } : undefined;
       const filters: FilterQuery<Release> = {};
@@ -56,21 +67,28 @@ export class ReleaseController extends CrudController<Release, CreateReleaseDto,
       ]);
 
       const extendedData = await Promise.all(
-        data.map(async (release) => ({
-          ...release,
-          flyers: (
-            await this.flyerService.getAll(undefined, { releases: release._id })
-          ).sort((a, b) => (a.type !== b.type ? a.type - b.type : a.size - b.size)),
-        }))
+        data.map(async (release) => {
+          const flyers = (await this.flyerService.getAll(undefined, { releases: release._id })).sort((a, b) =>
+            a.type !== b.type ? a.type - b.type : a.size - b.size
+          );
+
+          if (userData?.userId && flyers.length) {
+            await this.userFlyerService.addUserStatus(userData.userId, flyers);
+          }
+
+          release.flyers = flyers;
+
+          return release;
+        })
       );
 
-      return response.status(HttpStatus.OK).json({
+      response.status(HttpStatus.OK).json({
         message: `All ${this.name} data found successfully`,
         data: extendedData,
         totalRecords,
       });
     } catch (err) {
-      return response.status(err.status).json(err.response);
+      response.status(err.status).json(err.response);
     }
   }
 }

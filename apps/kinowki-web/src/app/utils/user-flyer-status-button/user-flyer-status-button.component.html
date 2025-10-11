@@ -1,0 +1,27 @@
+<p-button
+  [icon]="buttonIcon()"
+  [styleClass]="buttonClass()"
+  [class.small]="small()"
+  size="small"
+  [rounded]="true"
+  (onClick)="popover.toggle($event)" />
+<p-popover #popover>
+  <form class="flex flex-column gap-3 p-3 w-16rem" (submit)="save()">
+    <p-selectButton
+      fluid
+      class="user-flyer-status-buttons"
+      [styleClass]="'flex-auto'"
+      [required]="true"
+      [unselectable]="true"
+      [options]="userFlyerStatuses"
+      [formControl]="form.controls.status"
+      optionLabel="tooltip"
+      optionValue="value">
+      <ng-template #item let-item>
+        <i [class]="item.icon" [pTooltip]="item.tooltip" [showDelay]="400"></i>
+      </ng-template>
+    </p-selectButton>
+    <textarea pInputTextarea [autoResize]="true" [formControl]="form.controls.note" placeholder="Notatka..."></textarea>
+    <p-button class="ml-auto" label="Zapisz" icon="pi pi-save" size="small" severity="contrast" (onClick)="save()" />
+  </form>
+</p-popover>

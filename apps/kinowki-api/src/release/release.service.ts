@@ -2,12 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
 
-import { CreateReleaseDto, UpdateReleaseDto } from '@kinowki/shared';
+import { CreateReleaseDto, ReleaseDto, UpdateReleaseDto } from '@kinowki/shared';
 import { CrudService } from '../utils';
 import { Release } from './release.schema';
 
 @Injectable()
-export class ReleaseService extends CrudService<Release, CreateReleaseDto, UpdateReleaseDto> {
+export class ReleaseService extends CrudService<Release, ReleaseDto, CreateReleaseDto, UpdateReleaseDto> {
   name = 'release';
   sortKey = 'date';
 
@@ -22,7 +22,7 @@ export class ReleaseService extends CrudService<Release, CreateReleaseDto, Updat
       query = query.limit(params.rows).skip(params.first);
     }
 
-    const itemData = await query.sort({ date: 1 }).lean().exec();
+    const itemData = await query.sort({ date: 1 }).lean<ReleaseDto[]>().exec();
     if (!itemData) {
       throw new NotFoundException(`${this.name} data not found!`);
     }
@@ -38,7 +38,7 @@ export class ReleaseService extends CrudService<Release, CreateReleaseDto, Updat
     delete filters?.['film.title'];
 
     const itemData = await this.model
-      .aggregate([
+      .aggregate<ReleaseDto>([
         ...(filters && Object.keys(filters).length > 0 ? [{ $match: filters }] : []),
         {
           $lookup: {

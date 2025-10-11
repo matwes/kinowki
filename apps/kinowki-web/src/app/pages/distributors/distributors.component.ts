@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -50,6 +50,12 @@ import { FlyerComponent } from '../flyer';
   providers: [ConfirmationService, DialogService, MessageService],
 })
 export class DistributorsComponent {
+  private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly dialogService = inject(DialogService);
+  private readonly distributorService = inject(DistributorService);
+  private readonly releaseService = inject(ReleaseService);
+
   @ViewChild('flyersTable', { static: true }) flyersTable!: Table;
 
   genres = genres;
@@ -95,14 +101,6 @@ export class DistributorsComponent {
 
   today = this.getToday();
   currentYear = new Date().getFullYear();
-
-  constructor(
-    private readonly messageService: MessageService,
-    private readonly confirmationService: ConfirmationService,
-    private readonly dialogService: DialogService,
-    private readonly distributorService: DistributorService,
-    private readonly releaseService: ReleaseService
-  ) {}
 
   onDistributorSelected(distributor: DistributorDto) {
     if (this.selectedDistributor$.value) {

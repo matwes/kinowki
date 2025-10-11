@@ -1,6 +1,7 @@
 import { ImageDto } from './image.dto';
 import { ReleaseDto } from './release.dto';
 import { TagDto } from './tag.dto';
+import { UserFlyerDto } from './user-flyer.dto';
 
 export interface CreateFlyerDto {
   id: string;
@@ -21,4 +22,5 @@ export interface FlyerDto extends Omit<CreateFlyerDto, 'releases' | 'tags'> {
   createdAt: string;
   releases: ReleaseDto[];
   tags: TagDto[];
+  userFlyer?: UserFlyerDto;
 }

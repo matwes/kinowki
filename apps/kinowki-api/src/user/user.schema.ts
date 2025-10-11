@@ -19,6 +19,9 @@ export class User {
 
   @Prop({ default: false })
   isActive: boolean;
+
+  @Prop({ default: false })
+  importUsed: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

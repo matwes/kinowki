@@ -24,6 +24,7 @@ export class AuthService {
 
   isLoggedIn = computed(() => !!this.tokenSignal());
   isAdmin = computed(() => this.userSignal()?.role === 'admin');
+  importUsed = computed(() => !!this.userSignal()?.importUsed);
   userName = computed(() => this.userSignal()?.name);
 
   constructor() {
@@ -36,13 +37,15 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
-    return this.http.post<{ user: UserDto; token: string }>(`${environment.apiUrl}/auth/login`, { email, password }).pipe(
-      tap(({ user, token }) => {
-        this.userSignal.set(user);
-        this.tokenSignal.set(token);
-        localStorage.setItem('auth', JSON.stringify({ user, token }));
-      })
-    );
+    return this.http
+      .post<{ user: UserDto; token: string }>(`${environment.apiUrl}/auth/login`, { email, password })
+      .pipe(
+        tap(({ user, token }) => {
+          this.userSignal.set(user);
+          this.tokenSignal.set(token);
+          localStorage.setItem('auth', JSON.stringify({ user, token }));
+        })
+      );
   }
 
   logout() {
@@ -53,5 +56,15 @@ export class AuthService {
 
   register(email: string, password: string, name: string) {
     return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/register`, { email, password, name });
+  }
+
+  checkToken() {
+    return this.http.get<UserDto>(`${environment.apiUrl}/auth/check`);
+  }
+
+  updateUser(user: UserDto) {
+    this.userSignal.set(user);
+    const token = this.tokenSignal();
+    localStorage.setItem('auth', JSON.stringify({ user, token }));
   }
 }

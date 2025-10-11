@@ -1,13 +1,19 @@
-import { Controller, Get, HttpStatus, ParseIntPipe, Query, Res } from '@nestjs/common';
+import { Controller, Get, HttpStatus, ParseIntPipe, Query, Req, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { FilterQuery } from 'mongoose';
 
-import { CreateDistributorDto, UpdateDistributorDto } from '@kinowki/shared';
+import { CreateDistributorDto, DistributorDto, UpdateDistributorDto } from '@kinowki/shared';
 import { CrudController, getRegex } from '../utils';
 import { Distributor } from './distributor.schema';
 import { DistributorService } from './distributor.service';
 
 @Controller('distributor')
-export class DistributorController extends CrudController<Distributor, CreateDistributorDto, UpdateDistributorDto> {
+export class DistributorController extends CrudController<
+  Distributor,
+  DistributorDto,
+  CreateDistributorDto,
+  UpdateDistributorDto
+> {
   name = 'distributor';
 
   constructor(distributorService: DistributorService) {
@@ -16,7 +22,8 @@ export class DistributorController extends CrudController<Distributor, CreateDis
 
   @Get()
   override async getAll(
-    @Res() response,
+    @Req() req,
+    @Res() res: Response,
     @Query('first', new ParseIntPipe({ optional: true })) first?: number,
     @Query('rows', new ParseIntPipe({ optional: true })) rows?: number,
     @Query('name') name?: string
@@ -31,13 +38,13 @@ export class DistributorController extends CrudController<Distributor, CreateDis
         this.crudService.getAll(params, filters),
         this.crudService.count(filters),
       ]);
-      return response.status(HttpStatus.OK).json({
+      res.status(HttpStatus.OK).json({
         message: `All ${this.name} data found successfully`,
         data,
         totalRecords,
       });
     } catch (err) {
-      return response.status(err.status).json(err.response);
+      res.status(err.status).json(err.response);
     }
   }
 }

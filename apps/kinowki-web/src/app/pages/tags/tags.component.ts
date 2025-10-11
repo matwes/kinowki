@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -36,6 +36,11 @@ import { TagDialogComponent } from './tag-dialog';
   providers: [ConfirmationService, DialogService, MessageService],
 })
 export class TagsComponent {
+  private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly dialogService = inject(DialogService);
+  private readonly tagService = inject(TagService);
+
   genres = genres;
   event?: TableLazyLoadEvent;
   lazyEvent = new Subject<TableLazyLoadEvent>();
@@ -47,13 +52,6 @@ export class TagsComponent {
 
   value$ = this.data$.pipe(map((res) => res.data));
   totalRecords$ = this.data$.pipe(map((res) => res.totalRecords));
-
-  constructor(
-    private readonly messageService: MessageService,
-    private readonly confirmationService: ConfirmationService,
-    private readonly dialogService: DialogService,
-    private readonly tagService: TagService
-  ) {}
 
   lazyLoad(event?: TableLazyLoadEvent) {
     if (event) {

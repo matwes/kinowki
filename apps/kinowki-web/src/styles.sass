@@ -41,3 +41,47 @@ a, a:visited, a:hover, a:active
 
   &.wide
     max-width: 1750px
+
+.user-flyer-status-buttons
+  .p-togglebutton:nth-child(1).p-togglebutton-checked .p-togglebutton-content
+    background-color: var(--p-orange-600)
+
+  .p-togglebutton:nth-child(2).p-togglebutton-checked .p-togglebutton-content
+    background-color: var(--p-green-800)
+
+  .p-togglebutton:nth-child(3).p-togglebutton-checked .p-togglebutton-content
+    background-color: var(--p-red-800)
+
+  .p-togglebutton:nth-child(4).p-togglebutton-checked .p-togglebutton-content
+    background-color: var(--p-surface-800)
+
+.status-have
+  background-color: var(--p-orange-600) !important
+
+  &.hover:hover
+    background-color: var(--p-orange-700) !important
+
+.status-trade
+  background-color: var(--p-green-800) !important
+
+  &.hover:hover
+    background-color: var(--p-green-900) !important
+
+.status-want
+  background-color: var(--p-red-800) !important
+
+  &.hover:hover
+    background-color: var(--p-red-900) !important
+
+.status-unwanted
+  background-color: var(--p-surface-800) !important
+  opacity: 0.5
+
+  &.hover:hover
+    background-color: var(--p-surface-900) !important
+
+.status-unknown
+  background-color: var(--p-surface-700) !important
+
+  &.hover:hover
+    background-color: var(--p-surface-800) !important

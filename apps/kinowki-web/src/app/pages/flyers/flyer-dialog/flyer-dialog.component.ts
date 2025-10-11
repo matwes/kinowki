@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -32,6 +32,14 @@ import { ReleaseService } from '../../../services';
   ],
 })
 export class FlyerDialogComponent implements OnInit {
+  private readonly ref = inject(DynamicDialogRef);
+  private readonly config: DynamicDialogConfig<{
+    item: FlyerDto;
+    tags: TagDto[];
+  }> = inject(DynamicDialogConfig);
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly releaseService = inject(ReleaseService);
+
   options: {
     flyerSizes: { value: number; label: string }[];
     flyerTypes: { value: number; label: string }[];
@@ -84,13 +92,6 @@ export class FlyerDialogComponent implements OnInit {
   get images() {
     return this.form.controls.images;
   }
-
-  constructor(
-    private readonly ref: DynamicDialogRef,
-    private readonly config: DynamicDialogConfig<{ item: FlyerDto; tags: TagDto[] }>,
-    private readonly fb: NonNullableFormBuilder,
-    private readonly releaseService: ReleaseService
-  ) {}
 
   ngOnInit(): void {
     let initialReleases: ReleaseDto[] = [];

@@ -1,5 +1,6 @@
 import { DistributorDto } from './distributor.dto';
 import { FilmDto } from './film.dto';
+import { FlyerDto } from './flyer.dto';
 
 export interface CreateReleaseDto {
   film: string;
@@ -17,4 +18,5 @@ export interface ReleaseDto extends Omit<CreateReleaseDto, 'film' | 'distributor
   _id: string;
   film: FilmDto;
   distributors: DistributorDto[];
+  flyers?: FlyerDto[];
 }

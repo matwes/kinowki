@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,16 +9,27 @@ import { DataViewModule, DataView } from 'primeng/dataview';
 import { DialogService } from 'primeng/dynamicdialog';
 import { ImageModule } from 'primeng/image';
 import { InputTextModule } from 'primeng/inputtext';
+import { PopoverModule } from 'primeng/popover';
 import { SelectModule } from 'primeng/select';
+import { SelectButtonModule } from 'primeng/selectbutton';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
 import { BehaviorSubject, combineLatest, debounceTime, filter, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
 
 import { FlyerDto, TagDto, flyerSizes, flyerTypes, genres, releaseTypes } from '@kinowki/shared';
 import { FlyerService, TagService } from '../../services';
-import { JoinPipe, notEmpty, ReleaseTypeNamePipe, ShowIfAdminDirective } from '../../utils';
-import { FlyerComponent } from '../flyer/flyer.component';
+import {
+  JoinPipe,
+  notEmpty,
+  ReleaseTypeNamePipe,
+  ShowIfAdminDirective,
+  ShowIfLoggedDirective,
+  UserFlyerStatusClassDirective,
+  UserFlyerStatusButtonComponent,
+} from '../../utils';
+import { BigFlyerComponent } from '../big-flyer';
 import { FlyerDialogComponent } from './flyer-dialog';
 
 @UntilDestroy()
@@ -27,26 +38,38 @@ import { FlyerDialogComponent } from './flyer-dialog';
   templateUrl: './flyers.component.html',
   styleUrl: './flyers.component.sass',
   imports: [
+    BigFlyerComponent,
     ButtonModule,
     CommonModule,
     ConfirmDialogModule,
     DataViewModule,
-    FlyerComponent,
     FormsModule,
     ImageModule,
     InputTextModule,
     JoinPipe,
+    PopoverModule,
     ReactiveFormsModule,
     ReleaseTypeNamePipe,
+    SelectButtonModule,
     SelectModule,
+    ShowIfAdminDirective,
+    ShowIfLoggedDirective,
     TableModule,
     TagModule,
     ToastModule,
-    ShowIfAdminDirective,
+    TooltipModule,
+    UserFlyerStatusButtonComponent,
+    UserFlyerStatusClassDirective,
   ],
   providers: [ConfirmationService, DialogService, MessageService],
 })
 export class FlyersComponent implements AfterViewInit {
+  private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly dialogService = inject(DialogService);
+  private readonly flyerService = inject(FlyerService);
+  private readonly tagService = inject(TagService);
+
   @ViewChild('flyersView', { static: true }) flyersView!: DataView;
 
   genres = genres;
@@ -79,13 +102,7 @@ export class FlyersComponent implements AfterViewInit {
   flyerNameSearch = '';
   flyerTagSearch = '';
 
-  constructor(
-    private readonly messageService: MessageService,
-    private readonly confirmationService: ConfirmationService,
-    private readonly dialogService: DialogService,
-    private readonly flyerService: FlyerService,
-    private readonly tagService: TagService
-  ) {
+  constructor() {
     this.tagService.getAll().subscribe((res) => (this.tags = res.data));
     const event = localStorage.getItem('flyer-table');
     if (event) {

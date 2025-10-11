@@ -2,15 +2,16 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { notEmpty } from '../utils';
 import { environment } from '../../environments/environment';
+import { inject } from '@angular/core';
 
 export abstract class CrudService<Model, CreateDto, UpdateDto> {
+  protected readonly httpClient = inject(HttpClient);
+
   abstract name: string;
 
   get url() {
     return `${environment.apiUrl}/${this.name}`;
   }
-
-  constructor(protected readonly httpClient: HttpClient) {}
 
   create(createDto: CreateDto) {
     return this.httpClient.post<{ message: string; data: Model }>(this.url, createDto);

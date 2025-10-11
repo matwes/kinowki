@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { Types } from 'mongoose';
+
 import { DistributorService } from './distributor.service';
 import { ReleaseService } from '../release/release.service';
-import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class DistributorSchedulerService {
@@ -20,9 +22,11 @@ export class DistributorSchedulerService {
 
     for (const distributor of distributors) {
       try {
+        const distributorId = new Types.ObjectId(distributor._id);
+
         const [stats, flyerProbability] = await Promise.all([
-          this.releaseService.getDistributorsStats(distributor._id),
-          this.releaseService.getDistributorFlyerProbability(distributor._id),
+          this.releaseService.getDistributorsStats(distributorId),
+          this.releaseService.getDistributorFlyerProbability(distributorId),
         ]);
 
         await this.distributorService.update(String(distributor._id), {

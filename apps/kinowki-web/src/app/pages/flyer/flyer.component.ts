@@ -13,13 +13,24 @@ import { FlyerDto } from '@kinowki/shared';
 import { Image, ImageModule } from 'primeng/image';
 
 import { environment } from '../../../environments/environment';
-import { FlyerNotePipe } from '../../utils';
+import {
+  FlyerNotePipe,
+  ShowIfLoggedDirective,
+  UserFlyerStatusButtonComponent,
+  UserFlyerStatusClassDirective,
+} from '../../utils';
 
 @Component({
   selector: 'app-flyer',
   templateUrl: './flyer.component.html',
   styleUrl: './flyer.component.sass',
-  imports: [FlyerNotePipe, ImageModule],
+  imports: [
+    FlyerNotePipe,
+    ImageModule,
+    ShowIfLoggedDirective,
+    UserFlyerStatusButtonComponent,
+    UserFlyerStatusClassDirective,
+  ],
 })
 export class FlyerComponent implements AfterViewInit {
   private readonly CDN_URL = environment.cdnUrl;

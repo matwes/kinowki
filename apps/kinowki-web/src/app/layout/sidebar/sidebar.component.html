@@ -2,7 +2,7 @@
   <div class="sidebar-content">
     <app-logo class="cursor-pointer" routerLink="/ulotki" />
     <div class="top-bar-menu">
-      @for(page of pages; track page.url) {
+      @for(page of pages(); track page.url) {
       <a class="page" [routerLink]="page.url" routerLinkActive="active">
         {{ page.label }}
       </a>
@@ -35,7 +35,7 @@
       <div class="drawer-header shadow-3">
         <app-logo />
       </div>
-      @for(page of pages; track page.url) {
+      @for(page of pages(); track page.url) {
       <a class="drawer-item" [routerLink]="page.url" routerLinkActive="active" (click)="showDrawer = false">
         <i class="mr-2" [ngClass]="page.icon"></i>
         {{ page.label }}
@@ -64,4 +64,5 @@
   </ng-template>
 </p-drawer>
 <p-toast />
-<p-menu #menu [model]="items" [popup]="true" />
+<p-menu #menu [model]="items()" [popup]="true" />
+<input #fileInput class="hidden" type="file" accept=".xlsx" (change)="onFileSelected($event)" />
