@@ -68,7 +68,8 @@ export class ReleasesComponent {
 
   form = this.fb.group({
     year: 2025,
-    month: new Date().getMonth(),
+    selectMonth: new Date().getMonth(),
+    selectButtonMonth: new Date().getMonth(),
   });
 
   data$ = this.lazyEvent.pipe(
@@ -83,8 +84,12 @@ export class ReleasesComponent {
     return this.form.controls.year;
   }
 
-  get month() {
-    return this.form.controls.month;
+  get selectMonth() {
+    return this.form.controls.selectMonth;
+  }
+
+  get selectButtonMonth() {
+    return this.form.controls.selectButtonMonth;
   }
 
   today = this.getToday();
@@ -125,9 +130,10 @@ export class ReleasesComponent {
   private subscribeToSearchForm(table: Table) {
     const filters = table.filters;
     if (filters['month']) {
-      this.month.setValue((filters['month'] as FilterMetadata).value);
+      this.selectMonth.setValue((filters['month'] as FilterMetadata).value);
+      this.selectButtonMonth.setValue((filters['month'] as FilterMetadata).value);
     } else {
-      table.filter(this.month.value, 'month', '');
+      table.filter(this.selectMonth.value, 'month', '');
     }
     if (filters['year']) {
       this.year.setValue((filters['year'] as FilterMetadata).value);
@@ -135,9 +141,16 @@ export class ReleasesComponent {
       table.filter(this.year.value, 'year', '');
     }
 
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((search) => {
-      table.filter(search.month, 'month', '');
-      table.filter(search.year, 'year', '');
+    this.year.valueChanges.pipe(untilDestroyed(this)).subscribe((year) => table.filter(year, 'year', ''));
+
+    this.selectMonth.valueChanges.pipe(untilDestroyed(this)).subscribe((month) => {
+      table.filter(month, 'month', '');
+      this.selectButtonMonth.setValue(month, { emitEvent: false });
+    });
+
+    this.selectButtonMonth.valueChanges.pipe(untilDestroyed(this)).subscribe((month) => {
+      table.filter(month, 'month', '');
+      this.selectMonth.setValue(month, { emitEvent: false });
     });
   }
 

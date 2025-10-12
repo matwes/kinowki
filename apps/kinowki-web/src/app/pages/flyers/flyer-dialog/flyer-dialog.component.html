@@ -2,12 +2,6 @@
   <div class="formgrid grid m-2">
     <div class="field col-12">
       <p-iftalabel>
-        <input pInputText fluid id="id" [formControl]="id" />
-        <label for="id">ID</label>
-      </p-iftalabel>
-    </div>
-    <div class="field col-12">
-      <p-iftalabel>
         <p-multiSelect
           id="releases"
           fluid
@@ -27,6 +21,12 @@
           </ng-template>
         </p-multiSelect>
         <label for="tags">Premiery</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-12">
+      <p-iftalabel>
+        <input pInputText fluid id="id" [formControl]="id" />
+        <label for="id">ID</label>
       </p-iftalabel>
     </div>
     <div class="field col-6">

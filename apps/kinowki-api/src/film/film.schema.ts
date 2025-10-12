@@ -12,6 +12,9 @@ export class Film {
   originalTitle?: string;
 
   @Prop({ required: true })
+  firstLetter: string;
+
+  @Prop({ required: true })
   year: number;
 
   @Prop({ required: false })
@@ -24,7 +27,8 @@ export class Film {
   imdb?: number;
 }
 
-export const FilmSchema = SchemaFactory.createForClass(Film).index(
-  { title: 1 },
-  { unique: false, collation: { locale: 'pl', strength: 1 } }
-);
+export const FilmSchema = SchemaFactory.createForClass(Film)
+  .index({ firstLetter: 1 }, { unique: false, collation: { locale: 'pl', strength: 1 } })
+  .index({ genres: 1 })
+  .index({ imdb: 1 }, { unique: true, partialFilterExpression: { imdb: { $exists: true } } })
+  .index({ title: 1 }, { unique: false, collation: { locale: 'pl', strength: 1 } });

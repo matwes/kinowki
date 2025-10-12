@@ -12,6 +12,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 
 import { DistributorDto, FilmDto, genreMap, genres, releaseTypes } from '@kinowki/shared';
+import { letters } from '../letters';
 
 @Component({
   selector: 'app-film-dialog',
@@ -47,6 +48,7 @@ export class FilmDialogComponent implements OnInit {
   form = this.fb.group({
     title: [undefined as unknown as string, Validators.required],
     originalTitle: undefined as string | undefined,
+    firstLetter: undefined as string | undefined,
     year: [undefined as unknown as number, Validators.required],
     genres: [[] as number[]],
     imdb: undefined as number | undefined,
@@ -68,6 +70,10 @@ export class FilmDialogComponent implements OnInit {
 
   get originalTitle() {
     return this.form.controls.originalTitle;
+  }
+
+  get firstLetter() {
+    return this.form.controls.firstLetter;
   }
 
   get year() {
@@ -94,6 +100,7 @@ export class FilmDialogComponent implements OnInit {
       if (film) {
         this.title.setValue(film.title);
         this.originalTitle.setValue(film.originalTitle);
+        this.firstLetter.setValue(film.firstLetter);
         this.year.setValue(film.year);
         this.genres.setValue(film.genres);
         this.imdb.setValue(film.imdb);
@@ -149,9 +156,13 @@ export class FilmDialogComponent implements OnInit {
   }
 
   private getFromForm(): Partial<FilmDto> {
+    const title = this.title.value.trim();
+    const originalTitle = this.originalTitle.value?.trim();
+
     return {
-      title: this.title.value.trim(),
-      originalTitle: this.originalTitle.value?.trim(),
+      title,
+      originalTitle,
+      firstLetter: this.computeFirstLetter(title),
       year: this.year.value,
       genres: this.genres.value.sort((a, b) => genreMap[a].localeCompare(genreMap[b])),
       imdb: this.imdb.value,
@@ -176,5 +187,30 @@ export class FilmDialogComponent implements OnInit {
         };
       })
       .sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  private computeFirstLetter(title: string): string {
+    if (!title) return '#';
+
+    const firstChar = title.trim().charAt(0).toUpperCase();
+
+    if (letters.includes(firstChar)) {
+      return firstChar;
+    }
+
+    const normalized = firstChar
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace('Ł', 'Ł')
+      .replace('Ś', 'Ś')
+      .replace('Ź', 'Ź')
+      .replace('Ż', 'Ż')
+      .replace('Ó', 'Ó');
+
+    if (letters.includes(normalized)) {
+      return normalized;
+    }
+    
+    return '#';
   }
 }

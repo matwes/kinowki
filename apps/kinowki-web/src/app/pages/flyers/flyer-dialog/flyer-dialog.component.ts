@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -15,6 +16,7 @@ import { BehaviorSubject, debounceTime, filter, map, Observable, scan, startWith
 import { FlyerDto, flyerSizes, flyerTypes, ReleaseDto, TagDto, UpdateFlyerDto } from '@kinowki/shared';
 import { ReleaseService } from '../../../services';
 
+@UntilDestroy()
 @Component({
   selector: 'app-flyer-dialog',
   templateUrl: './flyer-dialog.component.html',
@@ -139,6 +141,8 @@ export class FlyerDialogComponent implements OnInit {
         return Array.from(uniqueReleasesMap.values());
       }, [] as ReleaseDto[])
     );
+
+    this.releases.valueChanges.pipe(untilDestroyed(this)).subscribe(() => this.id.setValue(this.generateFlyerId()));
   }
 
   addImage() {
@@ -157,6 +161,29 @@ export class FlyerDialogComponent implements OnInit {
         thumbnail: `${link}-Ulotka-2th.jpg` as string | undefined,
       })
     );
+  }
+
+  private generateFlyerId(): string {
+    let result = '';
+    const ids = this.releases.value;
+
+    if (ids.length) {
+      const releases = ids.map((id) => this.releaseMap.get(id)).filter((release) => !!release);
+
+      if (releases.length) {
+        if (releases.length === 1) {
+          const release = releases[0];
+          result = `${release.date}${release.film.year}${release.film.title}${release.film.originalTitle ?? ''}`;
+        } else {
+          const oldestRelease = releases.reduce((oldest, current) => (current.date < oldest.date ? current : oldest));
+          result = `${oldestRelease.date}${oldestRelease.film.year}${releases
+            .map((release) => release.film.title)
+            .join(' | ')}`;
+        }
+      }
+    }
+
+    return result;
   }
 
   private generateFlyerLink(): string {

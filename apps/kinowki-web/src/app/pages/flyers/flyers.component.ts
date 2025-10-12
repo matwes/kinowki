@@ -159,9 +159,13 @@ export class FlyersComponent implements AfterViewInit {
       .open(FlyerDialogComponent, {
         data: { item, tags: this.tags },
         header: item ? 'Edytuj ulotkę' : 'Dodaj ulotkę',
-        width: '90vw',
         closeOnEscape: false,
         modal: true,
+        width: '40vw',
+        breakpoints: {
+          '1400px': '75vw',
+          '640px': '90vw',
+        },
       })
       .onClose.pipe(
         untilDestroyed(this),

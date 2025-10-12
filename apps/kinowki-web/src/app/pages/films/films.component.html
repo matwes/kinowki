@@ -1,5 +1,8 @@
 <div class="card">
   <p-toast />
+  <div class="alphabet-header">
+    <p-selectbutton id="select-button-letter" [options]="letters" [formControl]="selectButtonLetter" />
+  </div>
   <p-table
     class="flex-auto overflow-hidden"
     dataKey="_id"
@@ -21,6 +24,14 @@
         <th [style.width]="'5%'"></th>
         <th [style.width]="'35%'">
           <div class="flex align-items-center gap-3">
+            <p-select
+              id="select-letter"
+              styleClass="w-6rem"
+              [showClear]="true"
+              [formControl]="selectLetter"
+              [options]="letters"
+              scrollHeight="30rem"
+              placeholder="Lit." />
             <p-columnFilter type="text" field="title" [showMenu]="false" [showClearButton]="false" matchMode="contains">
               <ng-template #filter let-value let-filter="filterCallback">
                 <input

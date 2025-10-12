@@ -32,24 +32,17 @@ export class FilmController extends CrudController<Film, FilmDto, CreateFilmDto,
     @Query('first', new ParseIntPipe({ optional: true })) first?: number,
     @Query('rows', new ParseIntPipe({ optional: true })) rows?: number,
     @Query('title') title?: string,
-    @Query('genres') genres?: string
+    @Query('genres') genres?: string,
+    @Query('letter') letter?: string
   ) {
     const userData = req.user as UserData | null;
 
     try {
       const params = rows ? { first: first || 0, rows } : undefined;
       const filters: FilterQuery<Film> = {
+        ...(letter ? { firstLetter: letter.toUpperCase() } : {}),
         ...(title
-          ? {
-              $or: [
-                {
-                  title: { $regex: getRegex(title) },
-                },
-                {
-                  originalTitle: { $regex: getRegex(title) },
-                },
-              ],
-            }
+          ? { $or: [{ title: { $regex: getRegex(title) } }, { originalTitle: { $regex: getRegex(title) } }] }
           : {}),
         ...(genres ? { genres: { $all: genres.split(',').map((g) => Number(g)) } } : {}),
       };

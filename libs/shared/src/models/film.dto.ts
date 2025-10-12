@@ -3,6 +3,7 @@ import { DistributorDto } from './distributor.dto';
 export interface CreateFilmDto {
   title: string;
   originalTitle?: string;
+  firstLetter: string;
   year: number;
   genres: number[];
   description?: string;
