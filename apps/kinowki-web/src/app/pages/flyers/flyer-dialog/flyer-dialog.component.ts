@@ -141,27 +141,82 @@ export class FlyerDialogComponent implements OnInit {
     );
   }
 
-  convertDateToPath(dateStr: string): string {
-    const [year, month] = dateStr.split('-');
-    return `/${year}/${month}/`;
+  addImage() {
+    const link = this.generateFlyerLink();
+
+    this.images.push(
+      this.fb.group({
+        original: `${link}-Ulotka-1.jpg`,
+        thumbnail: `${link}-Ulotka-1th.jpg` as string | undefined,
+      })
+    );
+
+    this.images.push(
+      this.fb.group({
+        original: `${link}-Ulotka-2.jpg`,
+        thumbnail: `${link}-Ulotka-2th.jpg` as string | undefined,
+      })
+    );
   }
 
-  addImage() {
-    const original = this.convertDateToPath(this.id.value);
+  private generateFlyerLink(): string {
+    let result = '';
+    const ids = this.releases.value;
 
-    this.images.push(
-      this.fb.group({
-        original,
-        thumbnail: '' as string | undefined,
-      })
-    );
+    if (ids.length) {
+      const releases = ids.map((id) => this.releaseMap.get(id)).filter((release) => !!release);
 
-    this.images.push(
-      this.fb.group({
-        original: '',
-        thumbnail: '' as string | undefined,
-      })
-    );
+      if (releases.length) {
+        const oldestDate = releases.reduce((oldest, current) => (current.date < oldest.date ? current : oldest)).date;
+
+        const [year, month] = oldestDate.split('-');
+
+        const titles = releases.map((release) => this.normalizeTitle(release.film.title)).join('-');
+
+        result = `/${year}/${month}/${titles}`;
+      }
+    }
+
+    return result;
+  }
+
+  private normalizeTitle(title: string): string {
+    if (!title) {
+      return '';
+    }
+
+    const charMap: Record<string, string> = {
+      ł: 'l',
+      Ł: 'L',
+      ą: 'a',
+      Ą: 'A',
+      ę: 'e',
+      Ę: 'E',
+      ś: 's',
+      Ś: 'S',
+      ć: 'c',
+      Ć: 'C',
+      ń: 'n',
+      Ń: 'N',
+      ó: 'o',
+      Ó: 'O',
+      ż: 'z',
+      Ż: 'Z',
+      ź: 'z',
+      Ź: 'Z',
+    };
+
+    return Array.from(title)
+      .map((ch) => charMap[ch] ?? ch)
+      .join('')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^\p{L}\p{N}\s-]+/gu, '')
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join('-');
   }
 
   deleteRelease(idx: number) {

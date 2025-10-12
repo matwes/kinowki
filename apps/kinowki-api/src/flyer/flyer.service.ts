@@ -66,9 +66,9 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
           number | undefined,
           string | undefined,
           number | undefined,
-          string | undefined,
-          string | undefined,
-          string | undefined
+          string | number | undefined,
+          string | number | undefined,
+          string | number | undefined
         ]
       >(sheet, { header: 1, raw: true })
       .filter((row) => !!row.length);
@@ -94,8 +94,11 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
         if (count) {
           noteParts.push(count);
         }
-        if (comment?.trim()) {
-          noteParts.push(comment?.trim());
+        if (comment) {
+          const trimmedComment = String(comment).trim();
+          if (trimmedComment) {
+            noteParts.push(trimmedComment);
+          }
         }
         const note = noteParts.join('\n');
 
