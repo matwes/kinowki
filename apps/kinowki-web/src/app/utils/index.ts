@@ -7,6 +7,7 @@ export * from './genre-name';
 export * from './imdb';
 export * from './join';
 export * from './not-empty';
+export * from './password-match-validator';
 export * from './release-date';
 export * from './release-type-icon';
 export * from './release-type-name';

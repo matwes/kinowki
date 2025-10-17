@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 
 import { CreateUserDto, UpdateUserDto, UserDto } from '@kinowki/shared';
 import { CrudService } from '../utils';
-import { User, UserDocument } from './user.schema';
+import { User } from './user.schema';
 
 @Injectable()
 export class UserService extends CrudService<User, UserDto, CreateUserDto, UpdateUserDto> {
@@ -16,6 +16,13 @@ export class UserService extends CrudService<User, UserDto, CreateUserDto, Updat
   }
 
   findByEmail(email: string) {
-    return this.model.findOne({ email }).lean<UserDocument>().exec();
+    return this.model.findOne({ email }).exec();
+  }
+
+  findByResetPasswordToken(token: string) {
+    return this.model.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: new Date() },
+    }).exec();
   }
 }

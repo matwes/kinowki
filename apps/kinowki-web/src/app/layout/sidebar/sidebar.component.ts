@@ -14,6 +14,7 @@ import { AuthService, FlyerService } from '../../services';
 import { LoginDialogComponent } from '../login-dialog';
 import { LogoComponent } from '../logo';
 import { RegisterDialogComponent } from '../register-dialog';
+import { ForgotPasswordDialogComponent } from '../forgot-password-dialog';
 
 @UntilDestroy()
 @Component({
@@ -36,6 +37,7 @@ export class SidebarComponent {
     { label: 'Filmy', url: '/filmy', icon: PrimeIcons.VIDEO },
     { label: 'Premiery', url: '/premiery', icon: PrimeIcons.CALENDAR },
     { label: 'Dystrybutorzy', url: '/dystrybutorzy', icon: PrimeIcons.BOOK },
+    { label: 'Wymiana', url: '/wymiana', icon: PrimeIcons.ARROW_RIGHT_ARROW_LEFT },
     ...(this.authService.isAdmin() ? [{ label: 'Tagi', url: '/tagi', icon: PrimeIcons.TAG }] : []),
     { label: 'Kontakt', url: '/kontakt', icon: PrimeIcons.INFO_CIRCLE },
   ]);
@@ -69,6 +71,8 @@ export class SidebarComponent {
         switchMap((data) => {
           if (data?.register) {
             return this.dialogService.open(RegisterDialogComponent, dialogOptions).onClose;
+          } else if (data?.forgotPassword) {
+            return this.dialogService.open(ForgotPasswordDialogComponent, dialogOptions).onClose;
           } else {
             return of(null);
           }
@@ -80,6 +84,13 @@ export class SidebarComponent {
             severity: 'success',
             summary: 'Utworzono konto',
             detail: 'Na podany e-mail wysłano link aktywacyjny',
+            life: 3000,
+          });
+        } else if (data?.requestedResetPassword) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Udało się',
+            detail: 'Na podany e-mail wysłano link do zresetowania hasła',
             life: 3000,
           });
         } else {

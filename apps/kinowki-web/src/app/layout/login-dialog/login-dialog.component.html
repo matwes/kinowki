@@ -24,9 +24,9 @@
       {{ error }}
     </div>
     }
-    <!-- <div class="field col-12 text-right text-300">
-      <p-button label="Zapomniałem hasła" variant="text" />
-    </div> -->
+    <div class="field col-12 text-right text-300">
+      <p-button label="Zapomniałem hasła" variant="text"  (onClick)="forgotPassword()" />
+    </div>
     <div class="field col-12 text-center text-300 my-3">
       Nie masz jeszcze konta?
       <p-button label="Zarejestruj się" variant="text" (onClick)="register()" />

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 
 import { UserService } from '../user/user.service';
 import { MailService } from './mail.service';
@@ -71,7 +72,7 @@ export class AuthService {
       role: user.role,
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = user;
+    const { password, resetPasswordToken, resetPasswordExpires, ...userWithoutPassword } = user;
 
     return { user: userWithoutPassword, token };
   }
@@ -99,7 +100,42 @@ export class AuthService {
 
   async getUser(userId: string) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...user } = await this.userService.get(userId);
+    const { password, resetPasswordToken, resetPasswordExpires, ...user } = await this.userService.get(userId);
     return user;
+  }
+
+  async requestPasswordReset(email: string) {
+    const user = await this.userService.findByEmail(email);
+    if (user) {
+      try {
+        const token = crypto.randomBytes(32).toString('hex');
+        user.resetPasswordToken = token;
+        user.resetPasswordExpires = new Date(Date.now() + 1000 * 60 * 15);
+        await user.save();
+
+        const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+        await this.mailService.sendResetPassword(user.email, resetUrl);
+      } catch (err) {
+        this.logger.error(`Error while requesting resetting user password`, err);
+        throw new BadRequestException('Error while requesting resetting user password');
+      }
+    }
+
+    return { message: 'Jeśli istnieje konto z tym emailem, wysłano link resetujący' };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const user = await this.userService.findByResetPasswordToken(token);
+
+    if (!user) {
+      throw new BadRequestException('Token is invalid or expired');
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    return { message: 'Hasło zostało zresetowane. Możesz się zalogować.' };
   }
 }

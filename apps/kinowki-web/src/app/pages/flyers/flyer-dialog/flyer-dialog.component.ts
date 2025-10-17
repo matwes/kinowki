@@ -238,7 +238,7 @@ export class FlyerDialogComponent implements OnInit {
       .join('')
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^\p{L}\p{N}\s-]+/gu, '')
+      .replace(/[^\p{L}\p{N}\s]+/gu, ' ')
       .trim()
       .split(/\s+/)
       .filter(Boolean)

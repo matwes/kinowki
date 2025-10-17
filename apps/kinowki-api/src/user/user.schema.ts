@@ -22,6 +22,12 @@ export class User {
 
   @Prop({ default: false })
   importUsed: boolean;
+
+  @Prop()
+  resetPasswordToken?: string;
+
+  @Prop()
+  resetPasswordExpires?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

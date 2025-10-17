@@ -1,6 +1,5 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { IftaLabelModule } from 'primeng/iftalabel';
@@ -9,58 +8,41 @@ import { PasswordModule } from 'primeng/password';
 
 import { AuthService } from '../../services';
 import { LogoComponent } from '../logo';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-  selector: 'app-login-dialog',
-  templateUrl: './login-dialog.component.html',
-  styleUrl: './login-dialog.component.sass',
+  selector: 'app-forgot-password-dialog',
+  templateUrl: './forgot-password-dialog.component.html',
+  styleUrl: './forgot-password-dialog.component.sass',
   imports: [ReactiveFormsModule, IftaLabelModule, ButtonModule, InputTextModule, LogoComponent, PasswordModule],
 })
-export class LoginDialogComponent {
+export class ForgotPasswordDialogComponent {
   private readonly ref = inject(DynamicDialogRef);
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly authService = inject(AuthService);
 
-  form = this.fb.group({
-    email: '',
-    password: '',
-  });
+  form = this.fb.group({ email: ['', [Validators.required, Validators.email]] });
 
   get email() {
     return this.form.controls.email;
   }
 
-  get password() {
-    return this.form.controls.password;
-  }
-
   error = signal<string | undefined>(undefined);
+  disableButton = signal(false);
 
   onSubmit() {
-    this.authService.login(this.email.value, this.password.value).subscribe({
+    this.disableButton.set(true);
+    this.authService.requestResetPassword(this.email.value.trim()).subscribe({
       next: () => {
         this.error.set(undefined);
-        this.ref.close();
+        this.ref.close({ requestedResetPassword: true });
       },
       error: (err: HttpErrorResponse) => {
         console.error(err);
-        if (err.status === 401) {
-          this.error.set('Niepoprawny e-mail lub hasło');
-        } else if (err.status === 403) {
-          this.error.set('Konto nie zostało aktywowane. Sprawdź swoją skrzynkę mailową');
-        } else {
-          this.error.set('Wystąpił błąd podczas logowania');
-        }
+        this.error.set('Wystąpił błąd podczas resetowania hasła');
+        this.disableButton.set(false);
       },
     });
-  }
-
-  register() {
-    this.ref.close({ register: true });
-  }
-
-  forgotPassword() {
-    this.ref.close({ forgotPassword: true });
   }
 
   closeDialog() {

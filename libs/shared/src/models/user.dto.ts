@@ -14,4 +14,6 @@ export interface UpdateUserDto extends Partial<CreateUserDto> {
 export interface UserDto extends CreateUserDto {
   _id: string;
   importUsed: boolean;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
 }

@@ -58,6 +58,14 @@ export class AuthService {
     return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/register`, { email, password, name });
   }
 
+  requestResetPassword(email: string) {
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/request-password-reset`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string) {
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/reset-password`, { token, newPassword });
+  }
+
   checkToken() {
     return this.http.get<UserDto>(`${environment.apiUrl}/auth/check`);
   }
