@@ -1,7 +1,6 @@
 export * from './activate';
 export * from './contact';
 export * from './distributors';
-export * from './exchange';
 export * from './films';
 export * from './flyers';
 export * from './releases';
