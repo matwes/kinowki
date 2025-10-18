@@ -6,10 +6,10 @@ export type FlyerDocument = HydratedDocument<Flyer>;
 
 @Schema({ timestamps: { createdAt: true, updatedAt: false } })
 export class Flyer {
-  @Prop({ required: true, index: true, unique: true })
+  @Prop({ required: true })
   id: string;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   name: string;
 
   @Prop()
@@ -34,4 +34,9 @@ export class Flyer {
   createdAt: Date;
 }
 
-export const FlyerSchema = SchemaFactory.createForClass(Flyer).index({ createdAt: -1 });
+export const FlyerSchema = SchemaFactory.createForClass(Flyer)
+  .index({ createdAt: -1 })
+  .index({ id: 1 }, { unique: true })
+  .index({ type: 1 })
+  .index({ size: 1 })
+  .index({ tags: 1 });
