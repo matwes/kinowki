@@ -47,7 +47,7 @@ import { FlyerComponent } from '../flyer';
     TableModule,
     ToastModule,
   ],
-  providers: [ConfirmationService, DialogService, MessageService],
+  providers: [ConfirmationService, DialogService],
 })
 export class DistributorsComponent {
   private readonly messageService = inject(MessageService);

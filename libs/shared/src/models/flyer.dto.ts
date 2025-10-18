@@ -5,6 +5,7 @@ import { UserFlyerDto } from './user-flyer.dto';
 
 export interface CreateFlyerDto {
   id: string;
+  name: string;
   type?: number;
   size?: number;
   tags: string[];

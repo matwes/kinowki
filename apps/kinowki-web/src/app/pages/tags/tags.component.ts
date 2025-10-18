@@ -33,7 +33,7 @@ import { TagDialogComponent } from './tag-dialog';
     ToastModule,
     ToolbarModule,
   ],
-  providers: [ConfirmationService, DialogService, MessageService],
+  providers: [ConfirmationService, DialogService],
 })
 export class TagsComponent {
   private readonly messageService = inject(MessageService);

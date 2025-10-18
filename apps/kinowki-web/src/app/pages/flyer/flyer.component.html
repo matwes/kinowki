@@ -26,11 +26,14 @@
     </div>
     }
   </div>
-  <app-user-flyer-status-button
-    *appShowIfLogged
-    [flyer]="flyer"
-    [small]="true"
-    (statusChanged)="flyer.userFlyer = $event" />
+  <div class="flex flex-column gap-2">
+    <app-user-flyer-status-button
+      *appShowIfLogged
+      [flyer]="flyer"
+      [small]="true"
+      (statusChanged)="flyer.userFlyer = $event" />
+    <app-copy-flyer-name-button [flyer]="flyer" [small]="true" />
+  </div>
 </div>
 <div class="note">{{ flyer | flyerNote }}</div>
 }

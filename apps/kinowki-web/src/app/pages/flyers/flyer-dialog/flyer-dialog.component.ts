@@ -13,7 +13,17 @@ import { SelectModule } from 'primeng/select';
 import { Nullable } from 'primeng/ts-helpers';
 import { BehaviorSubject, debounceTime, filter, map, Observable, scan, startWith, switchMap } from 'rxjs';
 
-import { FlyerDto, flyerSizes, flyerTypes, ReleaseDto, TagDto, UpdateFlyerDto } from '@kinowki/shared';
+import {
+  FlyerDto,
+  ReleaseDto,
+  TagDto,
+  UpdateFlyerDto,
+  flyerSizeMap,
+  flyerSizes,
+  flyerTypeMap,
+  flyerTypes,
+  releaseTypeMap,
+} from '@kinowki/shared';
 import { ReleaseService } from '../../../services';
 
 @UntilDestroy()
@@ -54,6 +64,7 @@ export class FlyerDialogComponent implements OnInit {
 
   form = this.fb.group({
     id: undefined as unknown as string,
+    name: undefined as unknown as string,
     releases: [[] as string[]],
     type: 1 as number | undefined,
     size: 1 as number | undefined,
@@ -69,6 +80,10 @@ export class FlyerDialogComponent implements OnInit {
 
   get id() {
     return this.form.controls.id;
+  }
+
+  get name() {
+    return this.form.controls.name;
   }
 
   get releases() {
@@ -186,6 +201,37 @@ export class FlyerDialogComponent implements OnInit {
     return result;
   }
 
+  private generateFlyerName(): string {
+    let name = '';
+    const ids = this.releases.value;
+
+    if (ids.length) {
+      const releases = ids.map((id) => this.releaseMap.get(id)).filter((release) => !!release);
+
+      if (releases.length) {
+        const oldestRelease = releases.reduce((oldest, current) => (current.date < oldest.date ? current : oldest));
+
+        name = `${oldestRelease.date} ${releases.map((release) => release.film.title).join(' | ')}`;
+
+        const tags = [
+          ...(oldestRelease.releaseType !== 1 && oldestRelease.releaseType !== 5
+            ? [releaseTypeMap[oldestRelease.releaseType]]
+            : []),
+          ...(oldestRelease.note ? [oldestRelease.note] : []),
+          ...(!this.size.value || this.size.value === 1 ? [] : [flyerSizeMap[this.size.value]]),
+          ...(!this.type.value || this.type.value === 1 ? [] : [flyerTypeMap[this.type.value]]),
+          ...(this.note.value ? [this.note.value] : []),
+        ];
+
+        if (tags.length) {
+          name += ` [${tags.join('] [')}]`;
+        }
+      }
+    }
+
+    return name;
+  }
+
   private generateFlyerLink(): string {
     let result = '';
     const ids = this.releases.value;
@@ -269,6 +315,7 @@ export class FlyerDialogComponent implements OnInit {
   private getFromForm(): Partial<UpdateFlyerDto> {
     return {
       id: this.id.value,
+      name: this.generateFlyerName(),
       releases: this.releases.value.sort((a, b) => {
         const releaseA = this.releaseMap.get(a);
         const releaseB = this.releaseMap.get(b);

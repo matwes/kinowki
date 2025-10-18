@@ -1,4 +1,5 @@
 export * from './alphabet';
+export * from './copy-flyer-name-button';
 export * from './distributor-badge';
 export * from './flyer-note';
 export * from './flyer-size-name';

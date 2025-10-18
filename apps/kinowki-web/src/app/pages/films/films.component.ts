@@ -53,7 +53,7 @@ import { letters } from './letters';
     TagModule,
     ToastModule,
   ],
-  providers: [ConfirmationService, DialogService, MessageService],
+  providers: [ConfirmationService, DialogService],
 })
 export class FilmsComponent {
   private readonly messageService = inject(MessageService);

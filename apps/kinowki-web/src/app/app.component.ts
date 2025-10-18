@@ -3,16 +3,19 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 import { SidebarComponent } from './layout';
 import { AuthService } from './services';
 
 @UntilDestroy()
 @Component({
-  imports: [RouterModule, SidebarComponent],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.sass',
+  providers: [MessageService],
+  imports: [RouterModule, SidebarComponent, ToastModule],
 })
 export class AppComponent implements OnInit {
   private readonly authService = inject(AuthService);

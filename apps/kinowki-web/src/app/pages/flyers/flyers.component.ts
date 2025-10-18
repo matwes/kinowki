@@ -21,13 +21,14 @@ import { BehaviorSubject, combineLatest, debounceTime, filter, map, shareReplay,
 import { FlyerDto, TagDto, flyerSizes, flyerTypes, genres, releaseTypes } from '@kinowki/shared';
 import { FlyerService, TagService } from '../../services';
 import {
+  CopyFlyerNameButtonComponent,
   JoinPipe,
-  notEmpty,
   ReleaseTypeNamePipe,
   ShowIfAdminDirective,
   ShowIfLoggedDirective,
-  UserFlyerStatusClassDirective,
   UserFlyerStatusButtonComponent,
+  UserFlyerStatusClassDirective,
+  notEmpty,
 } from '../../utils';
 import { BigFlyerComponent } from '../big-flyer';
 import { FlyerDialogComponent } from './flyer-dialog';
@@ -42,6 +43,7 @@ import { FlyerDialogComponent } from './flyer-dialog';
     ButtonModule,
     CommonModule,
     ConfirmDialogModule,
+    CopyFlyerNameButtonComponent,
     DataViewModule,
     FormsModule,
     ImageModule,
@@ -61,7 +63,7 @@ import { FlyerDialogComponent } from './flyer-dialog';
     UserFlyerStatusButtonComponent,
     UserFlyerStatusClassDirective,
   ],
-  providers: [ConfirmationService, DialogService, MessageService],
+  providers: [ConfirmationService, DialogService],
 })
 export class FlyersComponent implements AfterViewInit {
   private readonly messageService = inject(MessageService);

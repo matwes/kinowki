@@ -1,5 +1,4 @@
 <div class="card max-w-max">
-  <p-toast />
   <p-dataview
     #flyersView
     class="flex-auto overflow-hidden"
@@ -97,16 +96,15 @@
             } @empty {
             <div class="text-xs">{{ flyer.id }}</div>
             }
-            <div class="flyer-actions left" *appShowIfLogged>
-              <app-user-flyer-status-button [flyer]="flyer" (statusChanged)="flyer.userFlyer = $event" />
+            <div class="flyer-actions left">
+              <app-user-flyer-status-button
+                [flyer]="flyer"
+                (statusChanged)="flyer.userFlyer = $event"
+                *appShowIfLogged />
+              <app-copy-flyer-name-button [flyer]="flyer" />
             </div>
             <div class="flyer-actions right" *appShowIfAdmin>
-              <p-button
-                icon="pi pi-pencil"
-                class="mx-2"
-                size="small"
-                [rounded]="true"
-                (click)="openFlyerDialog(flyer)" />
+              <p-button icon="pi pi-pencil" size="small" [rounded]="true" (click)="openFlyerDialog(flyer)" />
               <p-button
                 icon="pi pi-trash"
                 severity="danger"

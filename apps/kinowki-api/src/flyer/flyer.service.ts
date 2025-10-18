@@ -3,7 +3,17 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import * as XLSX from 'xlsx';
 
-import { CreateFlyerDto, CreateUserFlyerDto, FlyerDto, UpdateFlyerDto, UserFlyerStatus } from '@kinowki/shared';
+import {
+  CreateFlyerDto,
+  CreateUserFlyerDto,
+  FlyerDto,
+  ReleaseDto,
+  UpdateFlyerDto,
+  UserFlyerStatus,
+  flyerSizeMap,
+  flyerTypeMap,
+  releaseTypeMap,
+} from '@kinowki/shared';
 import { CrudService } from '../utils';
 import { Flyer } from './flyer.schema';
 
@@ -14,6 +24,53 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
 
   constructor(@InjectModel(Flyer.name) model: Model<Flyer>) {
     super(model);
+
+    this.migrate();
+  }
+
+  async migrate() {
+    const flyers = await this.model
+      .find()
+      .populate({
+        path: 'releases',
+        populate: {
+          path: 'film',
+        },
+      })
+      .lean();
+
+    console.log(`Found ${flyers.length} flyers to process...`);
+
+    for (const flyer of flyers) {
+      if (!flyer.releases?.length) {
+        console.warn(`⚠️ Flyer ${flyer.id} has no releases, skipping`);
+        continue;
+      }
+
+      const releases = flyer.releases as unknown as ReleaseDto[];
+
+      const oldestRelease = releases.reduce((oldest, current) => (current.date < oldest.date ? current : oldest));
+
+      let name = `${oldestRelease.date} ${releases.map((release) => release.film.title).join(' | ')}`;
+
+      const tags = [
+        ...(oldestRelease.releaseType !== 1 && oldestRelease.releaseType !== 5
+          ? [releaseTypeMap[oldestRelease.releaseType]]
+          : []),
+        ...(oldestRelease.note ? [oldestRelease.note] : []),
+        ...(!flyer.size || flyer.size === 1 ? [] : [flyerSizeMap[flyer.size]]),
+        ...(!flyer.type || flyer.type === 1 ? [] : [flyerTypeMap[flyer.type]]),
+        ...(flyer.note ? [flyer.note] : []),
+      ];
+
+      if (tags.length) {
+        name += ` [${tags.join('] [')}]`;
+      }
+
+      await this.model.updateOne({ _id: flyer._id }, { $set: { name } });
+
+      console.log(`✅ Updated ${flyer.id} → ${name}`);
+    }
   }
 
   override async getAll(params?: { first: number; rows: number }, filters?: FilterQuery<Flyer>) {

@@ -14,6 +14,7 @@ import { Image, ImageModule } from 'primeng/image';
 
 import { environment } from '../../../environments/environment';
 import {
+  CopyFlyerNameButtonComponent,
   FlyerNotePipe,
   ShowIfLoggedDirective,
   UserFlyerStatusButtonComponent,
@@ -25,6 +26,7 @@ import {
   templateUrl: './flyer.component.html',
   styleUrl: './flyer.component.sass',
   imports: [
+    CopyFlyerNameButtonComponent,
     FlyerNotePipe,
     ImageModule,
     ShowIfLoggedDirective,

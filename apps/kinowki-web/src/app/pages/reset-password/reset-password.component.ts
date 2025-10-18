@@ -15,7 +15,6 @@ import { passwordsMatchValidator } from '../../utils';
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.sass',
   imports: [ReactiveFormsModule, IftaLabelModule, PasswordModule, ButtonModule, ToastModule],
-  providers: [MessageService],
 })
 export class ResetPasswordComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

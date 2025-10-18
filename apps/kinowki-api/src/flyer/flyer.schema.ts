@@ -9,6 +9,9 @@ export class Flyer {
   @Prop({ required: true, index: true, unique: true })
   id: string;
 
+  @Prop({required: true})
+  name: string;
+
   @Prop()
   type?: number;
 

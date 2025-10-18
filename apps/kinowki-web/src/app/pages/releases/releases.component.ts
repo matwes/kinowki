@@ -47,7 +47,7 @@ const LAST_YEAR = new Date().getFullYear() + 1;
     ToastModule,
     ToolbarModule,
   ],
-  providers: [ConfirmationService, DialogService, ReleaseService, MessageService],
+  providers: [ConfirmationService, DialogService, ReleaseService],
 })
 export class ReleasesComponent {
   private readonly messageService = inject(MessageService);

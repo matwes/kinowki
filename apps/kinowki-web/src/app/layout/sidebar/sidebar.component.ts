@@ -20,7 +20,7 @@ import { ForgotPasswordDialogComponent } from '../forgot-password-dialog';
 @Component({
   selector: 'app-sidebar',
   imports: [ButtonModule, CommonModule, DrawerModule, LogoComponent, MenuModule, RouterModule, ToastModule],
-  providers: [DialogService, MessageService],
+  providers: [DialogService],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.sass',
 })
