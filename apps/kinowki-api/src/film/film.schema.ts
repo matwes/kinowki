@@ -30,5 +30,5 @@ export class Film {
 export const FilmSchema = SchemaFactory.createForClass(Film)
   .index({ firstLetter: 1 }, { unique: false, collation: { locale: 'pl', strength: 1 } })
   .index({ genres: 1 })
-  .index({ imdb: 1 }, { unique: true, partialFilterExpression: { imdb: { $exists: true } } })
+  .index({ imdb: 1 }, { unique: true, partialFilterExpression: { imdb: { $type: 'number' } } })
   .index({ title: 1 }, { unique: false, collation: { locale: 'pl', strength: 1 } });
