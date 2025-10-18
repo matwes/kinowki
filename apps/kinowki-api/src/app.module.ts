@@ -13,7 +13,7 @@ import { UserFlyerModule } from './user-flyer/user-flyer.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.MONGO_URL, { dbName: 'kinowki', autoIndex: true }),
+    MongooseModule.forRoot(process.env.MONGO_URL, { dbName: 'kinowki' }),
     ScheduleModule.forRoot(),
     AuthModule,
     DistributorModule,

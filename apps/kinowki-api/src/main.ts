@@ -4,19 +4,19 @@
  */
 
 import { Logger } from '@nestjs/common';
-import { getConnectionToken } from '@nestjs/mongoose';
+// import { getConnectionToken } from '@nestjs/mongoose';
 import { NestFactory } from '@nestjs/core';
-import { Connection } from 'mongoose';
+// import { Connection } from 'mongoose';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const connection = app.get<Connection>(getConnectionToken());
+  // const connection = app.get<Connection>(getConnectionToken());
 
-  for (const [name, model] of Object.entries(connection.models)) {
-    await model.syncIndexes();
-    console.log(`Indexes synced for model: ${name}`);
-  }
+  // for (const [name, model] of Object.entries(connection.models)) {
+  //   await model.syncIndexes();
+  //   console.log(`Indexes synced for model: ${name}`);
+  // }
 
   const url = new URL(process.env.FRONTEND_URL);
   const origin = [process.env.FRONTEND_URL, `${url.protocol}//www.${url.hostname}`];
