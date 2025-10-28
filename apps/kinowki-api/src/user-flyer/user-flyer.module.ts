@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { UserFlyer, UserSchema } from './user-flyer.schema';
+import { UserModule } from '../user/user.module';
+import { UserFlyer, UserFlyerSchema } from './user-flyer.schema';
 import { UserFlyerService } from './user-flyer.service';
 import { UserFlyerController } from './user-flyer.controller';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: UserFlyer.name, schema: UserSchema }])],
+  imports: [MongooseModule.forFeature([{ name: UserFlyer.name, schema: UserFlyerSchema }]), UserModule],
   controllers: [UserFlyerController],
   providers: [UserFlyerService],
   exports: [UserFlyerService],

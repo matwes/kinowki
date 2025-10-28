@@ -19,7 +19,7 @@ export class UserFlyer {
   note?: string;
 }
 
-export const UserSchema = SchemaFactory.createForClass(UserFlyer)
+export const UserFlyerSchema = SchemaFactory.createForClass(UserFlyer)
   .index({ user: 1, flyer: 1 }, { unique: true })
   .index({ flyer: 1, status: 1 })
   .index({ user: 1, status: 1 });

@@ -5,3 +5,4 @@ export * from './flyer.service';
 export * from './release.service';
 export * from './tag.service';
 export * from './user-flyer.service';
+export * from './user.service';

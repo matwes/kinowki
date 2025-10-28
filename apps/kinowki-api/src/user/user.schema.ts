@@ -28,6 +28,15 @@ export class User {
 
   @Prop()
   resetPasswordExpires?: Date;
+
+  @Prop({ type: Number, default: 0 })
+  haveTotal: number;
+
+  @Prop({ type: Number, default: 0 })
+  tradeTotal: number;
+
+  @Prop({ type: Number, default: 0 })
+  wantTotal: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
-import { CreateUserFlyerDto, FlyerDto, UpdateUserFlyerDto, UserFlyerDto } from '@kinowki/shared';
+import { CreateUserFlyerDto, FlyerDto, UpdateUserFlyerDto, UserFlyerDto, UserFlyerStatus } from '@kinowki/shared';
 import { CrudService } from '../utils';
 import { UserFlyer } from './user-flyer.schema';
 
@@ -40,5 +40,33 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     const userFlyerMap = Object.fromEntries(userFlyers.map((userFlyer) => [userFlyer.flyer.toString(), userFlyer]));
 
     flyers.forEach((flyer) => (flyer.userFlyer = userFlyerMap[flyer._id.toString()]));
+  }
+
+  async getUserFlyerStats(userId: string) {
+    const result = await this.model.aggregate([
+      { $match: { user: new Types.ObjectId(userId) } },
+      { $group: { _id: '$status', count: { $sum: 1 } } },
+    ]);
+
+    let tradeTotal = 0;
+    let wantTotal = 0;
+    let haveTotal = 0;
+
+    for (const item of result) {
+      switch (item._id) {
+        case UserFlyerStatus.HAVE:
+          haveTotal += item.count;
+          break;
+        case UserFlyerStatus.TRADE:
+          tradeTotal = item.count;
+          haveTotal += item.count;
+          break;
+        case UserFlyerStatus.WANT:
+          wantTotal = item.count;
+          break;
+      }
+    }
+
+    return { tradeTotal, wantTotal, haveTotal };
   }
 }

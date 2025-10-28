@@ -5,6 +5,9 @@ export interface CreateUserDto {
   role: string;
   isActive: boolean;
   importUsed?: boolean;
+  haveTotal?: number;
+  tradeTotal?: number;
+  wantTotal?: number;
 }
 
 export interface UpdateUserDto extends Partial<CreateUserDto> {
