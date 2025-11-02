@@ -12,6 +12,9 @@ export class UserFlyer {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Flyer', required: true })
   flyer: Types.ObjectId;
 
+  @Prop({type: String, required: true})
+  flyerName: string;
+
   @Prop({ type: Number, enum: UserFlyerStatus, default: UserFlyerStatus.UNWANTED })
   status: UserFlyerStatus;
 

@@ -1,9 +1,23 @@
-import { Body, Controller, HttpStatus, Param, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Response } from 'express';
+import { FilterQuery, Types } from 'mongoose';
 import 'multer';
 
-import { CreateUserFlyerDto, UpdateUserFlyerDto, UserFlyerDto } from '@kinowki/shared';
-import { CrudController, JwtAuthGuard } from '../utils';
+import { CreateUserFlyerDto, FlyerDto, UpdateUserFlyerDto, UserFlyerDto, UserFlyerStatus } from '@kinowki/shared';
+import { CrudController, JwtAuthGuard, OptionalJwtAuthGuard } from '../utils';
 import { UserFlyer } from './user-flyer.schema';
 import { UserFlyerService } from './user-flyer.service';
 import { UserData } from '../auth/jwt-strategy';
@@ -21,6 +35,52 @@ export class UserFlyerController extends CrudController<
   constructor(protected userFlyerService: UserFlyerService, private readonly userService: UserService) {
     super(userFlyerService);
     this.updateUsers();
+  }
+
+  @Get()
+  @UseGuards(OptionalJwtAuthGuard)
+  override async getAll(
+    @Req() req,
+    @Res() res: Response,
+    @Query('first', new ParseIntPipe({ optional: true })) first?: number,
+    @Query('rows', new ParseIntPipe({ optional: true })) rows?: number,
+    @Query('user') userId?: string,
+    @Query('state') state?: 'have' | 'trade' | 'want'
+  ) {
+    const userData = req.user as UserData | null;
+
+    try {
+      const params = rows ? { first: first || 0, rows } : undefined;
+      const filters: FilterQuery<UserFlyer> = {
+        ...(userId ? { user: new Types.ObjectId(userId) } : {}),
+        ...(state === 'have'
+          ? { status: { $lt: UserFlyerStatus.WANT } }
+          : state === 'trade'
+          ? { status: UserFlyerStatus.TRADE }
+          : state === 'want'
+          ? { status: UserFlyerStatus.WANT }
+          : {}),
+      };
+
+      const [data, totalRecords] = await Promise.all([
+        this.userFlyerService.getAllWithReleases(params, filters),
+        this.crudService.count(filters),
+      ]);
+
+      const flyers = data.map((userFlyer) => userFlyer.flyer as unknown as FlyerDto);
+
+      if (userData?.userId && data.length) {
+        await this.userFlyerService.addUserStatus(userData.userId, flyers);
+      }
+
+      res.status(HttpStatus.OK).json({
+        message: `All ${this.name} data found successfully`,
+        data: flyers,
+        totalRecords,
+      });
+    } catch (err) {
+      res.status(err.status).json(err.response);
+    }
   }
 
   @UseGuards(JwtAuthGuard)

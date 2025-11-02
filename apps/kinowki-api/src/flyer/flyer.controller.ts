@@ -1,11 +1,14 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
   HttpStatus,
   Logger,
+  Param,
   ParseIntPipe,
   Post,
+  Put,
   Query,
   Req,
   Res,
@@ -21,7 +24,7 @@ import { CreateFlyerDto, FlyerDto, UpdateFlyerDto } from '@kinowki/shared';
 import { UserData } from '../auth/jwt-strategy';
 import { UserFlyerService } from '../user-flyer/user-flyer.service';
 import { UserService } from '../user/user.service';
-import { CrudController, getRegex, JwtAuthGuard, OptionalJwtAuthGuard } from '../utils';
+import { AdminGuard, CrudController, getRegex, JwtAuthGuard, OptionalJwtAuthGuard } from '../utils';
 import { Flyer } from './flyer.schema';
 import { FlyerService } from './flyer.service';
 
@@ -37,6 +40,23 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
     private readonly userService: UserService
   ) {
     super(flyerService);
+  }
+
+  @UseGuards(AdminGuard)
+  @Put('/:id')
+  async update(@Req() req, @Res() res: Response, @Param('id') id: string, @Body() updateDto: UpdateFlyerDto) {
+    try {
+      const existingItem = await this.crudService.update(id, updateDto);
+
+      await this.userFlyerService.updateFlyerName(existingItem._id, existingItem.name);
+
+      res.status(HttpStatus.OK).json({
+        message: `${this.name} has been successfully updated`,
+        data: existingItem,
+      });
+    } catch (err) {
+      res.status(err.status).json(err.response);
+    }
   }
 
   @UseGuards(JwtAuthGuard)

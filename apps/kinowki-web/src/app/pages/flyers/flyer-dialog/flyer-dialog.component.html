@@ -29,6 +29,15 @@
         <label for="id">ID</label>
       </p-iftalabel>
     </div>
+    <div class="field col-10">
+      <p-iftalabel>
+        <input pInputText fluid id="id" [formControl]="name" />
+        <label for="name">Name</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-2 align-self-center">
+      <p-button label="Odśwież" severity="primary" (onClick)="refresh()" />
+    </div>
     <div class="field col-6">
       <p-iftalabel>
         <p-select

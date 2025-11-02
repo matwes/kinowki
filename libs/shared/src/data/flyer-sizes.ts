@@ -72,6 +72,9 @@ export const flyerSizes = [
   { value: 71, label: '120×95 mm' },
   { value: 72, label: '90×40 mm' },
   { value: 73, label: '75×75 mm' },
+  { value: 74, label: '80×40 mm' },
+  { value: 75, label: '85×85 mm' },
+  { value: 76, label: '185×100 mm' },
 ].sort((a, b) => {
   const aStartsWithA = a.label.startsWith('A');
   const bStartsWithA = b.label.startsWith('A');

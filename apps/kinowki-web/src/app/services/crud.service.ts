@@ -37,7 +37,7 @@ export abstract class CrudService<Model, CreateDto, UpdateDto> {
     return this.httpClient.delete<{ message: string; data: Model }>(`${this.url}/${id}`);
   }
 
-  private buildQueryParams(params?: TableLazyLoadEvent): HttpParams {
+  protected buildQueryParams(params?: TableLazyLoadEvent): HttpParams {
     let httpParams = new HttpParams();
 
     if (!params) {

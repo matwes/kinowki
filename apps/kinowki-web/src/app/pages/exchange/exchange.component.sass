@@ -1,7 +1,66 @@
-:host ::ng-deep .p-datatable-tbody > tr.p-datatable-row-selected
-  background: var(--p-surface-800)
+:host ::ng-deep
+  .p-dataview
+    height: 100%
+    display: flex
+    flex-direction: column
+
+    .p-dataview-content
+      flex: auto
+      overflow-y: auto
+      position: relative
+
+      .p-dataview-emptymessage
+        display: flex
+        align-items: center
+        justify-content: center
+        padding: 2rem
+        position: absolute
+        bottom: 0
+        top: 0
+        left: 0
+        right: 0
+
+    .p-paginator-bottom
+      flex: none
+
+  .p-togglebutton-content
+    min-width: 3.25rem
+    padding: 0.125rem 0.5rem
 
 .email
   color: var(--p-text-muted-color)
   text-transform: uppercase
   font-size: 0.75rem
+
+.flyers-grid
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
+  padding: 1rem
+  padding-bottom: 0rem
+  column-gap: 0.5rem
+  row-gap: 0.5rem
+
+.flyer-wrapper
+  border: 1px solid var(--p-surface-800)
+  border-radius: 0.5rem
+  padding-bottom: 0.25rem
+
+.film-title
+  display: -webkit-box
+  -webkit-line-clamp: 2
+  -webkit-box-orient: vertical
+  -webkit-align-content: center
+  overflow: hidden
+  text-overflow: ellipsis
+  height: 1.75rem
+  width: 10.75rem
+  text-align: center
+  font-size: 0.75rem
+  color: var(--p-text-muted-color)
+  margin-bottom: 0.5rem
+  background: var(--p-surface-800)
+  border-radius: 0.25rem
+  border-bottom-left-radius: 0
+  border-bottom-right-radius: 0
+  padding: 0 0.125rem

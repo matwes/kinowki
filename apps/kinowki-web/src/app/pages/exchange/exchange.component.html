@@ -4,22 +4,18 @@
     [style.width.%]="40"
     dataKey="_id"
     stateStorage="local"
-    stateKey="users"
-    selectionMode="single"
     [value]="(value$ | async) ?? []"
     scrollHeight="flex"
     [scrollable]="true"
     [rowHover]="true"
     [lazy]="true"
-    [(selection)]="selection"
-    (selectionChange)="onUserSelected($event)"
     (onLazyLoad)="lazyLoad($event)">
     <ng-template #header>
       <tr>
         <th [style.width.%]="100">Użytkownik</th>
-        <th [style.minWidth.rem]="8" class="text-right">W kolekcji</th>
-        <th [style.minWidth.rem]="8" class="text-right">Na wymianę</th>
-        <th [style.minWidth.rem]="8" class="text-right">Poszukiwane</th>
+        <th [style.minWidth.rem]="8" class="text-center">W kolekcji</th>
+        <th [style.minWidth.rem]="8" class="text-center">Na wymianę</th>
+        <th [style.minWidth.rem]="8" class="text-center">Poszukiwane</th>
       </tr>
     </ng-template>
     <ng-template #body let-user>
@@ -28,11 +24,59 @@
           <div>{{ user.name }}</div>
           <div class="email">{{ user.email }}</div>
         </td>
-        <td class="text-right">{{ user.haveTotal }}</td>
-        <td class="text-right">{{ user.tradeTotal }}</td>
-        <td class="text-right">{{ user.wantTotal }}</td>
+        <td class="text-center">
+          <p-selectbutton
+            [options]="[{ label: user.haveTotal + '', value: { user, state: 'have' } }]"
+            [formControl]="state"
+            aria-labelledby="basic"
+            [unselectable]="true" />
+        </td>
+        <td class="text-center">
+          <p-selectbutton
+            [options]="[{ label: user.tradeTotal + '', value: { user, state: 'trade' } }]"
+            [formControl]="state"
+            aria-labelledby="basic"
+            [unselectable]="true" />
+        </td>
+        <td class="text-center">
+          <p-selectbutton
+            [options]="[{ label: user.wantTotal + '', value: { user, state: 'want' } }]"
+            [formControl]="state"
+            aria-labelledby="basic"
+            [unselectable]="true" />
+        </td>
       </tr>
     </ng-template>
   </p-table>
   <div class="flex-none" [style.width.%]="2"></div>
+  <p-dataview
+    #flyersView
+    class="flex-auto overflow-hidden"
+    dataKey="_id"
+    stateStorage="local"
+    stateKey="flyers"
+    emptyMessage="Nie znaleziono pasujących ulotek"
+    [value]="(flyers$ | async) ?? []"
+    [totalRecords]="(flyersTotalRecords$ | async) ?? 0"
+    [rows]="20"
+    scrollHeight="flex"
+    [paginator]="true"
+    [lazy]="true"
+    currentPageReportTemplate="{first}-{last} z {totalRecords}"
+    [showCurrentPageReport]="true"
+    (onLazyLoad)="lazyLoadFlyers($event)">
+    <ng-template #header>
+      <div class="w-full text-center font-bold">{{ flyersTitle() }}</div>
+    </ng-template>
+    <ng-template #list let-flyers>
+      <div class="flyers-grid">
+        @for(flyer of flyers; track $index) {
+        <div class="flyer-wrapper">
+          <div class="film-title">{{ flyer.releases | join : ' • ' : 'film.title' }}</div>
+          <app-flyer [flyer]="flyer" />
+        </div>
+        }
+      </div>
+    </ng-template>
+  </p-dataview>
 </div>

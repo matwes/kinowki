@@ -76,7 +76,7 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
     const userFlyers: CreateUserFlyerDto[] = [];
 
     const allFlyers = await this.model.find({}, '_id id').lean();
-    const flyerMap = new Map(allFlyers.map((flyer) => [flyer.id, flyer._id.toString()]));
+    const flyerMap = new Map(allFlyers.map((flyer) => [flyer.id, { _id: flyer._id.toString(), name: flyer.name }]));
 
     for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
       const row = rows[rowIndex];
@@ -102,9 +102,9 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
         }
         const note = noteParts.join('\n');
 
-        const flyer_id = flyerMap.get(flyerId);
-        if (flyer_id) {
-          userFlyers.push({ flyer: flyer_id, status, note });
+        const flyer = flyerMap.get(flyerId);
+        if (flyer) {
+          userFlyers.push({ flyer: flyer._id, flyerName: flyer.name, status, note });
         } else {
           console.error('Flyer missing!', flyerId);
         }

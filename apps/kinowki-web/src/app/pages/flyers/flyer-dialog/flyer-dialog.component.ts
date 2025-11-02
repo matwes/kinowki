@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -26,7 +25,6 @@ import {
 } from '@kinowki/shared';
 import { ReleaseService } from '../../../services';
 
-@UntilDestroy()
 @Component({
   selector: 'app-flyer-dialog',
   templateUrl: './flyer-dialog.component.html',
@@ -119,6 +117,7 @@ export class FlyerDialogComponent implements OnInit {
 
       if (flyer) {
         this.id.setValue(flyer.id);
+        this.name.setValue(flyer.name);
         this.releases.setValue(flyer.releases.map((release) => release._id));
         this.type.setValue(flyer.type);
         this.size.setValue(flyer.size);
@@ -156,8 +155,11 @@ export class FlyerDialogComponent implements OnInit {
         return Array.from(uniqueReleasesMap.values());
       }, [] as ReleaseDto[])
     );
+  }
 
-    this.releases.valueChanges.pipe(untilDestroyed(this)).subscribe(() => this.id.setValue(this.generateFlyerId()));
+  refresh() {
+    this.id.setValue(this.generateFlyerId());
+    this.name.setValue(this.generateFlyerName());
   }
 
   addImage() {
@@ -188,12 +190,34 @@ export class FlyerDialogComponent implements OnInit {
       if (releases.length) {
         if (releases.length === 1) {
           const release = releases[0];
-          result = `${release.date}${release.film.year}${release.film.title}${release.film.originalTitle ?? ''}`;
+          result = `${release.date}${release.film.year}${release.film.title}`;
+
+          const tags = [
+            ...(!this.size.value || this.size.value === 1 ? [] : [flyerSizeMap[this.size.value]]),
+            ...(!this.type.value || this.type.value === 1 ? [] : [flyerTypeMap[this.type.value]]),
+            ...(this.note.value ? [this.note.value] : []),
+          ];
+
+          if (tags.length) {
+            result += ` [${tags.join('] [')}]`;
+          }
+
+          result += `${release.film.originalTitle ?? ''}`;
         } else {
           const oldestRelease = releases.reduce((oldest, current) => (current.date < oldest.date ? current : oldest));
           result = `${oldestRelease.date}${oldestRelease.film.year}${releases
             .map((release) => release.film.title)
             .join(' | ')}`;
+
+          const tags = [
+            ...(!this.size.value || this.size.value === 1 ? [] : [flyerSizeMap[this.size.value]]),
+            ...(!this.type.value || this.type.value === 1 ? [] : [flyerTypeMap[this.type.value]]),
+            ...(this.note.value ? [this.note.value] : []),
+          ];
+
+          if (tags.length) {
+            result += ` [${tags.join('] [')}]`;
+          }
         }
       }
     }
@@ -315,7 +339,7 @@ export class FlyerDialogComponent implements OnInit {
   private getFromForm(): Partial<UpdateFlyerDto> {
     return {
       id: this.id.value,
-      name: this.generateFlyerName(),
+      name: this.name.value,
       releases: this.releases.value.sort((a, b) => {
         const releaseA = this.releaseMap.get(a);
         const releaseB = this.releaseMap.get(b);

@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 
 import { CreateUserFlyerDto, FlyerDto, UpdateUserFlyerDto, UserFlyerDto, UserFlyerStatus } from '@kinowki/shared';
 import { CrudService } from '../utils';
@@ -13,6 +13,32 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
 
   constructor(@InjectModel(UserFlyer.name) model: Model<UserFlyer>) {
     super(model);
+
+    this.migrateUserFlyersFlyerName();
+  }
+
+  updateFlyerName(flyer: string | Types.ObjectId, flyerName: string) {
+    return this.model.updateMany({ flyer }, { $set: { flyerName } });
+  }
+
+  async getAllWithReleases(params?: { first: number; rows: number }, filters?: FilterQuery<UserFlyer>) {
+    let query = this.model
+      .find(filters)
+      .populate({
+        path: 'flyer',
+        populate: [{ path: 'tags' }, { path: 'releases', populate: [{ path: 'film' }] }],
+      })
+      .sort({ flyerName: -1 });
+
+    if (params) {
+      query = query.limit(params.rows).skip(params.first);
+    }
+
+    const itemData = await query.collation({ locale: 'pl', strength: 1 }).lean<UserFlyerDto[]>().exec();
+    if (!itemData) {
+      throw new NotFoundException(`${this.name} data not found!`);
+    }
+    return itemData;
   }
 
   async importUserStatuses(userFlyers: UpdateUserFlyerDto[]) {
@@ -68,5 +94,28 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     }
 
     return { tradeTotal, wantTotal, haveTotal };
+  }
+
+  async migrateUserFlyersFlyerName() {
+    console.log('Starting migration: setting flyerName for UserFlyers...');
+
+    const userFlyers = await this.model
+      .find({ flyerName: { $exists: false } })
+      .populate('flyer', 'name')
+      .lean();
+
+    console.log(`Found ${userFlyers.length} UserFlyers to update.`);
+
+    let updated = 0;
+    for (const userFlyer of userFlyers) {
+      const flyer = userFlyer.flyer as unknown as FlyerDto | undefined;
+
+      if (flyer?.name) {
+        await this.model.updateOne({ _id: userFlyer._id }, { $set: { flyerName: flyer.name } });
+        updated++;
+      }
+    }
+
+    console.log(`✅ Migration finished. Updated ${updated} records.`);
   }
 }

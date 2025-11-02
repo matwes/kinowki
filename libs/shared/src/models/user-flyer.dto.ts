@@ -8,6 +8,7 @@ export enum UserFlyerStatus {
 export interface CreateUserFlyerDto {
   user?: string;
   flyer: string;
+  flyerName: string;
   status: UserFlyerStatus;
   note?: string;
 }
