@@ -1,15 +1,17 @@
 <div class="card">
   <div class="alphabet-header">
-    <p-selectbutton id="select-button-letter" [options]="letters" [formControl]="selectButtonLetter" />
+    <p-selectbutton
+      id="select-button-letter"
+      [options]="letters"
+      [ngModel]="filmLetterSearch"
+      (ngModelChange)="filter('letter', $event)" />
   </div>
   <p-table
     class="flex-auto overflow-hidden"
     dataKey="_id"
-    stateStorage="local"
-    stateKey="films"
     [value]="(value$ | async) ?? []"
     [totalRecords]="(totalRecords$ | async) ?? 0"
-    [rows]="10"
+    [rows]="20"
     scrollHeight="flex"
     [scrollable]="true"
     [rowHover]="true"
@@ -27,36 +29,29 @@
               id="select-letter"
               styleClass="w-6rem"
               [showClear]="true"
-              [formControl]="selectLetter"
+              [ngModel]="filmLetterSearch"
+              (ngModelChange)="filter('letter', $event)"
               [options]="letters"
               scrollHeight="30rem"
               placeholder="Lit." />
-            <p-columnFilter type="text" field="title" [showMenu]="false" [showClearButton]="false" matchMode="contains">
-              <ng-template #filter let-value let-filter="filterCallback">
-                <input
-                  pInputText
-                  styleClass="w-20rem"
-                  type="text"
-                  placeholder="Szukaj wg tytułu..."
-                  [ngModel]="value"
-                  (ngModelChange)="filter($event)" />
-              </ng-template>
-            </p-columnFilter>
+            <input
+              pInputText
+              styleClass="w-20rem"
+              type="text"
+              placeholder="Szukaj wg tytułu..."
+              [ngModel]="filmTitleSearch"
+              (ngModelChange)="filter('title', $event)" />
           </div>
         </th>
         <th [style.width]="'15%'">
           <div class="flex align-items-center gap-3">
-            <p-columnFilter field="genres" [showMenu]="false" [showClearButton]="false">
-              <ng-template #filter let-value let-filter="filterCallback">
-                <p-multiselect
-                  styleClass="w-20rem"
-                  [ngModel]="value"
-                  [options]="genres"
-                  placeholder="Szukaj wg gatunku..."
-                  [showClear]="false"
-                  (onChange)="filter($event.value)" />
-              </ng-template>
-            </p-columnFilter>
+            <p-multiselect
+              styleClass="w-20rem"
+              [options]="genres"
+              placeholder="Szukaj wg gatunku..."
+              [showClear]="true"
+              [ngModel]="filmGenreSearch"
+              (onChange)="filter('genres', $event.value)" (onClear)="onGenreClear()" />
           </div>
         </th>
         <th [style.width]="'35%'">Premiery</th>

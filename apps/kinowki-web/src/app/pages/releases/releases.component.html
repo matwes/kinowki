@@ -1,28 +1,33 @@
 <div class="card">
-  <form [formGroup]="form" class="releases-header">
+  <div class="releases-header">
+    <p-button icon="pi pi-angle-left" class="mr-2" [text]="true" severity="secondary" (onClick)="prevMonth()" />
     <h1 class="flex align-items-center gap-2 m-0">
       <p-select
         id="release-year"
         class="border-none shadow-none"
         [options]="options.years"
-        [formControl]="year"
+        [ngModel]="yearSearch"
+        (ngModelChange)="filter('year', $event)"
         scrollHeight="30rem"
         appendTo="body" />
     </h1>
     <p-selectbutton
       id="select-button-month"
       [options]="options.months"
-      [formControl]="selectButtonMonth"
+      [ngModel]="monthSearch"
+      (ngModelChange)="filter('month', $event)"
       [required]="true"
       [unselectable]="true" />
     <p-select
       id="select-month"
       styleClass="w-10rem"
-      [formControl]="selectMonth"
+      [ngModel]="monthSearch"
+      (ngModelChange)="filter('month', $event)"
       [options]="options.months"
       scrollHeight="30rem"
       [required]="true" />
-  </form>
+    <p-button icon="pi pi-angle-right" class="ml-2" [text]="true" severity="secondary" (onClick)="nextMonth()" />
+  </div>
   <p-table
     class="flex-auto overflow-hidden"
     dataKey="_id"

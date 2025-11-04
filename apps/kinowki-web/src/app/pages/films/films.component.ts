@@ -1,6 +1,7 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConfirmationService, FilterMetadata, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -13,7 +14,20 @@ import { SelectModule } from 'primeng/select';
 import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { debounceTime, filter, forkJoin, map, of, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Subject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  forkJoin,
+  map,
+  of,
+  shareReplay,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 import {
   CreateReleaseDto,
@@ -55,41 +69,33 @@ import { letters } from './letters';
   ],
   providers: [ConfirmationService, DialogService],
 })
-export class FilmsComponent {
+export class FilmsComponent implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly dialogService = inject(DialogService);
   private readonly filmService = inject(FilmService);
   private readonly distributorService = inject(DistributorService);
   private readonly releaseService = inject(ReleaseService);
-  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
-  @ViewChild(Table, { static: true }) set primengTable(table: Table) {
-    setTimeout(() => this.subscribeToSearchForm(table));
-  }
+  @ViewChild(Table, { static: true }) table!: Table;
 
   genres = genres;
+  letters = ['#', ...letters];
   event?: TableLazyLoadEvent;
+
   lazyEvent = new Subject<TableLazyLoadEvent>();
+  filters$ = new BehaviorSubject<{ [s: string]: FilterMetadata | FilterMetadata[] | undefined } | undefined>({});
 
-  readonly letters = ['#', ...letters];
+  filmLetterSearch: string | undefined;
+  filmTitleSearch: string | undefined;
+  filmGenreSearch: number[] | undefined;
 
-  searchForm = this.fb.group({
-    selectButtonLetter: 'A' as string | null,
-    selectLetter: 'A' as string | null,
-  });
-
-  get selectButtonLetter() {
-    return this.searchForm.controls.selectButtonLetter;
-  }
-
-  get selectLetter() {
-    return this.searchForm.controls.selectLetter;
-  }
-
-  data$ = this.lazyEvent.pipe(
+  data$ = combineLatest([this.lazyEvent, this.filters$]).pipe(
     debounceTime(500),
-    switchMap((lazyEvent) => this.filmService.getAll(lazyEvent)),
+    map(([lazyEvent, filters]) => ({ ...lazyEvent, filters })),
+    switchMap((event) => this.filmService.getAll(event)),
     shareReplay(1)
   );
 
@@ -97,13 +103,116 @@ export class FilmsComponent {
   totalRecords$ = this.data$.pipe(map((res) => res.totalRecords));
   private distributors?: DistributorDto[];
 
+  ngOnInit(): void {
+    this.route.queryParams
+      .pipe(
+        untilDestroyed(this),
+        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
+      )
+      .subscribe((params) => {
+        const filters: { [s: string]: FilterMetadata | FilterMetadata[] | undefined } = {};
+
+        const letter = params['l'] as string | undefined;
+        const title = params['tytul'] as string | undefined;
+        const genres = params['gatunek'] as string | undefined;
+        const first = +params['p'] || 0;
+
+        if (letter) {
+          filters['letter'] = { value: letter[0] };
+          this.filmLetterSearch = letter[0];
+        } else {
+          this.filmLetterSearch = undefined;
+        }
+
+        if (title) {
+          filters['title'] = { value: title };
+          this.filmTitleSearch = title;
+        } else {
+          this.filmTitleSearch = undefined;
+        }
+
+        if (genres) {
+          const value = genres
+            .split(',')
+            .map((genre) => Number(genre))
+            .filter((genre) => !isNaN(genre) && this.genres.some((g) => g.value === genre));
+
+          if (value.length) {
+            filters['genres'] = { value };
+            this.filmGenreSearch = value;
+          } else {
+            this.filmGenreSearch = undefined;
+          }
+        } else {
+          this.filmGenreSearch = undefined;
+        }
+
+        this.filters$.next(filters);
+
+        this.table.first = first;
+        this.lazyLoad({ first, rows: 20 });
+      });
+  }
+
   lazyLoad(event?: TableLazyLoadEvent) {
     if (event) {
       this.event = event;
     }
     if (this.event) {
+      this.updateUrl();
       this.lazyEvent.next(this.event);
     }
+  }
+
+  onGenreClear() {
+    this.filmGenreSearch = undefined;
+    this.filter('genres', []);
+  }
+
+  filter(field: string, value: string | number | (string | number)[]) {
+    const filters = { ...(this.filters$.value || {}) };
+    if (value === undefined || value === null || value === '' || (Array.isArray(value) && !value.length)) {
+      delete filters[field];
+    } else {
+      filters[field] = { value };
+    }
+    this.filters$.next(filters);
+
+    if (this.event) {
+      this.event.first = 0;
+      this.table.first = 0;
+      this.updateUrl();
+      this.lazyEvent.next(this.event);
+    }
+  }
+
+  private updateUrl() {
+    const filters = this.filters$.value;
+    const params: Record<string, string | number> = {
+      p: this.event?.first || 0,
+    };
+
+    if (filters) {
+      const letter = filters['letter'];
+      const title = filters['title'];
+      const genres = filters['genres'];
+
+      if (letter && !Array.isArray(letter) && letter.value) {
+        params['l'] = letter.value;
+      }
+      if (title && !Array.isArray(title) && title.value) {
+        params['tytul'] = title.value;
+      }
+      if (genres && !Array.isArray(genres) && genres.value) {
+        params['gatunek'] = genres.value.join(',');
+      }
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: params,
+      queryParamsHandling: '',
+    });
   }
 
   openFilmDialog(item?: FilmDto) {
@@ -170,26 +279,6 @@ export class FilmsComponent {
             });
           });
       },
-    });
-  }
-
-  private subscribeToSearchForm(table: Table) {
-    const filters = table.filters;
-    if (filters['letter']) {
-      this.selectButtonLetter.setValue((filters['letter'] as FilterMetadata).value);
-      this.selectLetter.setValue((filters['letter'] as FilterMetadata).value);
-    } else {
-      table.filter(this.selectLetter.value, 'letter', '');
-    }
-
-    this.selectLetter.valueChanges.pipe(untilDestroyed(this)).subscribe((search) => {
-      table.filter(search, 'letter', '');
-      this.selectButtonLetter.setValue(search, { emitEvent: false });
-    });
-
-    this.selectButtonLetter.valueChanges.pipe(untilDestroyed(this)).subscribe((search) => {
-      table.filter(search, 'letter', '');
-      this.selectLetter.setValue(search, { emitEvent: false });
     });
   }
 

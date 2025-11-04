@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConfirmationService, FilterMetadata, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -16,7 +17,18 @@ import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
-import { BehaviorSubject, combineLatest, debounceTime, filter, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Subject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  shareReplay,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 import { FlyerDto, TagDto, flyerSizes, flyerTypes, genres, releaseTypes } from '@kinowki/shared';
 import { FlyerService, TagService } from '../../services';
@@ -65,12 +77,14 @@ import { FlyerDialogComponent } from './flyer-dialog';
   ],
   providers: [ConfirmationService, DialogService],
 })
-export class FlyersComponent implements AfterViewInit {
+export class FlyersComponent implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly dialogService = inject(DialogService);
   private readonly flyerService = inject(FlyerService);
   private readonly tagService = inject(TagService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   @ViewChild('flyersView', { static: true }) flyersView!: DataView;
 
@@ -79,18 +93,13 @@ export class FlyersComponent implements AfterViewInit {
   flyerSizes = flyerSizes;
   releaseTypes = releaseTypes;
   event?: TableLazyLoadEvent;
-  restoredEvent?: TableLazyLoadEvent;
-  lazyEvent = new Subject<TableLazyLoadEvent>();
 
+  lazyEvent = new Subject<TableLazyLoadEvent>();
   filters$ = new BehaviorSubject<{ [s: string]: FilterMetadata | FilterMetadata[] | undefined } | undefined>({});
 
   data$ = combineLatest([this.lazyEvent, this.filters$]).pipe(
     debounceTime(500),
-    map(([lazyEvent, filters]) => {
-      const event = { ...lazyEvent, filters };
-      localStorage.setItem('flyer-table', JSON.stringify(event));
-      return event;
-    }),
+    map(([lazyEvent, filters]) => ({ ...lazyEvent, filters })),
     switchMap((event) => this.flyerService.getAll(event)),
     shareReplay(1)
   );
@@ -99,33 +108,80 @@ export class FlyersComponent implements AfterViewInit {
   totalRecords$ = this.data$.pipe(map((res) => res.totalRecords));
   tags: TagDto[] = [];
 
-  flyerSizeSearch = '';
-  flyerTypesSearch = '';
-  flyerNameSearch = '';
-  flyerTagSearch = '';
+  flyerSizeSearch: number | undefined;
+  flyerTypesSearch: number | undefined;
+  flyerNameSearch: string | undefined;
+  flyerTagSearch: string | undefined;
 
   constructor() {
-    this.tagService.getAll().subscribe((res) => (this.tags = res.data));
-    const event = localStorage.getItem('flyer-table');
-    if (event) {
-      this.restoredEvent = JSON.parse(event);
-    }
+    this.tagService
+      .getAll()
+      .pipe(untilDestroyed(this))
+      .subscribe((res) => (this.tags = res.data));
   }
 
-  ngAfterViewInit(): void {
-    if (this.restoredEvent) {
-      const filters = this.restoredEvent.filters;
-      this.lazyLoad(this.restoredEvent);
-      this.filters$.next(filters);
+  ngOnInit(): void {
+    this.route.queryParams
+      .pipe(
+        untilDestroyed(this),
+        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
+      )
+      .subscribe((params) => {
+        const filters: { [s: string]: FilterMetadata | FilterMetadata[] | undefined } = {};
 
-      this.flyerSizeSearch = (filters?.['flyerSize'] as FilterMetadata | undefined)?.value || undefined;
-      this.flyerTypesSearch = (filters?.['flyerType'] as FilterMetadata | undefined)?.value || undefined;
-      this.flyerNameSearch = (filters?.['id'] as FilterMetadata | undefined)?.value || undefined;
-      this.flyerTagSearch = (filters?.['flyerTags'] as FilterMetadata | undefined)?.value || undefined;
+        const flyerSize = params['rozmiar'];
+        const flyerType = params['typ'];
+        const id = params['nazwa'];
+        const flyerTag = params['tag'];
+        const first = +params['p'] || 0;
 
-      this.flyersView.first = this.restoredEvent.first;
-      this.flyersView.rows = this.restoredEvent.rows ?? 20;
-    }
+        if (flyerSize) {
+          const flyerSizeNumber = Number(flyerSize);
+          if (flyerSizes.some((size) => size.value === flyerSizeNumber)) {
+            filters['flyerSize'] = { value: flyerSizeNumber };
+            this.flyerSizeSearch = flyerSizeNumber;
+          } else {
+            this.flyerSizeSearch = undefined;
+          }
+        } else {
+          this.flyerSizeSearch = undefined;
+        }
+
+        if (flyerType) {
+          const flyerTypeNumber = Number(flyerType);
+          if (flyerTypes.some((type) => type.value === flyerTypeNumber)) {
+            filters['flyerType'] = { value: flyerType };
+            this.flyerTypesSearch = flyerTypeNumber;
+          } else {
+            this.flyerTypesSearch = undefined;
+          }
+        } else {
+          this.flyerTypesSearch = undefined;
+        }
+
+        if (id) {
+          filters['id'] = { value: id };
+          this.flyerNameSearch = id;
+        } else {
+          this.flyerNameSearch = undefined;
+        }
+
+        if (flyerTag) {
+          if (this.tags.some((tag) => tag._id === flyerTag)) {
+            filters['flyerTags'] = { value: flyerTag };
+            this.flyerTagSearch = flyerTag;
+          } else {
+            this.flyerTagSearch = undefined;
+          }
+        } else {
+          this.flyerTagSearch = undefined;
+        }
+
+        this.filters$.next(filters);
+
+        this.flyersView.first = first;
+        this.lazyLoad({ first, rows: 10 });
+      });
   }
 
   lazyLoad(event?: TableLazyLoadEvent) {
@@ -133,15 +189,13 @@ export class FlyersComponent implements AfterViewInit {
       this.event = event;
     }
     if (this.event) {
+      this.updateUrl();
       this.lazyEvent.next(this.event);
     }
   }
 
   filter(field: string, value: string | number) {
-    let filters = this.filters$.value;
-    if (!filters) {
-      filters = {};
-    }
+    const filters = { ...(this.filters$.value || {}) };
     if (value === undefined || value === null || value === '') {
       delete filters[field];
     } else {
@@ -151,9 +205,43 @@ export class FlyersComponent implements AfterViewInit {
 
     if (this.event) {
       this.event.first = 0;
-      this.lazyEvent.next(this.event);
       this.flyersView.first = 0;
+      this.updateUrl();
+      this.lazyEvent.next(this.event);
     }
+  }
+
+  private updateUrl() {
+    const filters = this.filters$.value;
+    const params: Record<string, string | number> = {
+      p: this.event?.first || 0,
+    };
+
+    if (filters) {
+      const flyerType = filters['flyerType'];
+      const flyerSize = filters['flyerSize'];
+      const id = filters['id'];
+      const flyerTags = filters['flyerTags'];
+
+      if (flyerType && !Array.isArray(flyerType) && flyerType.value) {
+        params['typ'] = flyerType.value;
+      }
+      if (flyerSize && !Array.isArray(flyerSize) && flyerSize.value) {
+        params['rozmiar'] = flyerSize.value;
+      }
+      if (id && !Array.isArray(id) && id.value) {
+        params['nazwa'] = id.value;
+      }
+      if (flyerTags && !Array.isArray(flyerTags) && flyerTags.value) {
+        params['tag'] = flyerTags.value;
+      }
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: params,
+      queryParamsHandling: '',
+    });
   }
 
   openFlyerDialog(item?: FlyerDto) {

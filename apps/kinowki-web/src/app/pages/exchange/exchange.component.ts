@@ -1,13 +1,25 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, signal, ViewChild } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { DataView, DataViewModule } from 'primeng/dataview';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { combineLatest, debounceTime, filter, map, of, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import {
+  EMPTY,
+  Subject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  of,
+  shareReplay,
+  switchMap,
+  tap,
+} from 'rxjs';
 
-import { FlyerDto, UserDto } from '@kinowki/shared';
+import { FlyerDto } from '@kinowki/shared';
 import { UserFlyerService, UserService } from '../../services';
 import { JoinPipe } from '../../utils';
 import { FlyerComponent } from '../flyer';
@@ -19,14 +31,16 @@ import { FlyerComponent } from '../flyer';
   styleUrl: './exchange.component.sass',
   imports: [AsyncPipe, DataViewModule, FlyerComponent, JoinPipe, ReactiveFormsModule, SelectButtonModule, TableModule],
 })
-export class ExchangeComponent {
+export class ExchangeComponent implements AfterViewInit {
   private readonly userService = inject(UserService);
   private readonly userFlyerService = inject(UserFlyerService);
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   @ViewChild('flyersView', { static: true }) flyersDataView!: DataView;
 
-  state = this.fb.control(undefined as undefined | { user: UserDto; state: 'have' | 'trade' | 'want' });
+  state = this.fb.control(undefined as undefined | { user: string; state: 'have' | 'trade' | 'want' });
 
   event?: TableLazyLoadEvent;
   lazyEvent = new Subject<TableLazyLoadEvent>();
@@ -49,24 +63,31 @@ export class ExchangeComponent {
   private flyersData$ = combineLatest([
     this.flyersLazyEvent,
     this.state.valueChanges.pipe(
-      tap((value) => {
-        this.state.setValue(value, { emitEvent: false });
-        if (value) {
-          if (value.state === 'have') {
-            this.flyersTitle.set(`${value.user.name} - ulotki w kolekcji`);
-          } else if (value.state === 'trade') {
-            this.flyersTitle.set(`${value.user.name} - ulotki na wymianę`);
-          } else if (value.state === 'want') {
-            this.flyersTitle.set(`${value.user.name} - ulotki poszukiwane`);
-          }
-        } else {
-          this.flyersTitle.set('Wybierz kolekcję do przeglądania klikając na przycisk z liczbą z listy użytkowników');
-        }
-
+      tap((value) => this.state.setValue(value, { emitEvent: false })),
+      tap(() => {
         this.flyersDataView.first = 0;
         this.flyersDataView.ngOnInit();
+        this.updateUrl();
       }),
-      filter((value) => !!value)
+      switchMap((value) => {
+        if (!value) {
+          this.flyersTitle.set('Wybierz kolekcję do przeglądania klikając na przycisk z liczbą z listy użytkowników');
+          return EMPTY;
+        }
+
+        return this.userService.get(value.user).pipe(
+          map((res) => res.data),
+          tap((user) => {
+            const titles: Record<string, string> = {
+              have: `${user.name} - ulotki w kolekcji`,
+              trade: `${user.name} - ulotki na wymianę`,
+              want: `${user.name} - ulotki poszukiwane`,
+            };
+            this.flyersTitle.set(titles[value.state] ?? user.name);
+          }),
+          map(() => value)
+        );
+      })
     ),
   ]).pipe(
     debounceTime(500),
@@ -78,13 +99,33 @@ export class ExchangeComponent {
       if (!lazyEvent.filters) {
         lazyEvent.filters = {};
       }
-      lazyEvent.filters['user'] = { value: res.user._id };
+      lazyEvent.filters['user'] = { value: res.user };
       lazyEvent.filters['state'] = { value: res.state };
       return this.userFlyerService.getFlyers(lazyEvent);
     })
   );
   flyers$ = this.flyersData$.pipe(map((res) => res.data));
   flyersTotalRecords$ = this.flyersData$.pipe(map((res) => res.totalRecords));
+
+  ngAfterViewInit(): void {
+    this.route.queryParams
+      .pipe(
+        untilDestroyed(this),
+        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
+      )
+      .subscribe((params) => {
+        const first = +params['p'] || 0;
+
+        if (params['uzytkownik'] && params['status'] && ['have', 'trade', 'want'].includes(params['status'])) {
+          this.state.setValue({ user: params['uzytkownik'], state: params['status'] });
+        } else {
+          this.state.setValue(undefined);
+        }
+
+        this.flyersDataView.first = first;
+        this.lazyLoadFlyers({ first, rows: 20 });
+      });
+  }
 
   lazyLoad(event?: TableLazyLoadEvent) {
     if (event) {
@@ -100,7 +141,27 @@ export class ExchangeComponent {
       this.flyersEvent = flyersEvent;
     }
     if (this.flyersEvent) {
+      this.updateUrl();
       this.flyersLazyEvent.next(this.flyersEvent);
     }
+  }
+
+  private updateUrl() {
+    const filters = this.state.value;
+
+    const params: Record<string, string | number> = {
+      p: this.flyersEvent?.first || 0,
+    };
+
+    if (filters) {
+      params['uzytkownik'] = filters.user;
+      params['status'] = filters.state;
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: params,
+      queryParamsHandling: '',
+    });
   }
 }

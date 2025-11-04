@@ -26,21 +26,21 @@
         </td>
         <td class="text-center">
           <p-selectbutton
-            [options]="[{ label: user.haveTotal + '', value: { user, state: 'have' } }]"
+            [options]="[{ label: user.haveTotal + '', value: { user: user._id, state: 'have' } }]"
             [formControl]="state"
             aria-labelledby="basic"
             [unselectable]="true" />
         </td>
         <td class="text-center">
           <p-selectbutton
-            [options]="[{ label: user.tradeTotal + '', value: { user, state: 'trade' } }]"
+            [options]="[{ label: user.tradeTotal + '', value: { user: user._id, state: 'trade' } }]"
             [formControl]="state"
             aria-labelledby="basic"
             [unselectable]="true" />
         </td>
         <td class="text-center">
           <p-selectbutton
-            [options]="[{ label: user.wantTotal + '', value: { user, state: 'want' } }]"
+            [options]="[{ label: user.wantTotal + '', value: { user: user._id, state: 'want' } }]"
             [formControl]="state"
             aria-labelledby="basic"
             [unselectable]="true" />
@@ -53,8 +53,6 @@
     #flyersView
     class="flex-auto overflow-hidden"
     dataKey="_id"
-    stateStorage="local"
-    stateKey="flyers"
     emptyMessage="Nie znaleziono pasujących ulotek"
     [value]="(flyers$ | async) ?? []"
     [totalRecords]="(flyersTotalRecords$ | async) ?? 0"
@@ -72,7 +70,10 @@
       <div class="flyers-grid">
         @for(flyer of flyers; track $index) {
         <div class="flyer-wrapper">
-          <div class="film-title">{{ flyer.releases | join : ' • ' : 'film.title' }}</div>
+          <div class="film-title">
+            <div class="title">{{ flyer.releases | join : ' • ' : 'film.title' }}</div>
+            <div class="date">{{ flyer.releases[0].date }}</div>
+          </div>
           <app-flyer [flyer]="flyer" />
         </div>
         }

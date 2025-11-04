@@ -41,8 +41,7 @@ export class ReleaseController extends CrudController<Release, ReleaseDto, Creat
       const filters: FilterQuery<Release> = {};
       let revertDateSort = false;
 
-      if (year && month !== undefined && month !== null) {
-        month++;
+      if (year && month) {
         const monthStr = String(month).padStart(2, '0');
         const nextMonth = month === 12 ? 1 : month + 1;
         const nextYear = month === 12 ? year + 1 : year;
