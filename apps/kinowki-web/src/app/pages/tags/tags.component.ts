@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -28,7 +28,6 @@ import { TagDialogComponent } from './tag-dialog';
     ConfirmDialogModule,
     FormsModule,
     InputTextModule,
-    ReactiveFormsModule,
     TableModule,
     ToastModule,
     ToolbarModule,

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConfirmationService, FilterMetadata, MessageService } from 'primeng/api';
@@ -62,7 +62,6 @@ import { FlyerDialogComponent } from './flyer-dialog';
     InputTextModule,
     JoinPipe,
     PopoverModule,
-    ReactiveFormsModule,
     ReleaseTypeNamePipe,
     SelectButtonModule,
     SelectModule,
@@ -113,20 +112,20 @@ export class FlyersComponent implements OnInit {
   flyerNameSearch: string | undefined;
   flyerTagSearch: string | undefined;
 
-  constructor() {
-    this.tagService
-      .getAll()
-      .pipe(untilDestroyed(this))
-      .subscribe((res) => (this.tags = res.data));
-  }
+  private tagsFetched = false;
 
   ngOnInit(): void {
-    this.route.queryParams
+    this.tagService
+      .getAll()
       .pipe(
         untilDestroyed(this),
+        tap((res) => (this.tags = res.data)),
+        switchMap(() => this.route.queryParams),
         distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
       )
       .subscribe((params) => {
+        this.tagsFetched = true;
+
         const filters: { [s: string]: FilterMetadata | FilterMetadata[] | undefined } = {};
 
         const flyerSize = params['rozmiar'];
@@ -189,7 +188,9 @@ export class FlyersComponent implements OnInit {
       this.event = event;
     }
     if (this.event) {
-      this.updateUrl();
+      if (this.tagsFetched) {
+        this.updateUrl();
+      }
       this.lazyEvent.next(this.event);
     }
   }

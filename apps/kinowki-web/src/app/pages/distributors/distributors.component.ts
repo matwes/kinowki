@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConfirmationService, FilterMetadata, MessageService } from 'primeng/api';
@@ -43,7 +43,6 @@ import { FlyerComponent } from '../flyer';
     FormsModule,
     ImdbPipe,
     InputTextModule,
-    ReactiveFormsModule,
     ReleaseTypeIconPipe,
     ShowIfAdminDirective,
     TableModule,
