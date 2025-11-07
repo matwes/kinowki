@@ -13,13 +13,13 @@ import { FlyerDto } from '@kinowki/shared';
 import { Image, ImageModule } from 'primeng/image';
 
 import { environment } from '../../../environments/environment';
-import { FlyerNotePipe } from '../../utils';
+import { FlyerNotePipe, ShowIfAdminDirective } from '../../utils';
 
 @Component({
   selector: 'app-big-flyer',
   templateUrl: './big-flyer.component.html',
   styleUrl: './big-flyer.component.sass',
-  imports: [FlyerNotePipe, ImageModule],
+  imports: [FlyerNotePipe, ImageModule, ShowIfAdminDirective],
 })
 export class BigFlyerComponent implements AfterViewInit {
   private readonly CDN_URL = environment.cdnUrl;
@@ -41,6 +41,8 @@ export class BigFlyerComponent implements AfterViewInit {
     })
   );
 
+  imageSizes = signal<Record<number, { width: number; height: number }>>({});
+
   @ViewChildren(Image, { read: ElementRef }) imageEls!: QueryList<ElementRef<HTMLElement>>;
 
   constructor() {
@@ -56,17 +58,34 @@ export class BigFlyerComponent implements AfterViewInit {
   }
 
   private updateBlankWidth(): void {
-    const firstImageEl = this.imageEls.first?.nativeElement.querySelector('img');
-    if (!firstImageEl) {
-      return;
-    }
+    const imgEls = this.imageEls.map((ref) => ref.nativeElement.querySelector('img'));
 
-    const setWidth = () => this.blankWidth.set(firstImageEl.offsetWidth);
+    imgEls.forEach((img, index) => {
+      if (!img) {
+        return;
+      }
 
-    if (firstImageEl.complete) {
-      setWidth();
-    } else {
-      firstImageEl.addEventListener('load', setWidth, { once: true });
+      const updateSize = () => {
+        const sizes = { ...this.imageSizes() };
+        sizes[index] = { width: img.naturalWidth, height: img.naturalHeight };
+        this.imageSizes.set(sizes);
+      };
+
+      if (img.complete) {
+        updateSize();
+      } else {
+        img.addEventListener('load', updateSize, { once: true });
+      }
+    });
+
+    const firstImageEl = imgEls[0];
+    if (firstImageEl) {
+      const setWidth = () => this.blankWidth.set(firstImageEl.offsetWidth);
+      if (firstImageEl.complete) {
+        setWidth();
+      } else {
+        firstImageEl.addEventListener('load', setWidth, { once: true });
+      }
     }
   }
 }

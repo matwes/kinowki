@@ -19,6 +19,8 @@
       </p-image>
       @if(image.thumbnail) {
       <div class="quality-badge">HQ</div>
+      } @if (imageSizes()[$index]) {
+      <div class="size-badge" *appShowIfAdmin>{{ imageSizes()[$index].width }}×{{ imageSizes()[$index].height }}</div>
       }
     </div>
     } } @empty {
