@@ -72,11 +72,11 @@
       <div class="grid grid-cols-12 p-3 pb-0 gap-4 grid-nogutter justify-content-center">
         @for(flyer of flyers; track $index) {
         <div class="flyer-cell shadow-3">
-          @if(flyer.releases.length) {
+          @if(flyer.distributors || flyer.notes) {
           <div class="flyer-cell-title">
-            {{ flyer.releases[0].distributors | join : ' • ' : 'name' }}
-            @if (flyer.releases[0].note) { @if(flyer.releases[0].distributors.length) { • }
-            <i>{{ flyer.releases[0].note }}</i> }
+            {{ flyer.distributors }}
+            @if (flyer.distributors && flyer.notes) { • }
+            <i>{{ flyer.notes }}</i>
           </div>
           }
           <app-big-flyer [flyer]="flyer" />

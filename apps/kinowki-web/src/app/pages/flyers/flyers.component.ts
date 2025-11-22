@@ -34,7 +34,6 @@ import { FlyerDto, TagDto, flyerSizes, flyerTypes, genres, releaseTypes } from '
 import { FlyerService, TagService } from '../../services';
 import {
   CopyFlyerNameButtonComponent,
-  JoinPipe,
   ReleaseTypeNamePipe,
   ShowIfAdminDirective,
   ShowIfLoggedDirective,
@@ -60,7 +59,6 @@ import { FlyerDialogComponent } from './flyer-dialog';
     FormsModule,
     ImageModule,
     InputTextModule,
-    JoinPipe,
     PopoverModule,
     ReleaseTypeNamePipe,
     SelectButtonModule,
@@ -100,6 +98,21 @@ export class FlyersComponent implements OnInit {
     debounceTime(500),
     map(([lazyEvent, filters]) => ({ ...lazyEvent, filters })),
     switchMap((event) => this.flyerService.getAll(event)),
+    map((res) => {
+      res.data.forEach((flyer) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (flyer as any).distributors = [
+          ...new Set(flyer.releases.flatMap((release) => release.distributors).map((distributor) => distributor.name)),
+        ].join(' • ');
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (flyer as any).notes = [
+          ...new Set(flyer.releases.map((release) => release.note || null).filter((note) => note !== null)),
+        ].join(' • ');
+      });
+
+      return res;
+    }),
     shareReplay(1)
   );
 
