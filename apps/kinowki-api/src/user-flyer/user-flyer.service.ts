@@ -57,7 +57,7 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     );
   }
 
-  async addUserStatus(user: string, flyers: FlyerDto[]) {
+  async addUserStatus(userId: string | undefined, flyers: FlyerDto[]) {
     const userFlyers = await this.getAll(null, { flyer: { $in: flyers.map((flyer) => flyer._id) } });
 
     const stats = {};
@@ -75,7 +75,7 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
         stats[id].want.push(userFlyer.user.toString());
       }
 
-      if (userFlyer.user.toString() === user.toString()) {
+      if (userId && userFlyer.user.toString() === userId) {
         stats[id].userFlyer = userFlyer;
       }
     }

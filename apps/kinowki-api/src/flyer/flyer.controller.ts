@@ -136,8 +136,8 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
         this.crudService.count(filters),
       ]);
 
-      if (userData?.userId && data.length) {
-        await this.userFlyerService.addUserStatus(userData.userId, data);
+      if (data.length) {
+        await this.userFlyerService.addUserStatus(userData?.userId?.toString(), data);
       }
 
       res.status(HttpStatus.OK).json({
