@@ -62,7 +62,8 @@ export class FlyerDialogComponent implements OnInit {
 
   form = this.fb.group({
     id: undefined as unknown as string,
-    name: undefined as unknown as string,
+    sortName: undefined as unknown as string,
+    sortDate: undefined as unknown as string,
     releases: [[] as string[]],
     type: 1 as number | undefined,
     size: 1 as number | undefined,
@@ -80,8 +81,12 @@ export class FlyerDialogComponent implements OnInit {
     return this.form.controls.id;
   }
 
-  get name() {
-    return this.form.controls.name;
+  get sortName() {
+    return this.form.controls.sortName;
+  }
+
+  get sortDate() {
+    return this.form.controls.sortDate;
   }
 
   get releases() {
@@ -117,7 +122,8 @@ export class FlyerDialogComponent implements OnInit {
 
       if (flyer) {
         this.id.setValue(flyer.id);
-        this.name.setValue(flyer.name);
+        this.sortDate.setValue(flyer.sortDate);
+        this.sortName.setValue(flyer.sortName);
         this.releases.setValue(flyer.releases.map((release) => release._id));
         this.type.setValue(flyer.type);
         this.size.setValue(flyer.size);
@@ -159,7 +165,8 @@ export class FlyerDialogComponent implements OnInit {
 
   refresh() {
     this.id.setValue(this.generateFlyerId());
-    this.name.setValue(this.generateFlyerName());
+    this.sortDate.setValue(this.generateSortDate());
+    this.sortName.setValue(this.generateSortName());
   }
 
   addImage() {
@@ -225,7 +232,7 @@ export class FlyerDialogComponent implements OnInit {
     return result;
   }
 
-  private generateFlyerName(): string {
+  private generateSortName(): string {
     let name = '';
     const ids = this.releases.value;
 
@@ -235,7 +242,7 @@ export class FlyerDialogComponent implements OnInit {
       if (releases.length) {
         const oldestRelease = releases.reduce((oldest, current) => (current.date < oldest.date ? current : oldest));
 
-        name = `${oldestRelease.date} ${releases.map((release) => release.film.title).join(' | ')}`;
+        name = `${releases.map((release) => release.film.title).join(' | ')}`;
 
         const tags = [
           ...(oldestRelease.releaseType !== 1 && oldestRelease.releaseType !== 5
@@ -254,6 +261,21 @@ export class FlyerDialogComponent implements OnInit {
     }
 
     return name;
+  }
+
+  private generateSortDate(): string {
+    const ids = this.releases.value;
+
+    if (ids.length) {
+      const releases = ids.map((id) => this.releaseMap.get(id)).filter((release) => !!release);
+
+      if (releases.length) {
+        const oldestRelease = releases.reduce((oldest, current) => (current.date < oldest.date ? current : oldest));
+        return oldestRelease.date;
+      }
+    }
+
+    return '';
   }
 
   private generateFlyerLink(): string {
@@ -339,7 +361,7 @@ export class FlyerDialogComponent implements OnInit {
   private getFromForm(): Partial<UpdateFlyerDto> {
     return {
       id: this.id.value,
-      name: this.name.value,
+      name: this.sortDate.value,
       releases: this.releases.value.sort((a, b) => {
         const releaseA = this.releaseMap.get(a);
         const releaseB = this.releaseMap.get(b);

@@ -31,7 +31,7 @@ import {
 } from 'rxjs';
 
 import { FlyerDto, TagDto, flyerSizes, flyerTypes, genres, releaseTypes } from '@kinowki/shared';
-import { FlyerService, TagService } from '../../services';
+import { FlyerService, TagService, UserService } from '../../services';
 import {
   CopyFlyerNameButtonComponent,
   ReleaseTypeNamePipe,
@@ -39,6 +39,7 @@ import {
   ShowIfLoggedDirective,
   UserFlyerStatusButtonComponent,
   UserFlyerStatusClassDirective,
+  UsersPipe,
   notEmpty,
 } from '../../utils';
 import { BigFlyerComponent } from '../big-flyer';
@@ -71,6 +72,7 @@ import { FlyerDialogComponent } from './flyer-dialog';
     TooltipModule,
     UserFlyerStatusButtonComponent,
     UserFlyerStatusClassDirective,
+    UsersPipe,
   ],
   providers: [ConfirmationService, DialogService],
 })
@@ -83,12 +85,19 @@ export class FlyersComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
+  usersMap$ = inject(UserService).getUserMap();
+
   @ViewChild('flyersView', { static: true }) flyersView!: DataView;
 
   genres = genres;
   flyerTypes = flyerTypes;
   flyerSizes = flyerSizes;
   releaseTypes = releaseTypes;
+  sorts = [
+    { label: 'Ostatnio dodane', value: 1 },
+    { label: 'Wg premiery', value: 2 },
+    { label: 'Alfabetycznie', value: 3 },
+  ];
   event?: TableLazyLoadEvent;
 
   lazyEvent = new Subject<TableLazyLoadEvent>();
@@ -124,6 +133,7 @@ export class FlyersComponent implements OnInit {
   flyerTypesSearch: number | undefined;
   flyerNameSearch: string | undefined;
   flyerTagSearch: string | undefined;
+  flyerSort = 1;
 
   private tagsFetched = false;
 
@@ -145,7 +155,16 @@ export class FlyersComponent implements OnInit {
         const flyerType = params['typ'];
         const id = params['nazwa'];
         const flyerTag = params['tag'];
+        const sort = +params['sort'] || 0;
         const first = +params['p'] || 0;
+
+        const sortNumber = Number(sort);
+        if (this.sorts.some((sort) => sort.value === sortNumber)) {
+          filters['sort'] = { value: sortNumber };
+          this.flyerSort = sortNumber;
+        } else {
+          this.flyerSort = 1;
+        }
 
         if (flyerSize) {
           const flyerSizeNumber = Number(flyerSize);
@@ -236,6 +255,7 @@ export class FlyersComponent implements OnInit {
       const flyerSize = filters['flyerSize'];
       const id = filters['id'];
       const flyerTags = filters['flyerTags'];
+      const flyerSort = filters['sort'];
 
       if (flyerType && !Array.isArray(flyerType) && flyerType.value) {
         params['typ'] = flyerType.value;
@@ -248,6 +268,9 @@ export class FlyersComponent implements OnInit {
       }
       if (flyerTags && !Array.isArray(flyerTags) && flyerTags.value) {
         params['tag'] = flyerTags.value;
+      }
+      if (flyerSort && !Array.isArray(flyerSort) && flyerSort.value) {
+        params['sort'] = flyerSort.value;
       }
     }
 
@@ -265,7 +288,7 @@ export class FlyersComponent implements OnInit {
         header: item ? 'Edytuj ulotkę' : 'Dodaj ulotkę',
         closeOnEscape: false,
         modal: true,
-        width: '40vw',
+        width: '50vw',
         breakpoints: {
           '1400px': '75vw',
           '640px': '90vw',

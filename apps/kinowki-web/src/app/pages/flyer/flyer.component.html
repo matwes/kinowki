@@ -31,7 +31,7 @@
       *appShowIfLogged
       [flyer]="flyer"
       [small]="true"
-      (statusChanged)="flyer.userFlyer = $event" />
+      (statusChanged)="statusChanged.emit()" />
     <app-copy-flyer-name-button [flyer]="flyer" [small]="true" />
   </div>
 </div>

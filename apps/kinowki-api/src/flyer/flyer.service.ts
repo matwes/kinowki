@@ -14,6 +14,7 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
 
   constructor(@InjectModel(Flyer.name) model: Model<Flyer>) {
     super(model);
+    this.fixSortNames();
   }
 
   override async getAll(params?: { first: number; rows: number }, filters?: FilterQuery<Flyer>) {
@@ -34,7 +35,11 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
     return itemData;
   }
 
-  async getAllWithReleases(params?: { first: number; rows: number }, filters?: FilterQuery<Flyer>) {
+  async getAllWithReleases(
+    params?: { first: number; rows: number },
+    filters?: FilterQuery<Flyer>,
+    sort?: Record<string, 1 | -1>
+  ) {
     let query = this.model
       .find(filters)
       .populate('tags')
@@ -45,7 +50,7 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
     }
 
     const itemData = await query
-      .sort({ createdAt: -1 })
+      .sort(sort ?? { createdAt: -1 })
       .collation({ locale: 'pl', strength: 1 })
       .lean<FlyerDto[]>()
       .exec();
@@ -129,5 +134,34 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
       default:
         return null;
     }
+  }
+
+  async fixSortNames() {
+    const flyers = await this.model.find({
+      $or: [{ sortName: { $exists: false } }, { sortDate: { $exists: false } }, { sortName: '' }, { sortDate: '' }],
+    });
+
+    for (const flyer of flyers) {
+      const name = flyer.name;
+      const match = name.match(/^(\d{4}-\d{2}-\d{2})\s*(.*)$/);
+
+      if (match) {
+        flyer.sortDate = match[1];
+        flyer.sortName = match[2];
+      } else {
+        flyer.sortDate = '';
+        flyer.sortName = name;
+      }
+
+      if (flyer.images.length) {
+        flyer.images = flyer.images.filter((image) => !!image.original);
+      }
+
+      flyer.name = undefined;
+
+      await flyer.save();
+    }
+
+    console.log('Sort name field added to', flyers.length, 'flyers');
   }
 }

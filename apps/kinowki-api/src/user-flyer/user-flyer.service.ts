@@ -58,14 +58,37 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
   }
 
   async addUserStatus(user: string, flyers: FlyerDto[]) {
-    const userFlyers = await this.getAll(null, {
-      user,
-      flyer: { $in: flyers.map((flyer) => flyer._id) },
+    const userFlyers = await this.getAll(null, { flyer: { $in: flyers.map((flyer) => flyer._id) } });
+
+    const stats = {};
+    for (const userFlyer of userFlyers) {
+      const id = userFlyer.flyer.toString();
+      if (!stats[id]) {
+        stats[id] = { have: [], trade: [], want: [], userFlyer: undefined };
+      }
+
+      if (userFlyer.status === UserFlyerStatus.HAVE) {
+        stats[id].have.push(userFlyer.user.toString());
+      } else if (userFlyer.status === UserFlyerStatus.TRADE) {
+        stats[id].trade.push(userFlyer.user.toString());
+      } else if (userFlyer.status === UserFlyerStatus.WANT) {
+        stats[id].want.push(userFlyer.user.toString());
+      }
+
+      if (userFlyer.user.toString() === user.toString()) {
+        stats[id].userFlyer = userFlyer;
+      }
+    }
+
+    flyers.forEach((flyer) => {
+      const id = flyer._id.toString();
+      const flyerStats = stats[id];
+
+      flyer.have = flyerStats?.have ?? [];
+      flyer.trade = flyerStats?.trade ?? [];
+      flyer.want = flyerStats?.want ?? [];
+      flyer.userFlyer = flyerStats?.userFlyer;
     });
-
-    const userFlyerMap = Object.fromEntries(userFlyers.map((userFlyer) => [userFlyer.flyer.toString(), userFlyer]));
-
-    flyers.forEach((flyer) => (flyer.userFlyer = userFlyerMap[flyer._id.toString()]));
   }
 
   async getUserFlyerStats(userId: string) {

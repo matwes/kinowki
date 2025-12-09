@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
   private readonly title = inject(Title);
 
   ngOnInit() {
-    this.title.setTitle('Kinówki');
+    this.title.setTitle('Kinówki - Polskie ulotki filmowe');
 
     this.primengConfig.setTranslation({
       dayNames: ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'],

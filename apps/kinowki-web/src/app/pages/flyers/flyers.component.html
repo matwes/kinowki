@@ -19,7 +19,7 @@
           <div class="search-label">Nazwa</div>
           <input
             pInputText
-            styleClass="w-20rem"
+            class="w-12rem"
             type="text"
             placeholder="Szukaj..."
             [ngModel]="flyerNameSearch"
@@ -60,6 +60,14 @@
             scrollHeight="30rem"
             (onChange)="filter('flyerTags', $event.value)" />
         </div>
+        <div class="filter-item">
+          <div class="search-label">Sortowanie</div>
+          <p-select
+            styleClass="w-12rem"
+            [ngModel]="flyerSort"
+            [options]="sorts"
+            (onChange)="filter('sort', $event.value)" />
+        </div>
         <p-button
           *appShowIfAdmin
           class="absolute right-0"
@@ -69,6 +77,7 @@
       </div>
     </ng-template>
     <ng-template #list let-flyers>
+      @if (usersMap$ | async; as usersMap) {
       <div class="grid grid-cols-12 p-3 pb-0 gap-4 grid-nogutter justify-content-center">
         @for(flyer of flyers; track $index) {
         <div class="flyer-cell shadow-3">
@@ -80,40 +89,57 @@
           </div>
           }
           <app-big-flyer [flyer]="flyer" />
-          <div class="flyer-cell-footer" [appUserFlyerStatusClass]="flyer.userFlyer">
-            @for(release of flyer.releases; track $index) {
-            <div class="text-center">
-              <div>
-                <b>{{ release.film.title }}</b>
+          <div>
+            <div class="flyer-stats">
+              <div class="flyer-stat" [pTooltip]="flyer.have | users: usersMap">
+                <i class="pi pi-check"></i>
+                <span>{{ flyer.have?.length ?? 0 }}</span>
               </div>
-              <div [style.opacity]="0.75">
-                {{ release.date }}
-                @if (release.releaseType !== 1) { <span> ({{ release.releaseType | releaseTypeName }})</span> }
+              <div class="flyer-stat" [pTooltip]="flyer.trade | users: usersMap">
+                <i class="pi pi-arrow-right-arrow-left"></i>
+                <span>{{ flyer.trade?.length ?? 0 }}</span>
+              </div>
+              <div class="flyer-stat" [pTooltip]="flyer.want | users: usersMap">
+                <i class="pi pi-search"></i>
+                <span>{{ flyer.want?.length ?? 0 }}</span>
               </div>
             </div>
-            } @empty {
-            <div class="text-xs">{{ flyer.id }}</div>
-            }
-            <div class="flyer-actions left">
-              <app-user-flyer-status-button
-                [flyer]="flyer"
-                (statusChanged)="flyer.userFlyer = $event"
-                *appShowIfLogged />
-              <app-copy-flyer-name-button [flyer]="flyer" />
-            </div>
-            <div class="flyer-actions right" *appShowIfAdmin>
-              <p-button icon="pi pi-pencil" size="small" [rounded]="true" (click)="openFlyerDialog(flyer)" />
-              <p-button
-                icon="pi pi-trash"
-                severity="danger"
-                size="small"
-                [rounded]="true"
-                (click)="deleteFlyer(flyer)" />
+            <div class="flyer-cell-footer" [appUserFlyerStatusClass]="flyer.userFlyer">
+              @for(release of flyer.releases; track $index) {
+              <div class="text-center">
+                <div>
+                  <b>{{ release.film.title }}</b>
+                </div>
+                <div [style.opacity]="0.75">
+                  {{ release.date }}
+                  @if (release.releaseType !== 1) { <span> ({{ release.releaseType | releaseTypeName }})</span> }
+                </div>
+              </div>
+              } @empty {
+              <div class="text-xs">{{ flyer.id }}</div>
+              }
+              <div class="flyer-actions left">
+                <app-user-flyer-status-button
+                  [flyer]="flyer"
+                  (statusChanged)="lazyLoad()"
+                  *appShowIfLogged />
+                <app-copy-flyer-name-button [flyer]="flyer" />
+              </div>
+              <div class="flyer-actions right" *appShowIfAdmin>
+                <p-button icon="pi pi-pencil" size="small" [rounded]="true" (click)="openFlyerDialog(flyer)" />
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  size="small"
+                  [rounded]="true"
+                  (click)="deleteFlyer(flyer)" />
+              </div>
             </div>
           </div>
         </div>
         }
       </div>
+      }
     </ng-template>
   </p-dataview>
   <p-confirmDialog [style.width.rem]="28" />

@@ -106,6 +106,7 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
     @Res() res: Response,
     @Query('first', new ParseIntPipe({ optional: true })) first?: number,
     @Query('rows', new ParseIntPipe({ optional: true })) rows?: number,
+    @Query('sort', new ParseIntPipe({ optional: true })) flyerSort?: 1 | 2 | 3,
     @Query('id') id?: string,
     @Query('flyerType') flyerType?: string,
     @Query('flyerSize') flyerSize?: string,
@@ -121,9 +122,17 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
         ...(flyerSize ? { size: flyerSize } : {}),
         ...(flyerTags ? { tags: flyerTags } : {}),
       };
+      const sort: Record<string, 1 | -1> | undefined =
+        flyerSort === 1
+          ? { createdAt: -1 }
+          : flyerSort === 2
+          ? { sortDate: -1 }
+          : flyerSort === 3
+          ? { sortName: 1 }
+          : undefined;
 
       const [data, totalRecords] = await Promise.all([
-        this.flyerService.getAllWithReleases(params, filters),
+        this.flyerService.getAllWithReleases(params, filters, sort),
         this.crudService.count(filters),
       ]);
 

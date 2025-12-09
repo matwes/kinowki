@@ -29,14 +29,20 @@
         <label for="id">ID</label>
       </p-iftalabel>
     </div>
-    <div class="field col-10">
+    <div class="field col-3">
       <p-iftalabel>
-        <input pInputText fluid id="id" [formControl]="name" />
-        <label for="name">Name</label>
+        <input pInputText fluid id="id" [formControl]="sortDate" />
+        <label for="sortDate">Data</label>
       </p-iftalabel>
     </div>
-    <div class="field col-2 align-self-center">
-      <p-button label="Odśwież" severity="primary" (onClick)="refresh()" />
+    <div class="field col-8">
+      <p-iftalabel>
+        <input pInputText fluid id="id" [formControl]="sortName" />
+        <label for="sortName">Nazwa</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-1 align-self-center">
+      <p-button icon="pi pi-refresh" severity="success" rounded variant="outlined" (onClick)="refresh()" />
     </div>
     <div class="field col-6">
       <p-iftalabel>
@@ -96,7 +102,7 @@
       <p-button icon="pi pi-plus" severity="success" rounded variant="outlined" (onClick)="addImage()" />
     </div>
     @for(image of images.controls; track $index) {
-    <div class="field col-5">
+    <div class="field col-6">
       <p-iftalabel>
         <input pInputText fluid id="image-original-{{ $index }}" [formControl]="image.controls.original" />
         <label for="image-original-{{ $index }}">Oryginał</label>
@@ -108,7 +114,7 @@
         <label for="image-thumbnail-{{ $index }}">Thumbnail</label>
       </p-iftalabel>
     </div>
-    <div class="field col-2 flex align-items-center justify-content-center">
+    <div class="field col-1 flex align-items-center justify-content-center">
       <p-button icon="pi pi-trash" severity="danger" rounded variant="outlined" (onClick)="deleteRelease($index)" />
     </div>
     }

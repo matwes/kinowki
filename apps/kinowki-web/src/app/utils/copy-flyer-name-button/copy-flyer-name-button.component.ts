@@ -20,7 +20,7 @@ export class CopyFlyerNameButtonComponent {
   buttonClass = computed(() => getClassForStatus(this.flyer().userFlyer?.status, true));
 
   copy() {
-    const flyerName = this.flyer().name;
+    const flyerName = this.flyer().sortName;
 
     navigator.clipboard.writeText(flyerName);
 

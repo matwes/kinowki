@@ -5,6 +5,7 @@ import {
   effect,
   ElementRef,
   input,
+  output,
   QueryList,
   signal,
   ViewChildren,
@@ -39,6 +40,8 @@ export class FlyerComponent implements AfterViewInit {
 
   flyer = input.required<FlyerDto>();
   big = input(false);
+  statusChanged = output<void>();
+
   blankWidth = signal(175);
 
   images = computed(() =>

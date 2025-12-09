@@ -9,8 +9,14 @@ export class Flyer {
   @Prop({ required: true })
   id: string;
 
+  @Prop()
+  name: string | undefined;
+
   @Prop({ required: true })
-  name: string;
+  sortName: string;
+
+  @Prop({ required: true })
+  sortDate: string;
 
   @Prop()
   type?: number;
@@ -36,6 +42,8 @@ export class Flyer {
 
 export const FlyerSchema = SchemaFactory.createForClass(Flyer)
   .index({ createdAt: -1 })
+  .index({ sortDate: -1 })
+  .index({ sortName: 1 })
   .index({ id: 1 }, { unique: true })
   .index({ type: 1 })
   .index({ size: 1 })

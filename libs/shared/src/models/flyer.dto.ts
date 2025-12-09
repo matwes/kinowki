@@ -6,6 +6,8 @@ import { UserFlyerDto } from './user-flyer.dto';
 export interface CreateFlyerDto {
   id: string;
   name: string;
+  sortName: string;
+  sortDate: string;
   type?: number;
   size?: number;
   tags: string[];
@@ -24,4 +26,7 @@ export interface FlyerDto extends Omit<CreateFlyerDto, 'releases' | 'tags'> {
   releases: ReleaseDto[];
   tags: TagDto[];
   userFlyer?: UserFlyerDto;
+  have?: string[];
+  trade?: string[];
+  want?: string[];
 }

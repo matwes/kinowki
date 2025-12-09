@@ -74,7 +74,7 @@
             <div class="title">{{ flyer.releases | join : ' • ' : 'film.title' }}</div>
             <div class="date">{{ flyer.releases[0].date }}</div>
           </div>
-          <app-flyer [flyer]="flyer" />
+          <app-flyer [flyer]="flyer" (statusChanged)="lazyLoadFlyers()" />
         </div>
         }
       </div>

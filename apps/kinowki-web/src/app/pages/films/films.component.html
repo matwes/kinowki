@@ -51,7 +51,8 @@
               placeholder="Szukaj wg gatunku..."
               [showClear]="true"
               [ngModel]="filmGenreSearch"
-              (onChange)="filter('genres', $event.value)" (onClear)="onGenreClear()" />
+              (onChange)="filter('genres', $event.value)"
+              (onClear)="onGenreClear()" />
           </div>
         </th>
         <th [style.width]="'35%'">Premiery</th>
@@ -93,7 +94,7 @@
                 [showReleaseDate]="true" />
               <div class="flyers">
                 @for(flyer of release.flyers; track $index) {
-                <app-flyer [flyer]="flyer" />
+                <app-flyer [flyer]="flyer" (statusChanged)="lazyLoad()" />
                 }
               </div>
             </div>
