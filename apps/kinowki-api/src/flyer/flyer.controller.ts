@@ -126,9 +126,9 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
         flyerSort === 1
           ? { createdAt: -1 }
           : flyerSort === 2
-          ? { sortDate: -1 }
+          ? { sortDate: -1, sortName: 1 }
           : flyerSort === 3
-          ? { sortName: 1 }
+          ? { sortName: 1, sortDate: -1 }
           : undefined;
 
       const [data, totalRecords] = await Promise.all([
