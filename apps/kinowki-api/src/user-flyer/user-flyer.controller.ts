@@ -104,7 +104,12 @@ export class UserFlyerController extends CrudController<
           data: newItem,
         });
       } catch (err) {
-        res.status(err.status).json(err.response);
+        console.error(err);
+
+        const status = err.status || HttpStatus.INTERNAL_SERVER_ERROR;
+        const response = err.response || { message: 'Unknown error', details: err.message };
+
+        res.status(status).json(response);
       }
     }
   }
