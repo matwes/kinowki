@@ -47,8 +47,9 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
   async update(@Req() req, @Res() res: Response, @Param('id') id: string, @Body() updateDto: UpdateFlyerDto) {
     try {
       const existingItem = await this.crudService.update(id, updateDto);
+      const flyerName = `${existingItem.sortDate} ${existingItem.sortName}`;
 
-      await this.userFlyerService.updateFlyerName(existingItem._id, existingItem.name);
+      await this.userFlyerService.updateFlyerName(existingItem._id, flyerName);
 
       res.status(HttpStatus.OK).json({
         message: `${this.name} has been successfully updated`,

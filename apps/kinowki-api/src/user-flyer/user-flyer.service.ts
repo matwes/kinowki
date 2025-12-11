@@ -133,8 +133,10 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     for (const userFlyer of userFlyers) {
       const flyer = userFlyer.flyer as unknown as FlyerDto | undefined;
 
-      if (flyer?.name) {
-        await this.model.updateOne({ _id: userFlyer._id }, { $set: { flyerName: flyer.name } });
+      if (flyer && flyer.sortDate && flyer.sortName) {
+        const flyerName = `${flyer.sortDate} ${flyer.sortName}`;
+
+        await this.model.updateOne({ _id: userFlyer._id }, { $set: { flyerName } });
         updated++;
       }
     }

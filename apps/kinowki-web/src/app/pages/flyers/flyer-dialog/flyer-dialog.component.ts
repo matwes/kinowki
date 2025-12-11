@@ -361,7 +361,8 @@ export class FlyerDialogComponent implements OnInit {
   private getFromForm(): Partial<UpdateFlyerDto> {
     return {
       id: this.id.value,
-      name: this.sortDate.value,
+      sortDate: this.sortDate.value,
+      sortName: this.sortName.value,
       releases: this.releases.value.sort((a, b) => {
         const releaseA = this.releaseMap.get(a);
         const releaseB = this.releaseMap.get(b);

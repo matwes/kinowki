@@ -5,7 +5,6 @@ import { UserFlyerDto } from './user-flyer.dto';
 
 export interface CreateFlyerDto {
   id: string;
-  name: string;
   sortName: string;
   sortDate: string;
   type?: number;

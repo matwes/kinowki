@@ -112,7 +112,7 @@ export class UserFlyerStatusButtonComponent implements AfterViewInit {
     if (flyerDto && status !== null) {
       const _id = this.form.controls._id.value;
       const flyer = this.form.controls.flyer.value;
-      const flyerName = flyerDto.name;
+      const flyerName = `${flyerDto.sortDate} ${flyerDto.sortName}`;
       const note = this.form.controls.note.value.trim();
 
       if (status !== undefined) {
