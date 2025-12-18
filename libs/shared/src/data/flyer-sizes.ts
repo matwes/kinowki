@@ -1,9 +1,9 @@
 export const flyerSizes = [
-  { value: 1, label: 'A6 pionowa', size: '105×148 mm' },
+  { value: 1, label: 'A6', size: '105×148 mm' },
   { value: 2, label: 'A6 pozioma', size: '148×105 mm' },
-  { value: 3, label: 'A5 pionowa', size: '148×210 mm' },
+  { value: 3, label: 'A5', size: '148×210 mm' },
   { value: 4, label: 'A5 pozioma', size: '210×148 mm' },
-  { value: 5, label: 'A4 pionowa', size: '210×297 mm' },
+  { value: 5, label: 'A4', size: '210×297 mm' },
   { value: 6, label: 'A4 pozioma', size: '297×210 mm' },
   { value: 7, label: '60×60 mm' },
   { value: 8, label: '180×180 mm' },
@@ -75,6 +75,7 @@ export const flyerSizes = [
   { value: 74, label: '80×40 mm' },
   { value: 75, label: '85×85 mm' },
   { value: 76, label: '185×100 mm' },
+  { value: 77, label: '70×40 mm' },
 ].sort((a, b) => {
   const aStartsWithA = a.label.startsWith('A');
   const bStartsWithA = b.label.startsWith('A');
