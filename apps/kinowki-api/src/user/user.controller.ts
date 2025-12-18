@@ -2,7 +2,7 @@ import { Controller, Get, HttpStatus, ParseIntPipe, Query, Req, Res } from '@nes
 import { Response } from 'express';
 
 import { CreateUserDto, UpdateUserDto, UserDto } from '@kinowki/shared';
-import { CrudController } from '../utils';
+import { CrudController, errorHandler } from '../utils';
 import { User } from './user.schema';
 import { UserService } from './user.service';
 
@@ -33,7 +33,7 @@ export class UserController extends CrudController<User, UserDto, CreateUserDto,
         totalRecords,
       });
     } catch (err) {
-      res.status(err.status).json(err.response);
+      errorHandler(res, err, "Getting users");
     }
   }
 }

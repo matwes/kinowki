@@ -17,7 +17,7 @@ import { FilterQuery, Types } from 'mongoose';
 import 'multer';
 
 import { CreateUserFlyerDto, FlyerDto, UpdateUserFlyerDto, UserFlyerDto, UserFlyerStatus } from '@kinowki/shared';
-import { CrudController, JwtAuthGuard, OptionalJwtAuthGuard } from '../utils';
+import { CrudController, errorHandler, JwtAuthGuard, OptionalJwtAuthGuard } from '../utils';
 import { UserFlyer } from './user-flyer.schema';
 import { UserFlyerService } from './user-flyer.service';
 import { UserData } from '../auth/jwt-strategy';
@@ -79,7 +79,7 @@ export class UserFlyerController extends CrudController<
         totalRecords,
       });
     } catch (err) {
-      res.status(err.status).json(err.response);
+      errorHandler(res, err, "Getting user flyers");
     }
   }
 
@@ -104,12 +104,7 @@ export class UserFlyerController extends CrudController<
           data: newItem,
         });
       } catch (err) {
-        console.error(err);
-
-        const status = err.status || HttpStatus.INTERNAL_SERVER_ERROR;
-        const response = err.response || { message: 'Unknown error', details: err.message };
-
-        res.status(status).json(response);
+        errorHandler(res, err, "Adding user flyer");
       }
     }
   }
@@ -140,7 +135,7 @@ export class UserFlyerController extends CrudController<
           data: existingItem,
         });
       } catch (err) {
-        res.status(err.status).json(err.response);
+        errorHandler(res, err, "Updating user flyer");
       }
     }
   }

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Logger,
@@ -24,7 +25,7 @@ import { CreateFlyerDto, FlyerDto, UpdateFlyerDto } from '@kinowki/shared';
 import { UserData } from '../auth/jwt-strategy';
 import { UserFlyerService } from '../user-flyer/user-flyer.service';
 import { UserService } from '../user/user.service';
-import { AdminGuard, CrudController, getRegex, JwtAuthGuard, OptionalJwtAuthGuard } from '../utils';
+import { AdminGuard, CrudController, errorHandler, getRegex, JwtAuthGuard, OptionalJwtAuthGuard } from '../utils';
 import { Flyer } from './flyer.schema';
 import { FlyerService } from './flyer.service';
 
@@ -56,7 +57,7 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
         data: existingItem,
       });
     } catch (err) {
-      res.status(err.status).json(err.response);
+      errorHandler(res, err, 'Updating flyer');
     }
   }
 
@@ -93,8 +94,7 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
             data: userFlyers.length,
           });
         } catch (err) {
-          this.logger.error('An error occurred while trying to import flyers from file', err);
-          res.status(err.status).json(err.response);
+          errorHandler(res, err, 'Importing flyers');
         }
       }
     }
@@ -147,7 +147,25 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
         totalRecords,
       });
     } catch (err) {
-      res.status(err.status).json(err.response);
+      errorHandler(res, err, 'Getting flyers');
+    }
+  }
+
+  @UseGuards(AdminGuard)
+  @Delete('/:id')
+  async delete(@Res() res: Response, @Param('id') id: string) {
+    try {
+      const deletedItem = await this.flyerService.delete(id);
+      const deleteUserFlyers = await this.userFlyerService.deleteMany({ flyer: id });
+
+      console.log(`Flyer ${id} and ${deleteUserFlyers.deletedCount} user statuses deleted`);
+
+      res.status(HttpStatus.OK).json({
+        message: `${this.name} deleted successfully`,
+        data: deletedItem,
+      });
+    } catch (err) {
+      errorHandler(res, err, `Deleting ${this.name}`);
     }
   }
 }

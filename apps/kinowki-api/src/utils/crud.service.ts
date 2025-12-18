@@ -55,6 +55,10 @@ export abstract class CrudService<Schema, BaseDto, CreateDto, UpdateDto> {
     return deletedItem;
   }
 
+  async deleteMany(filter: FilterQuery<Schema>) {
+    return await this.model.deleteMany(filter).exec();
+  }
+
   async count(filters?: FilterQuery<Schema>): Promise<number> {
     return await this.model.countDocuments(filters);
   }

@@ -17,6 +17,23 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     this.migrateUserFlyersFlyerName();
   }
 
+  override async create(createDto: CreateUserFlyerDto) {
+    return (
+      await this.model.findOneAndUpdate(
+        {
+          user: createDto.user,
+          flyer: createDto.flyer,
+        },
+        { $set: createDto },
+        {
+          upsert: true,
+          new: true,
+          setDefaultsOnInsert: true,
+        }
+      )
+    ).toObject<UserFlyerDto>();
+  }
+
   updateFlyerName(flyer: string | Types.ObjectId, flyerName: string) {
     return this.model.updateMany({ flyer }, { $set: { flyerName } });
   }

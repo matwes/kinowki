@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { FilterQuery } from 'mongoose';
 
 import { CreateDistributorDto, DistributorDto, UpdateDistributorDto } from '@kinowki/shared';
-import { CrudController, getRegex } from '../utils';
+import { CrudController, errorHandler, getRegex } from '../utils';
 import { Distributor } from './distributor.schema';
 import { DistributorService } from './distributor.service';
 
@@ -44,7 +44,7 @@ export class DistributorController extends CrudController<
         totalRecords,
       });
     } catch (err) {
-      res.status(err.status).json(err.response);
+      errorHandler(res, err, "Getting distributors");
     }
   }
 }

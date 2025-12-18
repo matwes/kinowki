@@ -13,8 +13,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { CrudService } from './crud.service';
 import { AdminGuard } from './admin.guard';
+import { CrudService } from './crud.service';
+import { errorHandler } from './error-handler';
 
 export abstract class CrudController<Schema, BaseDto, CreateDto, UpdateDto> {
   abstract name: string;
@@ -31,7 +32,7 @@ export abstract class CrudController<Schema, BaseDto, CreateDto, UpdateDto> {
         data: newItem,
       });
     } catch (err) {
-      res.status(err.status).json(err.response);
+      errorHandler(res, err, `Creating ${this.name}`);
     }
   }
 
@@ -45,7 +46,7 @@ export abstract class CrudController<Schema, BaseDto, CreateDto, UpdateDto> {
         data: existingItem,
       });
     } catch (err) {
-      res.status(err.status).json(err.response);
+      errorHandler(res, err, `Updating ${this.name}`);
     }
   }
 
@@ -65,7 +66,7 @@ export abstract class CrudController<Schema, BaseDto, CreateDto, UpdateDto> {
         totalRecords,
       });
     } catch (err) {
-      res.status(err.status).json(err.response);
+      errorHandler(res, err, `Getting ${this.name}`);
     }
   }
 
@@ -78,7 +79,7 @@ export abstract class CrudController<Schema, BaseDto, CreateDto, UpdateDto> {
         data: existingItem,
       });
     } catch (err) {
-      res.status(err.status).json(err.response);
+      errorHandler(res, err, `Getting single ${this.name}`);
     }
   }
 
@@ -92,7 +93,7 @@ export abstract class CrudController<Schema, BaseDto, CreateDto, UpdateDto> {
         data: deletedItem,
       });
     } catch (err) {
-      res.status(err.status).json(err.response);
+      errorHandler(res, err, `Deleting ${this.name}`);
     }
   }
 }

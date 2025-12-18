@@ -7,7 +7,7 @@ import { UserData } from '../auth/jwt-strategy';
 import { FlyerService } from '../flyer/flyer.service';
 import { ReleaseService } from '../release/release.service';
 import { UserFlyerService } from '../user-flyer/user-flyer.service';
-import { CrudController, getRegex, OptionalJwtAuthGuard } from '../utils';
+import { CrudController, errorHandler, getRegex, OptionalJwtAuthGuard } from '../utils';
 import { Film } from './film.schema';
 import { FilmService } from './film.service';
 
@@ -90,7 +90,7 @@ export class FilmController extends CrudController<Film, FilmDto, CreateFilmDto,
         totalRecords,
       });
     } catch (err) {
-      res.status(err.status).json(err.response);
+      errorHandler(res, err, "Getting films");
     }
   }
 }
