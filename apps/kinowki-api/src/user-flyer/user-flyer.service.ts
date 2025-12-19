@@ -14,7 +14,7 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
   constructor(@InjectModel(UserFlyer.name) model: Model<UserFlyer>) {
     super(model);
 
-    this.migrateUserFlyersFlyerName();
+    this.migrateRemoveOrphanUserFlyers();
   }
 
   override async create(createDto: CreateUserFlyerDto) {
@@ -159,5 +159,41 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     }
 
     console.log(`✅ Migration finished. Updated ${updated} records.`);
+  }
+
+  async migrateRemoveOrphanUserFlyers() {
+    console.log('Starting migration: removing orphan UserFlyers...');
+
+    const orphanIds = await this.model.aggregate([
+      {
+        $lookup: {
+          from: 'flyers',
+          localField: 'flyer',
+          foreignField: '_id',
+          as: 'flyerDoc',
+        },
+      },
+      {
+        $match: {
+          flyerDoc: { $size: 0 },
+        },
+      },
+      {
+        $project: { _id: 1 },
+      },
+    ]);
+
+    console.log(`Found ${orphanIds.length} orphan UserFlyers.`);
+
+    if (orphanIds.length === 0) {
+      console.log('✅ Nothing to delete.');
+      return;
+    }
+
+    const result = await this.model.deleteMany({
+      _id: { $in: orphanIds.map((d) => d._id) },
+    });
+
+    console.log(`✅ Migration finished. Deleted ${result.deletedCount} records.`);
   }
 }
