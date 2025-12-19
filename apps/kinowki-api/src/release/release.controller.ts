@@ -4,7 +4,7 @@ import { FilterQuery, Types } from 'mongoose';
 
 import { CreateReleaseDto, ReleaseDto, UpdateReleaseDto } from '@kinowki/shared';
 import { FlyerService } from '../flyer/flyer.service';
-import { CrudController, getRegex, OptionalJwtAuthGuard } from '../utils';
+import { CrudController, getRegex, OptionalJwtAuthGuard, sortFlyers } from '../utils';
 import { Release } from './release.schema';
 import { ReleaseService } from './release.service';
 import { UserData } from '../auth/jwt-strategy';
@@ -67,9 +67,7 @@ export class ReleaseController extends CrudController<Release, ReleaseDto, Creat
 
       const extendedData = await Promise.all(
         data.map(async (release) => {
-          const flyers = (await this.flyerService.getAll(undefined, { releases: release._id })).sort((a, b) =>
-            a.type !== b.type ? a.type - b.type : a.size - b.size
-          );
+          const flyers = (await this.flyerService.getAll(undefined, { releases: release._id })).sort(sortFlyers);
 
           if (userData?.userId && flyers.length) {
             await this.userFlyerService.addUserStatus(userData.userId, flyers);

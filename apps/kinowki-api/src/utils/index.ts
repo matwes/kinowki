@@ -6,3 +6,4 @@ export * from './image.schema';
 export * from './jwt-auth.guard';
 export * from './optional-jwt-auth.guard';
 export * from './regex';
+export * from './sort-flyers';

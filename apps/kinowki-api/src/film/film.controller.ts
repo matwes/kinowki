@@ -7,7 +7,7 @@ import { UserData } from '../auth/jwt-strategy';
 import { FlyerService } from '../flyer/flyer.service';
 import { ReleaseService } from '../release/release.service';
 import { UserFlyerService } from '../user-flyer/user-flyer.service';
-import { CrudController, errorHandler, getRegex, OptionalJwtAuthGuard } from '../utils';
+import { CrudController, errorHandler, getRegex, OptionalJwtAuthGuard, sortFlyers } from '../utils';
 import { Film } from './film.schema';
 import { FilmService } from './film.service';
 
@@ -60,9 +60,7 @@ export class FilmController extends CrudController<Film, FilmDto, CreateFilmDto,
 
           const releasesWithFlyers = await Promise.all(
             releases.map(async (release) => {
-              const flyers = (await this.flyerService.getAll(undefined, { releases: release._id })).sort((a, b) =>
-                a.type !== b.type ? a.type - b.type : a.size - b.size
-              );
+              const flyers = (await this.flyerService.getAll(undefined, { releases: release._id })).sort(sortFlyers);
               flyerCount += flyers.length;
 
               if (userData?.userId && flyers.length) {
@@ -90,7 +88,7 @@ export class FilmController extends CrudController<Film, FilmDto, CreateFilmDto,
         totalRecords,
       });
     } catch (err) {
-      errorHandler(res, err, "Getting films");
+      errorHandler(res, err, 'Getting films');
     }
   }
 }
