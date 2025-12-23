@@ -3,12 +3,13 @@ import { Component, computed, input } from '@angular/core';
 import { DistributorDto } from '@kinowki/shared';
 import { PrimeIcons } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-distributor-badge',
   templateUrl: './distributor-badge.component.html',
   styleUrl: './distributor-badge.component.sass',
-  imports: [NgClass, TagModule],
+  imports: [NgClass, TagModule, TooltipModule],
 })
 export class DistributorBadgeComponent {
   distributors = input.required<DistributorDto[]>();
@@ -56,7 +57,10 @@ export class DistributorBadgeComponent {
     return distributors.map((distributor) => distributor.name).join(' • ');
   });
 
-  probabilityLabel = computed(() => (Number.isFinite(this.flyerProbability) ? `${this.flyerProbability}%` : '?'));
+  probabilityLabel = computed(() => {
+    const flyerProbability = this.flyerProbability();
+    return Number.isFinite(flyerProbability) ? `${flyerProbability}%` : '?';
+  });
 
   styleClass = computed(() => {
     if (this.showFlyerProbability()) {

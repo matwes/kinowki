@@ -14,7 +14,9 @@ releaseNote()}; as data) {
   }
   <i class="badge-note">{{ data.releaseNote }}</i>
   } @if (data.showFlyerProbability) {
-  <span class="badge-probability" [ngClass]="data.styleClass">{{ data.probabilityLabel }}</span>
+  <span class="badge-probability" [ngClass]="data.styleClass" pTooltip="Ostatnie 10 premier z ulotkami">{{
+    data.probabilityLabel
+  }}</span>
   }
 </div>
 }
