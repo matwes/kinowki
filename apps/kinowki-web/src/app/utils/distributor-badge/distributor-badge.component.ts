@@ -24,13 +24,15 @@ export class DistributorBadgeComponent {
   });
 
   showFlyerProbability = computed(() => {
+    const releaseDate = this.releaseDate();
     const hasFlyers = this.hasFlyers();
+
     if (hasFlyers) {
       return false;
     }
 
     const today = new Date().toISOString().slice(0, 10);
-    return this.releaseDate() > today;
+    return releaseDate > today;
   });
 
   flyerProbability = computed(() => {
@@ -53,6 +55,8 @@ export class DistributorBadgeComponent {
 
     return distributors.map((distributor) => distributor.name).join(' • ');
   });
+
+  probabilityLabel = computed(() => (Number.isFinite(this.flyerProbability) ? `${this.flyerProbability}%` : '?'));
 
   styleClass = computed(() => {
     if (this.showFlyerProbability()) {
