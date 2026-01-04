@@ -12,6 +12,7 @@
     (onLazyLoad)="lazyLoad($event)">
     <ng-template #header>
       <tr>
+        <th [style.width.rem]="1"></th>
         <th [style.width.%]="100">Użytkownik</th>
         <th [style.minWidth.rem]="8" class="text-center">W kolekcji</th>
         <th [style.minWidth.rem]="8" class="text-center">Na wymianę</th>
@@ -20,30 +21,26 @@
     </ng-template>
     <ng-template #body let-user>
       <tr class="table-row" [pSelectableRow]="user">
-        <td>
-          <div>{{ user.name }}</div>
-          <div class="email">{{ user.email }}</div>
+        <td class="pr-0">
+          @if(!user.isActive) {
+          <a href="mailto:{{ user.email }}" class="mail-link" [pTooltip]="user.email">
+            <i class="pi pi-envelope"></i>
+          </a>
+          }
         </td>
+        <td [class.font-bold]="user.isActive">{{ user.name }}</td>
         <td class="text-center">
           <p-selectbutton
-            [options]="[{ label: user.haveTotal + '', value: { user: user._id, state: 'have' } }]"
+            [options]="user.collection"
             [formControl]="state"
             aria-labelledby="basic"
             [unselectable]="true" />
         </td>
         <td class="text-center">
-          <p-selectbutton
-            [options]="[{ label: user.tradeTotal + '', value: { user: user._id, state: 'trade' } }]"
-            [formControl]="state"
-            aria-labelledby="basic"
-            [unselectable]="true" />
+          <p-selectbutton [options]="user.trade" [formControl]="state" aria-labelledby="basic" [unselectable]="true" />
         </td>
         <td class="text-center">
-          <p-selectbutton
-            [options]="[{ label: user.wantTotal + '', value: { user: user._id, state: 'want' } }]"
-            [formControl]="state"
-            aria-labelledby="basic"
-            [unselectable]="true" />
+          <p-selectbutton [options]="user.want" [formControl]="state" aria-labelledby="basic" [unselectable]="true" />
         </td>
       </tr>
     </ng-template>

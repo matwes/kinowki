@@ -43,9 +43,9 @@ export class SidebarComponent {
   ]);
 
   items = computed<MenuItem[]>(() => [
-    ...(this.authService.importUsed()
-      ? []
-      : [{ label: 'Importuj z .xlsx (tylko raz)', icon: PrimeIcons.FILE_IMPORT, command: () => this.import() }]),
+    // ...(this.authService.importUsed()
+    //   ? []
+    //   : [{ label: 'Importuj z .xlsx (tylko raz)', icon: PrimeIcons.FILE_IMPORT, command: () => this.import() }]),
     { label: 'Wyloguj', icon: PrimeIcons.SIGN_OUT, command: () => this.logout() },
   ]);
 

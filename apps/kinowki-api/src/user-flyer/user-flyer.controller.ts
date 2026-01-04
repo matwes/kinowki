@@ -79,7 +79,7 @@ export class UserFlyerController extends CrudController<
         totalRecords,
       });
     } catch (err) {
-      errorHandler(res, err, "Getting user flyers");
+      errorHandler(res, err, 'Getting user flyers');
     }
   }
 
@@ -96,15 +96,26 @@ export class UserFlyerController extends CrudController<
     } else {
       try {
         const newItem = await this.crudService.create({ ...createDto, user: userId });
-        const userFlyerStats = await this.userFlyerService.getUserFlyerStats(userId);
-        await this.userService.update(userId, userFlyerStats);
+
+        this.userFlyerService
+          .getUserFlyerStats(userId)
+          .then((stats) =>
+            this.userService
+              .update(userId, stats)
+              .catch((err) => console.error('Update user stats after adding flyer failed:', err))
+          )
+          .catch((err) => console.error('Getting user stats after adding flyer failed:', err));
+
+        this.userFlyerService
+          .updateUserOffers(userId)
+          .catch((err) => console.error('Updating user offers after adding flyer failed:', err));
 
         res.status(HttpStatus.CREATED).json({
           message: `${this.name} has been created successfully`,
           data: newItem,
         });
       } catch (err) {
-        errorHandler(res, err, "Adding user flyer");
+        errorHandler(res, err, 'Adding user flyer');
       }
     }
   }
@@ -127,15 +138,26 @@ export class UserFlyerController extends CrudController<
     } else {
       try {
         const existingItem = await this.crudService.update(id, updateDto);
-        const userFlyerStats = await this.userFlyerService.getUserFlyerStats(userId);
-        await this.userService.update(userId, userFlyerStats);
+
+        this.userFlyerService
+          .getUserFlyerStats(userId)
+          .then((stats) =>
+            this.userService
+              .update(userId, stats)
+              .catch((err) => console.error('Update user stats after updating flyer failed:', err))
+          )
+          .catch((err) => console.error('Getting user stats after updating flyer failed:', err));
+
+        this.userFlyerService
+          .updateUserOffers(userId)
+          .catch((err) => console.error('Updating user offers after updating flyer failed:', err));
 
         res.status(HttpStatus.OK).json({
           message: `${this.name} has been successfully updated`,
           data: existingItem,
         });
       } catch (err) {
-        errorHandler(res, err, "Updating user flyer");
+        errorHandler(res, err, 'Updating user flyer');
       }
     }
   }

@@ -5,16 +5,23 @@ import { FilterQuery, Model, Types } from 'mongoose';
 import { CreateUserFlyerDto, FlyerDto, UpdateUserFlyerDto, UserFlyerDto, UserFlyerStatus } from '@kinowki/shared';
 import { CrudService } from '../utils';
 import { UserFlyer } from './user-flyer.schema';
+import { UserService } from '../user/user.service';
+import { UserOfferService } from '../user-offer/user-offer.service';
 
 @Injectable()
 export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, CreateUserFlyerDto, UpdateUserFlyerDto> {
   name = 'user flyer';
   sortKey = 'flyer';
 
-  constructor(@InjectModel(UserFlyer.name) model: Model<UserFlyer>) {
+  constructor(
+    @InjectModel(UserFlyer.name) model: Model<UserFlyer>,
+    private readonly userService: UserService,
+    private readonly userOfferService: UserOfferService
+  ) {
     super(model);
 
-    this.migrateRemoveOrphanUserFlyers();
+    // this.migrateRemoveOrphanUserFlyers();
+    this.migrateCreateInitialUserOffers();
   }
 
   override async create(createDto: CreateUserFlyerDto) {
@@ -136,6 +143,47 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     return { tradeTotal, wantTotal, haveTotal };
   }
 
+  async updateUserOffer(userTrade: Types.ObjectId | string, userWant: Types.ObjectId | string) {
+    const result = await this.model.aggregate([
+      { $match: { user: new Types.ObjectId(userTrade), status: UserFlyerStatus.TRADE } },
+      {
+        $lookup: {
+          from: 'userflyers',
+          let: { flyer: '$flyer' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$flyer', '$$flyer'] },
+                    { $eq: ['$user', new Types.ObjectId(userWant)] },
+                    { $eq: ['$status', UserFlyerStatus.WANT] },
+                  ],
+                },
+              },
+            },
+          ],
+          as: 'wanted',
+        },
+      },
+      { $match: { wanted: { $ne: [] } } },
+      { $count: 'count' },
+    ]);
+
+    return this.userOfferService.createOrUpdate(userTrade, userWant, result[0]?.count ?? 0);
+  }
+
+  async updateUserOffers(user: Types.ObjectId | string) {
+    const users = await this.userService.getAll();
+
+    for (const otherUser of users) {
+      if (otherUser._id.toString() !== user.toString()) {
+        await this.updateUserOffer(user, otherUser._id);
+        await this.updateUserOffer(otherUser._id, user);
+      }
+    }
+  }
+
   async migrateUserFlyersFlyerName() {
     console.log('Starting migration: setting flyerName for UserFlyers...');
 
@@ -195,5 +243,21 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     });
 
     console.log(`✅ Migration finished. Deleted ${result.deletedCount} records.`);
+  }
+
+  async migrateCreateInitialUserOffers() {
+    console.log('Starting migration: creating user offers...');
+
+    const users = await this.userService.getAll();
+
+    for (const userTrade of users) {
+      for (const userWant of users) {
+        if (userTrade._id.toString() !== userWant._id.toString()) {
+          await this.updateUserOffer(userTrade._id, userWant._id);
+        }
+      }
+    }
+
+    console.log('✅ Migration finished. Created/updated user offers.');
   }
 }

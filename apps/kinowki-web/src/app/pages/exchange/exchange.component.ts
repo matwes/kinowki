@@ -1,26 +1,30 @@
 import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, Component, inject, signal, ViewChild } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { DataView, DataViewModule } from 'primeng/dataview';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { TooltipModule } from 'primeng/tooltip';
 import {
   EMPTY,
   Subject,
   combineLatest,
   debounceTime,
   distinctUntilChanged,
+  forkJoin,
   map,
   of,
   shareReplay,
   switchMap,
+  take,
   tap,
 } from 'rxjs';
 
 import { FlyerDto } from '@kinowki/shared';
-import { UserFlyerService, UserService } from '../../services';
+import { AuthService, UserFlyerService, UserOfferService, UserService } from '../../services';
 import { JoinPipe } from '../../utils';
 import { FlyerComponent } from '../flyer';
 
@@ -29,11 +33,22 @@ import { FlyerComponent } from '../flyer';
   selector: 'app-exchange',
   templateUrl: './exchange.component.html',
   styleUrl: './exchange.component.sass',
-  imports: [AsyncPipe, DataViewModule, FlyerComponent, JoinPipe, ReactiveFormsModule, SelectButtonModule, TableModule],
+  imports: [
+    AsyncPipe,
+    DataViewModule,
+    FlyerComponent,
+    JoinPipe,
+    ReactiveFormsModule,
+    SelectButtonModule,
+    TableModule,
+    TooltipModule,
+  ],
 })
 export class ExchangeComponent implements AfterViewInit {
+  private readonly authService = inject(AuthService);
   private readonly userService = inject(UserService);
   private readonly userFlyerService = inject(UserFlyerService);
+  private readonly userOfferService = inject(UserOfferService);
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -45,13 +60,62 @@ export class ExchangeComponent implements AfterViewInit {
   event?: TableLazyLoadEvent;
   lazyEvent = new Subject<TableLazyLoadEvent>();
 
+  readonly isLoggedIn$ = toObservable(this.authService.isLoggedIn);
+
   private data$ = this.lazyEvent.pipe(
     debounceTime(500),
-    switchMap((lazyEvent) => this.userService.getAll(lazyEvent)),
+    switchMap((lazyEvent) =>
+      this.isLoggedIn$.pipe(
+        take(1),
+        switchMap((loggedIn) =>
+          forkJoin({
+            users: this.userService.getAll(lazyEvent),
+            offers: loggedIn ? this.userOfferService.getUserOffers() : of(null),
+          })
+        )
+      )
+    ),
+
     shareReplay(1)
   );
 
-  value$ = this.data$.pipe(map((res) => res.data));
+  value$ = this.data$.pipe(
+    map(({ users, offers: activeUserData }) =>
+      users.data
+        .map((user) => {
+          const trade = activeUserData?.data.offers.trade[user._id] ?? 0;
+          const want = activeUserData?.data.offers.want[user._id] ?? 0;
+          const isActive = user._id === activeUserData?.data.activeUser;
+
+          return {
+            ...user,
+            isActive,
+            sort: Math.min(trade, want),
+            collection: [{ label: String(user.haveTotal), value: { user: user._id, state: 'have' } }],
+            trade: [
+              { label: String(user.tradeTotal), value: { user: user._id, state: 'trade' } },
+              ...(trade ? [{ label: String(trade), value: { user: user._id, state: '' }, disabled: true }] : []),
+            ],
+            want: [
+              { label: String(user.wantTotal), value: { user: user._id, state: 'want' } },
+              ...(want ? [{ label: String(want), value: { user: user._id, state: '' }, disabled: true }] : []),
+            ],
+          };
+        })
+        .sort((a, b) => {
+          if (a.isActive && !b.isActive) {
+            return -1;
+          }
+          if (!a.isActive && b.isActive) {
+            return 1;
+          }
+          if (b.sort !== a.sort) {
+            return b.sort - a.sort;
+          }
+          return a.name.localeCompare(b.name, 'pl');
+        })
+    )
+  );
 
   // flyers
 

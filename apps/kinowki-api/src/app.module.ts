@@ -10,6 +10,7 @@ import { FlyerModule } from './flyer/flyer.module';
 import { TagModule } from './tag/tag.module';
 import { UserModule } from './user/user.module';
 import { UserFlyerModule } from './user-flyer/user-flyer.module';
+import { UserOfferModule } from './user-offer/user-offer.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UserFlyerModule } from './user-flyer/user-flyer.module';
     TagModule,
     UserFlyerModule,
     UserModule,
+    UserOfferModule,
   ],
   controllers: [],
   providers: [],

@@ -5,4 +5,5 @@ export * from './image.dto';
 export * from './release.dto';
 export * from './tag.dto';
 export * from './user-flyer.dto';
+export * from './user-offer.dto';
 export * from './user.dto';
