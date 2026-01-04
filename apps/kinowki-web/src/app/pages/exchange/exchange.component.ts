@@ -119,6 +119,11 @@ export class ExchangeComponent implements AfterViewInit {
           if (!a.isActive && b.isActive) {
             return 1;
           }
+
+          if (a.hasMatch !== b.hasMatch) {
+            return a.hasMatch ? -1 : 1;
+          }
+
           if (a.hasMatch) {
             if (b.sortMin !== a.sortMin) {
               return b.sortMin - a.sortMin;
@@ -128,7 +133,7 @@ export class ExchangeComponent implements AfterViewInit {
               return b.sortMax - a.sortMax;
             }
           }
-          return a.name.localeCompare(b.name, 'pl');
+          return a.name.localeCompare(b.name);
         })
     )
   );
