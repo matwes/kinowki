@@ -83,22 +83,32 @@ export class ExchangeComponent implements AfterViewInit {
     map(({ users, offers: activeUserData }) =>
       users.data
         .map((user) => {
-          const trade = activeUserData?.data.offers.trade[user._id] ?? 0;
-          const want = activeUserData?.data.offers.want[user._id] ?? 0;
+          const activeUserTrade = activeUserData?.data.offers.trade[user._id] ?? 0;
+          const activeUserWant = activeUserData?.data.offers.want[user._id] ?? 0;
           const isActive = user._id === activeUserData?.data.activeUser;
+
+          const sortMin = Math.min(activeUserTrade, activeUserWant);
+          const sortMax = Math.max(activeUserTrade, activeUserWant);
+          const hasMatch = sortMin > 0;
 
           return {
             ...user,
             isActive,
-            sort: Math.min(trade, want),
+            sortMin,
+            sortMax,
+            hasMatch,
             collection: [{ label: String(user.haveTotal), value: { user: user._id, state: 'have' } }],
             trade: [
               { label: String(user.tradeTotal), value: { user: user._id, state: 'trade' } },
-              ...(trade ? [{ label: String(trade), value: { user: user._id, state: '' }, disabled: true }] : []),
+              ...(activeUserWant
+                ? [{ label: String(activeUserWant), value: { user: user._id, state: '' }, disabled: true }]
+                : []),
             ],
             want: [
               { label: String(user.wantTotal), value: { user: user._id, state: 'want' } },
-              ...(want ? [{ label: String(want), value: { user: user._id, state: '' }, disabled: true }] : []),
+              ...(activeUserTrade
+                ? [{ label: String(activeUserTrade), value: { user: user._id, state: '' }, disabled: true }]
+                : []),
             ],
           };
         })
@@ -109,8 +119,14 @@ export class ExchangeComponent implements AfterViewInit {
           if (!a.isActive && b.isActive) {
             return 1;
           }
-          if (b.sort !== a.sort) {
-            return b.sort - a.sort;
+          if (a.hasMatch) {
+            if (b.sortMin !== a.sortMin) {
+              return b.sortMin - a.sortMin;
+            }
+          } else {
+            if (b.sortMax !== a.sortMax) {
+              return b.sortMax - a.sortMax;
+            }
           }
           return a.name.localeCompare(b.name, 'pl');
         })
