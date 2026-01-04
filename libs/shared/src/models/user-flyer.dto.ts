@@ -5,6 +5,14 @@ export enum UserFlyerStatus {
   UNWANTED = 3,
 }
 
+export enum UserFlyerFilter {
+  HAVE = 'have',
+  TRADE = 'trade',
+  TRADE_MATCH = 'trade-match',
+  WANT = 'want',
+  WANT_MATCH = 'want-match',
+}
+
 export interface CreateUserFlyerDto {
   user?: string;
   flyer: string;

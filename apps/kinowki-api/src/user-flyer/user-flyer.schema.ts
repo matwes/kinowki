@@ -12,7 +12,7 @@ export class UserFlyer {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Flyer', required: true })
   flyer: Types.ObjectId;
 
-  @Prop({type: String, required: true})
+  @Prop({ type: String, required: true })
   flyerName: string;
 
   @Prop({ type: Number, enum: UserFlyerStatus, default: UserFlyerStatus.UNWANTED })
@@ -24,5 +24,6 @@ export class UserFlyer {
 
 export const UserFlyerSchema = SchemaFactory.createForClass(UserFlyer)
   .index({ user: 1, flyer: 1 }, { unique: true })
-  .index({ flyer: 1, status: 1 })
-  .index({ user: 1, status: 1 });
+  .index({ user: 1, status: 1 })
+  .index({ flyer: 1, user: 1, status: 1 })
+  .index({ flyer: 1, status: 1 });

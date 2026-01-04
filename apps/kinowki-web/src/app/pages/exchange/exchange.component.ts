@@ -23,7 +23,7 @@ import {
   tap,
 } from 'rxjs';
 
-import { FlyerDto } from '@kinowki/shared';
+import { FlyerDto, UserFlyerFilter } from '@kinowki/shared';
 import { AuthService, UserFlyerService, UserOfferService, UserService } from '../../services';
 import { JoinPipe } from '../../utils';
 import { FlyerComponent } from '../flyer';
@@ -55,7 +55,7 @@ export class ExchangeComponent implements AfterViewInit {
 
   @ViewChild('flyersView', { static: true }) flyersDataView!: DataView;
 
-  state = this.fb.control(undefined as undefined | { user: string; state: 'have' | 'trade' | 'want' });
+  state = this.fb.control(undefined as undefined | { user: string; state: UserFlyerFilter });
 
   event?: TableLazyLoadEvent;
   lazyEvent = new Subject<TableLazyLoadEvent>();
@@ -97,17 +97,38 @@ export class ExchangeComponent implements AfterViewInit {
             sortMin,
             sortMax,
             hasMatch,
-            collection: [{ label: String(user.haveTotal), value: { user: user._id, state: 'have' } }],
+            collection: [
+              {
+                label: String(user.haveTotal),
+                value: { user: user._id, state: UserFlyerFilter.HAVE },
+              },
+            ],
             trade: [
-              { label: String(user.tradeTotal), value: { user: user._id, state: 'trade' } },
+              {
+                label: String(user.tradeTotal),
+                value: { user: user._id, state: UserFlyerFilter.TRADE },
+              },
               ...(activeUserWant
-                ? [{ label: String(activeUserWant), value: { user: user._id, state: '' }, disabled: true }]
+                ? [
+                    {
+                      label: String(activeUserWant),
+                      value: { user: user._id, state: UserFlyerFilter.TRADE_MATCH },
+                    },
+                  ]
                 : []),
             ],
             want: [
-              { label: String(user.wantTotal), value: { user: user._id, state: 'want' } },
+              {
+                label: String(user.wantTotal),
+                value: { user: user._id, state: UserFlyerFilter.WANT },
+              },
               ...(activeUserTrade
-                ? [{ label: String(activeUserTrade), value: { user: user._id, state: '' }, disabled: true }]
+                ? [
+                    {
+                      label: String(activeUserTrade),
+                      value: { user: user._id, state: UserFlyerFilter.WANT_MATCH },
+                    },
+                  ]
                 : []),
             ],
           };
@@ -164,9 +185,11 @@ export class ExchangeComponent implements AfterViewInit {
           map((res) => res.data),
           tap((user) => {
             const titles: Record<string, string> = {
-              have: `${user.name} - ulotki w kolekcji`,
-              trade: `${user.name} - ulotki na wymianę`,
-              want: `${user.name} - ulotki poszukiwane`,
+              [UserFlyerFilter.HAVE]: `Ulotki w kolekcji ${user.name}`,
+              [UserFlyerFilter.TRADE]: `Ulotki na wymianę ${user.name}`,
+              [UserFlyerFilter.TRADE_MATCH]: `Ulotki na wymianę ${user.name}, które szukam`,
+              [UserFlyerFilter.WANT]: `Ulotki poszukiwane przez ${user.name}`,
+              [UserFlyerFilter.WANT_MATCH]: `Ulotki poszukiwane przez ${user.name}, które mam na wymianę`,
             };
             this.flyersTitle.set(titles[value.state] ?? user.name);
           }),
@@ -201,7 +224,7 @@ export class ExchangeComponent implements AfterViewInit {
       .subscribe((params) => {
         const first = +params['p'] || 0;
 
-        if (params['uzytkownik'] && params['status'] && ['have', 'trade', 'want'].includes(params['status'])) {
+        if (params['uzytkownik'] && params['status'] && this.isValidUserFlyerFilter(params['status'])) {
           this.state.setValue({ user: params['uzytkownik'], state: params['status'] });
         } else {
           this.state.setValue(undefined);
@@ -248,5 +271,16 @@ export class ExchangeComponent implements AfterViewInit {
       queryParams: params,
       queryParamsHandling: '',
     });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private isValidUserFlyerFilter(filter: any) {
+    return [
+      UserFlyerFilter.HAVE,
+      UserFlyerFilter.TRADE,
+      UserFlyerFilter.TRADE_MATCH,
+      UserFlyerFilter.WANT,
+      UserFlyerFilter.WANT_MATCH,
+    ].includes(filter);
   }
 }

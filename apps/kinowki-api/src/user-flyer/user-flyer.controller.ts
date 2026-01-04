@@ -13,10 +13,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { FilterQuery, Types } from 'mongoose';
 import 'multer';
 
-import { CreateUserFlyerDto, FlyerDto, UpdateUserFlyerDto, UserFlyerDto, UserFlyerStatus } from '@kinowki/shared';
+import { CreateUserFlyerDto, FlyerDto, UpdateUserFlyerDto, UserFlyerDto, UserFlyerFilter } from '@kinowki/shared';
 import { CrudController, errorHandler, JwtAuthGuard, OptionalJwtAuthGuard } from '../utils';
 import { UserFlyer } from './user-flyer.schema';
 import { UserFlyerService } from './user-flyer.service';
@@ -45,41 +44,33 @@ export class UserFlyerController extends CrudController<
     @Query('first', new ParseIntPipe({ optional: true })) first?: number,
     @Query('rows', new ParseIntPipe({ optional: true })) rows?: number,
     @Query('user') userId?: string,
-    @Query('state') state?: 'have' | 'trade' | 'want'
+    @Query('state') state?: UserFlyerFilter
   ) {
     const userData = req.user as UserData | null;
 
-    try {
-      const params = rows ? { first: first || 0, rows } : undefined;
-      const filters: FilterQuery<UserFlyer> = {
-        ...(userId ? { user: new Types.ObjectId(userId) } : {}),
-        ...(state === 'have'
-          ? { status: { $lt: UserFlyerStatus.WANT } }
-          : state === 'trade'
-          ? { status: UserFlyerStatus.TRADE }
-          : state === 'want'
-          ? { status: UserFlyerStatus.WANT }
-          : {}),
-      };
+    if (!state || !userId) {
+      console.error('Getting user flyers', 'No state (', state, ') or user id (', userId, ') in request');
+      res.status(404).json({ message: 'Brak statusu lub od użytkownika!' });
+    } else {
+      try {
+        const params = rows ? { first: first || 0, rows } : undefined;
 
-      const [data, totalRecords] = await Promise.all([
-        this.userFlyerService.getAllWithReleases(params, filters),
-        this.crudService.count(filters),
-      ]);
+        const result = await this.userFlyerService.getAllWithReleases(state, userId, userData.userId, params);
 
-      const flyers = data.map((userFlyer) => userFlyer.flyer as unknown as FlyerDto);
+        const flyers = result.data.map((userFlyer) => userFlyer.flyer as unknown as FlyerDto);
 
-      if (userData?.userId && data.length) {
-        await this.userFlyerService.addUserStatus(userData.userId, flyers);
+        if (userData?.userId && result.data.length) {
+          await this.userFlyerService.addUserStatus(userData.userId, flyers);
+        }
+
+        res.status(HttpStatus.OK).json({
+          message: `All ${this.name} data found successfully`,
+          data: flyers,
+          totalRecords: result.totalRecords,
+        });
+      } catch (err) {
+        errorHandler(res, err, 'Getting user flyers');
       }
-
-      res.status(HttpStatus.OK).json({
-        message: `All ${this.name} data found successfully`,
-        data: flyers,
-        totalRecords,
-      });
-    } catch (err) {
-      errorHandler(res, err, 'Getting user flyers');
     }
   }
 

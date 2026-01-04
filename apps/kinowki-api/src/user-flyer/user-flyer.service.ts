@@ -2,7 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
 
-import { CreateUserFlyerDto, FlyerDto, UpdateUserFlyerDto, UserFlyerDto, UserFlyerStatus } from '@kinowki/shared';
+import {
+  CreateUserFlyerDto,
+  FlyerDto,
+  UpdateUserFlyerDto,
+  UserFlyerDto,
+  UserFlyerFilter,
+  UserFlyerStatus,
+} from '@kinowki/shared';
 import { CrudService } from '../utils';
 import { UserFlyer } from './user-flyer.schema';
 import { UserService } from '../user/user.service';
@@ -21,7 +28,7 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     super(model);
 
     // this.migrateRemoveOrphanUserFlyers();
-    this.migrateCreateInitialUserOffers();
+    // this.migrateCreateInitialUserOffers();
   }
 
   override async create(createDto: CreateUserFlyerDto) {
@@ -45,24 +52,133 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     return this.model.updateMany({ flyer }, { $set: { flyerName } });
   }
 
-  async getAllWithReleases(params?: { first: number; rows: number }, filters?: FilterQuery<UserFlyer>) {
-    let query = this.model
-      .find(filters)
-      .populate({
-        path: 'flyer',
-        populate: [{ path: 'tags' }, { path: 'releases', populate: [{ path: 'film' }] }],
-      })
-      .sort({ flyerName: -1 });
+  async getAllWithReleases(
+    state: UserFlyerFilter,
+    userId: string,
+    loggedUserId?: string,
+    params?: { first: number; rows: number }
+  ) {
+    if ((state === UserFlyerFilter.TRADE_MATCH || state === UserFlyerFilter.WANT_MATCH) && loggedUserId) {
+      const [result] = await this.model
+        .aggregate([
+          {
+            $match: {
+              user: new Types.ObjectId(userId),
+              status: state === UserFlyerFilter.TRADE_MATCH ? UserFlyerStatus.TRADE : UserFlyerStatus.WANT,
+            },
+          },
+          {
+            $lookup: {
+              from: 'userflyers',
+              let: { flyerId: '$flyer' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [
+                        { $eq: ['$flyer', '$$flyerId'] },
+                        { $eq: ['$user', new Types.ObjectId(loggedUserId)] },
+                        {
+                          $eq: [
+                            '$status',
+                            state === UserFlyerFilter.TRADE_MATCH ? UserFlyerStatus.WANT : UserFlyerStatus.TRADE,
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                },
+              ],
+              as: 'match',
+            },
+          },
+          { $match: { match: { $ne: [] } } },
+          {
+            $lookup: {
+              from: 'flyers',
+              localField: 'flyer',
+              foreignField: '_id',
+              as: 'flyer',
+            },
+          },
+          { $unwind: '$flyer' },
+          {
+            $lookup: {
+              from: 'tags',
+              localField: 'flyer.tags',
+              foreignField: '_id',
+              as: 'flyer.tags',
+            },
+          },
+          {
+            $lookup: {
+              from: 'releases',
+              let: { releaseIds: '$flyer.releases' },
+              pipeline: [
+                { $match: { $expr: { $in: ['$_id', '$$releaseIds'] } } },
+                {
+                  $lookup: {
+                    from: 'films',
+                    localField: 'film',
+                    foreignField: '_id',
+                    as: 'film',
+                  },
+                },
+                { $unwind: { path: '$film', preserveNullAndEmptyArrays: true } },
+              ],
+              as: 'flyer.releases',
+            },
+          },
+          { $sort: { flyerName: -1 } },
+          {
+            $facet: {
+              data: [...(params ? [{ $skip: params.first }, { $limit: params.rows }] : [])],
+              totalRecords: [{ $count: 'count' }],
+            },
+          },
+        ])
+        .collation({ locale: 'pl', strength: 1 });
 
-    if (params) {
-      query = query.limit(params.rows).skip(params.first);
-    }
+      return {
+        data: result.data as UserFlyerDto[],
+        totalRecords: (result.totalRecords[0]?.count as number | undefined) ?? 0,
+      };
+    } else {
+      const filters: FilterQuery<UserFlyer> = { user: new Types.ObjectId(userId) };
 
-    const itemData = await query.collation({ locale: 'pl', strength: 1 }).lean<UserFlyerDto[]>().exec();
-    if (!itemData) {
-      throw new NotFoundException(`${this.name} data not found!`);
+      if (state === UserFlyerFilter.HAVE) {
+        filters.status = { $lt: UserFlyerStatus.WANT };
+      } else if (state === UserFlyerFilter.TRADE) {
+        filters.status = UserFlyerStatus.TRADE;
+      } else {
+        filters.status = UserFlyerStatus.WANT;
+      }
+
+      let query = this.model
+        .find(filters)
+        .populate({
+          path: 'flyer',
+          populate: [{ path: 'tags' }, { path: 'releases', populate: [{ path: 'film' }] }],
+        })
+        .sort({ flyerName: -1 });
+
+      if (params) {
+        query = query.limit(params.rows).skip(params.first);
+      }
+
+      const [data, totalRecords] = await Promise.all([
+        query.collation({ locale: 'pl', strength: 1 }).lean<UserFlyerDto[]>().exec(),
+        this.count(filters),
+      ]);
+      if (!data) {
+        throw new NotFoundException(`${this.name} data not found!`);
+      }
+
+      return {
+        data,
+        totalRecords,
+      };
     }
-    return itemData;
   }
 
   async importUserStatuses(userFlyers: UpdateUserFlyerDto[]) {
