@@ -16,6 +16,10 @@ export class UserOfferService extends CrudService<UserOffer, UserOfferDto, Creat
     super(model);
   }
 
+  async getOfferCount(userTrade: Types.ObjectId | string, userWant: Types.ObjectId | string) {
+    return (await this.model.findOne({ userTrade, userWant }).lean<UserOfferDto>().exec())?.count ?? 0;
+  }
+
   async createOrUpdate(userTrade: Types.ObjectId | string, userWant: Types.ObjectId | string, count: number) {
     return await this.model
       .updateOne({ userTrade, userWant }, { $set: { userTrade, userWant, count } }, { upsert: true })

@@ -59,14 +59,21 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     params?: { first: number; rows: number }
   ) {
     if ((state === UserFlyerFilter.TRADE_MATCH || state === UserFlyerFilter.WANT_MATCH) && loggedUserId) {
-      const [result] = await this.model
+      const userTrade = new Types.ObjectId(state === UserFlyerFilter.TRADE_MATCH ? userId : loggedUserId);
+      const userWant = new Types.ObjectId(state === UserFlyerFilter.TRADE_MATCH ? loggedUserId : userId);
+
+      const totalRecords = await this.userOfferService.getOfferCount(userTrade, userWant);
+
+      if (!totalRecords) {
+        return {
+          data: [],
+          totalRecords: 0,
+        };
+      }
+
+      const result = await this.model
         .aggregate([
-          {
-            $match: {
-              user: new Types.ObjectId(userId),
-              status: state === UserFlyerFilter.TRADE_MATCH ? UserFlyerStatus.TRADE : UserFlyerStatus.WANT,
-            },
-          },
+          { $match: { user: userTrade, status: UserFlyerStatus.TRADE } },
           {
             $lookup: {
               from: 'userflyers',
@@ -77,22 +84,22 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
                     $expr: {
                       $and: [
                         { $eq: ['$flyer', '$$flyerId'] },
-                        { $eq: ['$user', new Types.ObjectId(loggedUserId)] },
-                        {
-                          $eq: [
-                            '$status',
-                            state === UserFlyerFilter.TRADE_MATCH ? UserFlyerStatus.WANT : UserFlyerStatus.TRADE,
-                          ],
-                        },
+                        { $eq: ['$user', userWant] },
+                        { $eq: ['$status', UserFlyerStatus.WANT] },
                       ],
                     },
                   },
                 },
+                { $limit: 1 },
+                { $project: { _id: 1 } },
               ],
               as: 'match',
             },
           },
           { $match: { match: { $ne: [] } } },
+          { $unset: 'match' },
+          { $sort: { flyerName: -1 } },
+          ...(params ? [{ $skip: params.first }, { $limit: params.rows }] : []),
           {
             $lookup: {
               from: 'flyers',
@@ -129,19 +136,12 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
               as: 'flyer.releases',
             },
           },
-          { $sort: { flyerName: -1 } },
-          {
-            $facet: {
-              data: [...(params ? [{ $skip: params.first }, { $limit: params.rows }] : [])],
-              totalRecords: [{ $count: 'count' }],
-            },
-          },
         ])
         .collation({ locale: 'pl', strength: 1 });
 
       return {
-        data: result.data as UserFlyerDto[],
-        totalRecords: (result.totalRecords[0]?.count as number | undefined) ?? 0,
+        data: result as UserFlyerDto[],
+        totalRecords,
       };
     } else {
       const filters: FilterQuery<UserFlyer> = { user: new Types.ObjectId(userId) };
