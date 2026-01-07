@@ -1,10 +1,10 @@
 export const flyerSizes = [
-  { value: 1, label: 'A6', size: '105×148 mm' },
-  { value: 2, label: 'A6 pozioma', size: '148×105 mm' },
-  { value: 3, label: 'A5', size: '148×210 mm' },
-  { value: 4, label: 'A5 pozioma', size: '210×148 mm' },
-  { value: 5, label: 'A4', size: '210×297 mm' },
-  { value: 6, label: 'A4 pozioma', size: '297×210 mm' },
+  { value: 1, label: 'A6' },
+  { value: 2, label: 'A6 pozioma' },
+  { value: 3, label: 'A5' },
+  { value: 4, label: 'A5 pozioma' },
+  { value: 5, label: 'A4' },
+  { value: 6, label: 'A4 pozioma' },
   { value: 7, label: '60×60 mm' },
   { value: 8, label: '180×180 mm' },
   { value: 9, label: '65×65 mm' },
@@ -92,6 +92,8 @@ export const flyerSizes = [
 });
 
 export const flyerSizeMap = flyerSizes.reduce(
-  (map, genre) => ({ ...map, [genre.value]: genre.label }),
+  (map, size) => ({ ...map, [size.value]: size.label }),
   {} as Record<number, string>
 );
+
+flyerSizeMap[2] = 'pozioma';

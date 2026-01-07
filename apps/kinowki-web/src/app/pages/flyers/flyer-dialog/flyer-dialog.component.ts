@@ -355,7 +355,7 @@ export class FlyerDialogComponent implements OnInit {
   }
 
   addSeparator() {
-    this.note.setValue(this.note.value + ' • ');
+    this.note.setValue(`${this.note.value} • `);
   }
 
   private getFromForm(): Partial<UpdateFlyerDto> {
