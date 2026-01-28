@@ -16,6 +16,6 @@ export const flyerTypes = [
 ];
 
 export const flyerTypeMap = flyerTypes.reduce(
-  (map, genre) => ({ ...map, [genre.value]: genre.label }),
+  (map, type) => ({ ...map, [type.value]: type.label }),
   {} as Record<number, string>
 );

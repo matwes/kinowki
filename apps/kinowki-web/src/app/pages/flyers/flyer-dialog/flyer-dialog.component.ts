@@ -17,6 +17,7 @@ import {
   ReleaseDto,
   TagDto,
   UpdateFlyerDto,
+  flyerKinds,
   flyerSizeMap,
   flyerSizes,
   flyerTypeMap,
@@ -51,10 +52,11 @@ export class FlyerDialogComponent implements OnInit {
   private readonly releaseService = inject(ReleaseService);
 
   options: {
+    flyerKinds: { value: number; label: string }[];
     flyerSizes: { value: number; label: string }[];
     flyerTypes: { value: number; label: string }[];
     tags: TagDto[];
-  } = { flyerSizes, flyerTypes, tags: [] };
+  } = { flyerKinds, flyerSizes, flyerTypes, tags: [] };
 
   releaseSearch = new BehaviorSubject<string>('');
   releases$: Nullable<Observable<ReleaseDto[]>>;
@@ -65,6 +67,7 @@ export class FlyerDialogComponent implements OnInit {
     sortDate: undefined as unknown as string,
     filterName: undefined as unknown as string,
     releases: [[] as string[]],
+    kind: 1,
     type: 1 as number | undefined,
     size: 1 as number | undefined,
     tags: [[] as string[]],
@@ -91,6 +94,10 @@ export class FlyerDialogComponent implements OnInit {
 
   get releases() {
     return this.form.controls.releases;
+  }
+
+  get kind() {
+    return this.form.controls.kind;
   }
 
   get type() {
@@ -125,6 +132,7 @@ export class FlyerDialogComponent implements OnInit {
         this.sortName.setValue(flyer.sortName);
         this.filterName.setValue(flyer.filterName);
         this.releases.setValue(flyer.releases.map((release) => release._id));
+        this.kind.setValue(flyer.kind);
         this.type.setValue(flyer.type);
         this.size.setValue(flyer.size);
         this.tags.setValue(flyer.tags.map((tag) => tag._id));
@@ -343,6 +351,7 @@ export class FlyerDialogComponent implements OnInit {
 
         return releaseA.film.title.localeCompare(releaseB.film.title);
       }),
+      kind: this.kind.value,
       type: this.type.value,
       size: this.size.value,
       tags: this.tags.value,

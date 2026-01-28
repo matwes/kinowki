@@ -15,6 +15,9 @@ export class Flyer {
   @Prop({ required: true })
   filterName: string;
 
+  @Prop({ required: true, default: 1 })
+  kind: number;
+
   @Prop()
   type?: number;
 
@@ -42,6 +45,7 @@ export const FlyerSchema = SchemaFactory.createForClass(Flyer)
   .index({ sortDate: -1 })
   .index({ sortName: 1 })
   .index({ filterName: 1 })
+  .index({ kind: 1 })
   .index({ type: 1 })
   .index({ size: 1 })
   .index({ tags: 1 });

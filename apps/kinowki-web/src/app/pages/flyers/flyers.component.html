@@ -19,7 +19,7 @@
           <div class="search-label">Nazwa</div>
           <input
             pInputText
-            class="w-12rem"
+            class="w-10rem"
             type="text"
             placeholder="Szukaj..."
             [ngModel]="flyerNameSearch"
@@ -28,7 +28,7 @@
         <div class="filter-item">
           <div class="search-label">Rozmiar</div>
           <p-select
-            styleClass="w-10rem"
+            styleClass="w-9rem"
             [ngModel]="flyerSizeSearch"
             [options]="flyerSizes"
             placeholder="Szukaj..."
@@ -39,7 +39,7 @@
         <div class="filter-item">
           <div class="search-label">Typ</div>
           <p-select
-            styleClass="w-10rem"
+            styleClass="w-9rem"
             [ngModel]="flyerTypesSearch"
             [options]="flyerTypes"
             placeholder="Szukaj..."
@@ -48,9 +48,20 @@
             (onChange)="filter('flyerType', $event.value)" />
         </div>
         <div class="filter-item">
+          <div class="search-label">Rodzaj</div>
+          <p-select
+            styleClass="w-9rem"
+            [ngModel]="flyerKindSearch"
+            [options]="flyerKinds"
+            placeholder="Szukaj..."
+            [showClear]="true"
+            scrollHeight="30rem"
+            (onChange)="filter('flyerKind', $event.value)" />
+        </div>
+        <div class="filter-item">
           <div class="search-label">Tag</div>
           <p-select
-            styleClass="w-10rem"
+            styleClass="w-9rem"
             [ngModel]="flyerTagSearch"
             [options]="tags"
             optionValue="_id"
@@ -63,7 +74,7 @@
         <div class="filter-item">
           <div class="search-label">Sortowanie</div>
           <p-select
-            styleClass="w-12rem"
+            styleClass="w-10rem"
             [ngModel]="flyerSort"
             [options]="sorts"
             (onChange)="filter('sort', $event.value)" />
@@ -110,10 +121,7 @@
                 <div>
                   <b>{{ release.film.title }}</b>
                 </div>
-                <div [style.opacity]="0.75">
-                  {{ release.date }}
-                  @if (release.releaseType !== 1) { <span> ({{ release.releaseType | releaseTypeName }})</span> }
-                </div>
+                <div [style.opacity]="0.75">{{ release.date }}</div>
               </div>
               }
               <div class="flyer-actions left">

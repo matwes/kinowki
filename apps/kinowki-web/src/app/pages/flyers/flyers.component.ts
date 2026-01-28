@@ -30,11 +30,10 @@ import {
   tap,
 } from 'rxjs';
 
-import { FlyerDto, TagDto, flyerSizes, flyerTypes, genres, releaseTypes } from '@kinowki/shared';
+import { FlyerDto, TagDto, flyerKinds, flyerSizes, flyerTypes, genres, releaseTypes } from '@kinowki/shared';
 import { FlyerService, TagService, UserService } from '../../services';
 import {
   CopyFlyerNameButtonComponent,
-  ReleaseTypeNamePipe,
   ShowIfAdminDirective,
   ShowIfLoggedDirective,
   UserFlyerStatusButtonComponent,
@@ -61,7 +60,6 @@ import { FlyerDialogComponent } from './flyer-dialog';
     ImageModule,
     InputTextModule,
     PopoverModule,
-    ReleaseTypeNamePipe,
     SelectButtonModule,
     SelectModule,
     ShowIfAdminDirective,
@@ -90,11 +88,12 @@ export class FlyersComponent implements OnInit {
   @ViewChild('flyersView', { static: true }) flyersView!: DataView;
 
   genres = genres;
+  flyerKinds = flyerKinds;
   flyerTypes = flyerTypes;
   flyerSizes = flyerSizes;
   releaseTypes = releaseTypes;
   sorts = [
-    { label: 'Ostatnio dodane', value: 1 },
+    { label: 'Wg dodania', value: 1 },
     { label: 'Wg premiery', value: 2 },
     { label: 'Alfabetycznie', value: 3 },
   ];
@@ -130,6 +129,7 @@ export class FlyersComponent implements OnInit {
   tags: TagDto[] = [];
 
   flyerSizeSearch: number | undefined;
+  flyerKindSearch: number | undefined;
   flyerTypesSearch: number | undefined;
   flyerNameSearch: string | undefined;
   flyerTagSearch: string | undefined;
@@ -152,6 +152,7 @@ export class FlyersComponent implements OnInit {
         const filters: { [s: string]: FilterMetadata | FilterMetadata[] | undefined } = {};
 
         const flyerSize = params['rozmiar'];
+        const flyerKind = params['rodzaj'];
         const flyerType = params['typ'];
         const filterName = params['nazwa'];
         const flyerTag = params['tag'];
@@ -176,6 +177,18 @@ export class FlyersComponent implements OnInit {
           }
         } else {
           this.flyerSizeSearch = undefined;
+        }
+
+        if (flyerKind) {
+          const flyerKindNumber = Number(flyerKind);
+          if (flyerKinds.some((kind) => kind.value === flyerKindNumber)) {
+            filters['flyerKind'] = { value: flyerKind };
+            this.flyerKindSearch = flyerKindNumber;
+          } else {
+            this.flyerKindSearch = undefined;
+          }
+        } else {
+          this.flyerKindSearch = undefined;
         }
 
         if (flyerType) {
@@ -251,12 +264,16 @@ export class FlyersComponent implements OnInit {
     };
 
     if (filters) {
+      const flyerKind = filters['flyerKind'];
       const flyerType = filters['flyerType'];
       const flyerSize = filters['flyerSize'];
       const filterName = filters['filterName'];
       const flyerTags = filters['flyerTags'];
       const flyerSort = filters['sort'];
 
+      if (flyerKind && !Array.isArray(flyerKind) && flyerKind.value) {
+        params['rodzaj'] = flyerKind.value;
+      }
       if (flyerType && !Array.isArray(flyerType) && flyerType.value) {
         params['typ'] = flyerType.value;
       }

@@ -21,6 +21,8 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
 
   constructor(@InjectModel(Flyer.name) model: Model<Flyer>) {
     super(model);
+
+    this.migrateFlyerKind();
   }
 
   override async getAll(params?: { first: number; rows: number }, filters?: FilterQuery<Flyer>) {
@@ -115,5 +117,13 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
     });
 
     await this.model.bulkWrite(ops);
+  }
+
+  async migrateFlyerKind() {
+    console.log('Starting migration: setting Flyer.kind = 1 where missing...');
+
+    const res = await this.model.updateMany({ kind: { $exists: false } }, { $set: { kind: 1 } });
+
+    console.log(`✅ Migration finished. Updated ${res.modifiedCount} records.`);
   }
 }

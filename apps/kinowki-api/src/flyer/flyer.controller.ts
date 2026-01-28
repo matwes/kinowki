@@ -65,6 +65,7 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
     @Query('rows', new ParseIntPipe({ optional: true })) rows?: number,
     @Query('sort', new ParseIntPipe({ optional: true })) flyerSort?: 1 | 2 | 3,
     @Query('filterName') filterName?: string,
+    @Query('flyerKind') flyerKind?: string,
     @Query('flyerType') flyerType?: string,
     @Query('flyerSize') flyerSize?: string,
     @Query('flyerTags') flyerTags?: string
@@ -75,6 +76,7 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
       const params = rows ? { first: first || 0, rows } : undefined;
       const filters: FilterQuery<Flyer> = {
         ...(filterName ? { filterName: { $regex: getRegex(filterName) } } : {}),
+        ...(flyerKind ? { kind: flyerKind } : {}),
         ...(flyerType ? { type: flyerType } : {}),
         ...(flyerSize ? { size: flyerSize } : {}),
         ...(flyerTags ? { tags: flyerTags } : {}),
