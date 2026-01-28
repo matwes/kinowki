@@ -26,8 +26,6 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     private readonly userOfferService: UserOfferService
   ) {
     super(model);
-
-    this.migrateUserFlyersFlyerName();
   }
 
   override async create(createDto: CreateUserFlyerDto) {
