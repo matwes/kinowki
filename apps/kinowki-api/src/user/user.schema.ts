@@ -20,9 +20,6 @@ export class User {
   @Prop({ default: false })
   isActive: boolean;
 
-  @Prop({ default: false })
-  importUsed: boolean;
-
   @Prop()
   resetPasswordToken?: string;
 

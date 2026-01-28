@@ -153,7 +153,7 @@ export class FlyersComponent implements OnInit {
 
         const flyerSize = params['rozmiar'];
         const flyerType = params['typ'];
-        const id = params['nazwa'];
+        const filterName = params['nazwa'];
         const flyerTag = params['tag'];
         const sort = +params['sort'] || 0;
         const first = +params['p'] || 0;
@@ -190,9 +190,9 @@ export class FlyersComponent implements OnInit {
           this.flyerTypesSearch = undefined;
         }
 
-        if (id) {
-          filters['id'] = { value: id };
-          this.flyerNameSearch = id;
+        if (filterName) {
+          filters['filterName'] = { value: filterName };
+          this.flyerNameSearch = filterName;
         } else {
           this.flyerNameSearch = undefined;
         }
@@ -253,7 +253,7 @@ export class FlyersComponent implements OnInit {
     if (filters) {
       const flyerType = filters['flyerType'];
       const flyerSize = filters['flyerSize'];
-      const id = filters['id'];
+      const filterName = filters['filterName'];
       const flyerTags = filters['flyerTags'];
       const flyerSort = filters['sort'];
 
@@ -263,8 +263,8 @@ export class FlyersComponent implements OnInit {
       if (flyerSize && !Array.isArray(flyerSize) && flyerSize.value) {
         params['rozmiar'] = flyerSize.value;
       }
-      if (id && !Array.isArray(id) && id.value) {
-        params['nazwa'] = id.value;
+      if (filterName && !Array.isArray(filterName) && filterName.value) {
+        params['nazwa'] = filterName.value;
       }
       if (flyerTags && !Array.isArray(flyerTags) && flyerTags.value) {
         params['tag'] = flyerTags.value;
@@ -305,7 +305,7 @@ export class FlyersComponent implements OnInit {
 
   deleteFlyer(item: FlyerDto) {
     this.confirmationService.confirm({
-      message: `Czy na pewno chcesz usunąć ulotkę „${item.id}”?`,
+      message: `Czy na pewno chcesz usunąć ulotkę „${item.filterName}”?`,
       header: 'Usuń ulotke',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -319,7 +319,7 @@ export class FlyersComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'Sukces',
-              detail: `Usunięto ulotkę „${item.id}”`,
+              detail: `Usunięto ulotkę „${item.filterName}”`,
               life: 3000,
             });
           });

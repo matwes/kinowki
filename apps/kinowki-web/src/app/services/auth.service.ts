@@ -24,7 +24,6 @@ export class AuthService {
 
   isLoggedIn = computed(() => !!this.tokenSignal());
   isAdmin = computed(() => this.userSignal()?.role === 'admin');
-  importUsed = computed(() => !!this.userSignal()?.importUsed);
   userName = computed(() => this.userSignal()?.name);
 
   constructor() {

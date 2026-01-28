@@ -181,22 +181,6 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     }
   }
 
-  async importUserStatuses(userFlyers: UpdateUserFlyerDto[]) {
-    if (!userFlyers.length) {
-      return;
-    }
-
-    return this.model.bulkWrite(
-      userFlyers.map((userFlyer) => ({
-        updateOne: {
-          filter: { user: userFlyer.user, flyer: userFlyer.flyer },
-          update: userFlyer,
-          upsert: true,
-        },
-      }))
-    );
-  }
-
   async addUserStatus(userId: string | undefined, flyers: FlyerDto[]) {
     const userFlyers = await this.getAll(null, { flyer: { $in: flyers.map((flyer) => flyer._id) } });
 

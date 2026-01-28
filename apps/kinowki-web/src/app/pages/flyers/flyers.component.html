@@ -23,7 +23,7 @@
             type="text"
             placeholder="Szukaj..."
             [ngModel]="flyerNameSearch"
-            (ngModelChange)="filter('id', $event)" />
+            (ngModelChange)="filter('filterName', $event)" />
         </div>
         <div class="filter-item">
           <div class="search-label">Rozmiar</div>
@@ -91,15 +91,15 @@
           <app-big-flyer [flyer]="flyer" />
           <div>
             <div class="flyer-stats">
-              <div class="flyer-stat" [pTooltip]="flyer.have | users: usersMap">
+              <div class="flyer-stat" [pTooltip]="flyer.have | users : usersMap">
                 <i class="pi pi-check"></i>
                 <span>{{ flyer.have?.length ?? 0 }}</span>
               </div>
-              <div class="flyer-stat" [pTooltip]="flyer.trade | users: usersMap">
+              <div class="flyer-stat" [pTooltip]="flyer.trade | users : usersMap">
                 <i class="pi pi-arrow-right-arrow-left"></i>
                 <span>{{ flyer.trade?.length ?? 0 }}</span>
               </div>
-              <div class="flyer-stat" [pTooltip]="flyer.want | users: usersMap">
+              <div class="flyer-stat" [pTooltip]="flyer.want | users : usersMap">
                 <i class="pi pi-search"></i>
                 <span>{{ flyer.want?.length ?? 0 }}</span>
               </div>
@@ -115,14 +115,9 @@
                   @if (release.releaseType !== 1) { <span> ({{ release.releaseType | releaseTypeName }})</span> }
                 </div>
               </div>
-              } @empty {
-              <div class="text-xs">{{ flyer.id }}</div>
               }
               <div class="flyer-actions left">
-                <app-user-flyer-status-button
-                  [flyer]="flyer"
-                  (statusChanged)="lazyLoad()"
-                  *appShowIfLogged />
+                <app-user-flyer-status-button [flyer]="flyer" (statusChanged)="lazyLoad()" *appShowIfLogged />
                 <app-copy-flyer-name-button [flyer]="flyer" />
               </div>
               <div class="flyer-actions right" *appShowIfAdmin>

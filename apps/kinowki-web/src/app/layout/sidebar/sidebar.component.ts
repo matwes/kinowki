@@ -42,12 +42,7 @@ export class SidebarComponent {
     { label: 'Kontakt', url: '/kontakt', icon: PrimeIcons.INFO_CIRCLE },
   ]);
 
-  items = computed<MenuItem[]>(() => [
-    // ...(this.authService.importUsed()
-    //   ? []
-    //   : [{ label: 'Importuj z .xlsx (tylko raz)', icon: PrimeIcons.FILE_IMPORT, command: () => this.import() }]),
-    { label: 'Wyloguj', icon: PrimeIcons.SIGN_OUT, command: () => this.logout() },
-  ]);
+  items = computed<MenuItem[]>(() => [{ label: 'Wyloguj', icon: PrimeIcons.SIGN_OUT, command: () => this.logout() }]);
 
   showDrawer = false;
 
@@ -102,42 +97,5 @@ export class SidebarComponent {
   logout() {
     this.authService.logout();
     window.location.reload();
-  }
-
-  import() {
-    this.fileInput.nativeElement.click();
-  }
-
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) {
-      return;
-    }
-
-    input.value = '';
-
-    this.flyerService
-      .importUserFlyers(file)
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (event) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sukces',
-            detail: `Zaimportowano ${event.data} rekordów`,
-            life: 3000,
-          });
-          setTimeout(() => window.location.reload(), 3000);
-        },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Błąd',
-            detail: 'Wystąpił problem podczas importowania pliku.',
-            life: 3000,
-          });
-        },
-      });
   }
 }

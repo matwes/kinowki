@@ -4,9 +4,9 @@ import { TagDto } from './tag.dto';
 import { UserFlyerDto } from './user-flyer.dto';
 
 export interface CreateFlyerDto {
-  id: string;
   sortName: string;
   sortDate: string;
+  filterName: string;
   type?: number;
   size?: number;
   tags: string[];

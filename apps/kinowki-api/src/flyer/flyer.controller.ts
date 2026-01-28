@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,16 +7,12 @@ import {
   Logger,
   Param,
   ParseIntPipe,
-  Post,
   Put,
   Query,
   Req,
   Res,
-  UploadedFile,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { FilterQuery } from 'mongoose';
 
@@ -25,7 +20,7 @@ import { CreateFlyerDto, FlyerDto, UpdateFlyerDto } from '@kinowki/shared';
 import { UserData } from '../auth/jwt-strategy';
 import { UserFlyerService } from '../user-flyer/user-flyer.service';
 import { UserService } from '../user/user.service';
-import { AdminGuard, CrudController, errorHandler, getRegex, JwtAuthGuard, OptionalJwtAuthGuard } from '../utils';
+import { AdminGuard, CrudController, errorHandler, getRegex, OptionalJwtAuthGuard } from '../utils';
 import { Flyer } from './flyer.schema';
 import { FlyerService } from './flyer.service';
 
@@ -61,45 +56,6 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
     }
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post('import')
-  @UseInterceptors(FileInterceptor('file'))
-  async importFile(@UploadedFile() file: Express.Multer.File, @Req() req, @Res() res: Response) {
-    const userData = req.user as UserData | null;
-    if (!userData) {
-      res.status(HttpStatus.UNAUTHORIZED).json({
-        message: 'You must be logged in to perform this action.',
-      });
-    } else if (!file) {
-      if (!file) {
-        throw new BadRequestException('No file uploaded');
-      }
-    } else {
-      const user = await this.userService.get(userData.userId);
-      if (user.importUsed) {
-        res.status(HttpStatus.FORBIDDEN).json({
-          message: 'Import can be done only once.',
-        });
-      } else {
-        try {
-          const userFlyers = await this.flyerService.importFromXlsx(file.buffer);
-          await this.userFlyerService.importUserStatuses(
-            userFlyers.map((userFlyer) => ({ ...userFlyer, user: userData.userId }))
-          );
-
-          await this.userService.update(userData.userId, { importUsed: true });
-
-          res.status(HttpStatus.OK).json({
-            message: `${userFlyers.length} user flyers imported!`,
-            data: userFlyers.length,
-          });
-        } catch (err) {
-          errorHandler(res, err, 'Importing flyers');
-        }
-      }
-    }
-  }
-
   @Get()
   @UseGuards(OptionalJwtAuthGuard)
   override async getAll(
@@ -108,7 +64,7 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
     @Query('first', new ParseIntPipe({ optional: true })) first?: number,
     @Query('rows', new ParseIntPipe({ optional: true })) rows?: number,
     @Query('sort', new ParseIntPipe({ optional: true })) flyerSort?: 1 | 2 | 3,
-    @Query('id') id?: string,
+    @Query('filterName') filterName?: string,
     @Query('flyerType') flyerType?: string,
     @Query('flyerSize') flyerSize?: string,
     @Query('flyerTags') flyerTags?: string
@@ -118,7 +74,7 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
     try {
       const params = rows ? { first: first || 0, rows } : undefined;
       const filters: FilterQuery<Flyer> = {
-        ...(id ? { id: { $regex: getRegex(id) } } : {}),
+        ...(filterName ? { filterName: { $regex: getRegex(filterName) } } : {}),
         ...(flyerType ? { type: flyerType } : {}),
         ...(flyerSize ? { size: flyerSize } : {}),
         ...(flyerTags ? { tags: flyerTags } : {}),

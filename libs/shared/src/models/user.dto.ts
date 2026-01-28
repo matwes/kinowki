@@ -4,7 +4,6 @@ export interface CreateUserDto {
   password: string;
   role: string;
   isActive: boolean;
-  importUsed?: boolean;
   haveTotal?: number;
   tradeTotal?: number;
   wantTotal?: number;
@@ -16,7 +15,6 @@ export interface UpdateUserDto extends Partial<CreateUserDto> {
 
 export interface UserDto extends CreateUserDto {
   _id: string;
-  importUsed: boolean;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
 }

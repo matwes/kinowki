@@ -61,9 +61,9 @@ export class FlyerDialogComponent implements OnInit {
   private releaseMap = new Map<string, ReleaseDto>();
 
   form = this.fb.group({
-    id: undefined as unknown as string,
     sortName: undefined as unknown as string,
     sortDate: undefined as unknown as string,
+    filterName: undefined as unknown as string,
     releases: [[] as string[]],
     type: 1 as number | undefined,
     size: 1 as number | undefined,
@@ -77,16 +77,16 @@ export class FlyerDialogComponent implements OnInit {
     ),
   });
 
-  get id() {
-    return this.form.controls.id;
-  }
-
   get sortName() {
     return this.form.controls.sortName;
   }
 
   get sortDate() {
     return this.form.controls.sortDate;
+  }
+
+  get filterName() {
+    return this.form.controls.filterName;
   }
 
   get releases() {
@@ -121,9 +121,9 @@ export class FlyerDialogComponent implements OnInit {
       const flyer = this.config.data.item;
 
       if (flyer) {
-        this.id.setValue(flyer.id);
         this.sortDate.setValue(flyer.sortDate);
         this.sortName.setValue(flyer.sortName);
+        this.filterName.setValue(flyer.filterName);
         this.releases.setValue(flyer.releases.map((release) => release._id));
         this.type.setValue(flyer.type);
         this.size.setValue(flyer.size);
@@ -164,9 +164,9 @@ export class FlyerDialogComponent implements OnInit {
   }
 
   refresh() {
-    this.id.setValue(this.generateFlyerId());
     this.sortDate.setValue(this.generateSortDate());
     this.sortName.setValue(this.generateSortName());
+    this.filterName.setValue(this.generateFilterName());
   }
 
   addImage() {
@@ -187,77 +187,43 @@ export class FlyerDialogComponent implements OnInit {
     );
   }
 
-  private generateFlyerId(): string {
-    let result = '';
-    const ids = this.releases.value;
-
-    if (ids.length) {
-      const releases = ids.map((id) => this.releaseMap.get(id)).filter((release) => !!release);
-
-      if (releases.length) {
-        if (releases.length === 1) {
-          const release = releases[0];
-          result = `${release.date}${release.film.year}${release.film.title}`;
-
-          const tags = [
-            ...(!this.size.value || this.size.value === 1 ? [] : [flyerSizeMap[this.size.value]]),
-            ...(!this.type.value || this.type.value === 1 ? [] : [flyerTypeMap[this.type.value]]),
-            ...(this.note.value ? [this.note.value] : []),
-          ];
-
-          if (tags.length) {
-            result += ` [${tags.join('] [')}]`;
-          }
-
-          result += `${release.film.originalTitle ?? ''}`;
-        } else {
-          const oldestRelease = releases.reduce((oldest, current) => (current.date < oldest.date ? current : oldest));
-          result = `${oldestRelease.date}${oldestRelease.film.year}${releases
-            .map((release) => release.film.title)
-            .join(' | ')}`;
-
-          const tags = [
-            ...(!this.size.value || this.size.value === 1 ? [] : [flyerSizeMap[this.size.value]]),
-            ...(!this.type.value || this.type.value === 1 ? [] : [flyerTypeMap[this.type.value]]),
-            ...(this.note.value ? [this.note.value] : []),
-          ];
-
-          if (tags.length) {
-            result += ` [${tags.join('] [')}]`;
-          }
-        }
-      }
-    }
-
-    return result;
+  private generateFilterName(): string {
+    return [
+      ...this.releases.value
+        .map((releaseId) => this.releaseMap.get(releaseId))
+        .filter((release) => !!release)
+        .flatMap((release) => [release.film?.title, release.film?.originalTitle, release.note]),
+      this.note.value,
+    ]
+      .filter(Boolean)
+      .join(';');
   }
 
   private generateSortName(): string {
-    let name = '';
-    const ids = this.releases.value;
+    const releases = this.releases.value
+      .map((releaseId) => this.releaseMap.get(releaseId))
+      .filter((release) => !!release);
 
-    if (ids.length) {
-      const releases = ids.map((id) => this.releaseMap.get(id)).filter((release) => !!release);
+    if (!releases.length) {
+      return '';
+    }
 
-      if (releases.length) {
-        const oldestRelease = releases.reduce((oldest, current) => (current.date < oldest.date ? current : oldest));
+    const oldestRelease = releases.reduce((oldest, current) => (current.date < oldest.date ? current : oldest));
 
-        name = `${releases.map((release) => release.film.title).join(' | ')}`;
+    let name = `${releases.map((release) => release.film.title).join(' | ')}`;
 
-        const tags = [
-          ...(oldestRelease.releaseType !== 1 && oldestRelease.releaseType !== 5
-            ? [releaseTypeMap[oldestRelease.releaseType]]
-            : []),
-          ...(oldestRelease.note ? [oldestRelease.note] : []),
-          ...(!this.size.value || this.size.value === 1 ? [] : [flyerSizeMap[this.size.value]]),
-          ...(!this.type.value || this.type.value === 1 ? [] : [flyerTypeMap[this.type.value]]),
-          ...(this.note.value ? [this.note.value] : []),
-        ];
+    const tags = [
+      ...(oldestRelease.releaseType !== 1 && oldestRelease.releaseType !== 5
+        ? [releaseTypeMap[oldestRelease.releaseType]]
+        : []),
+      ...(oldestRelease.note ? [oldestRelease.note] : []),
+      ...(!this.size.value || this.size.value === 1 ? [] : [flyerSizeMap[this.size.value]]),
+      ...(!this.type.value || this.type.value === 1 ? [] : [flyerTypeMap[this.type.value]]),
+      ...(this.note.value ? [this.note.value] : []),
+    ];
 
-        if (tags.length) {
-          name += ` [${tags.join('] [')}]`;
-        }
-      }
+    if (tags.length) {
+      name += ` [${tags.join('] [')}]`;
     }
 
     return name;
@@ -360,9 +326,9 @@ export class FlyerDialogComponent implements OnInit {
 
   private getFromForm(): Partial<UpdateFlyerDto> {
     return {
-      id: this.id.value,
       sortDate: this.sortDate.value,
       sortName: this.sortName.value,
+      filterName: this.filterName.value,
       releases: this.releases.value.sort((a, b) => {
         const releaseA = this.releaseMap.get(a);
         const releaseB = this.releaseMap.get(b);
