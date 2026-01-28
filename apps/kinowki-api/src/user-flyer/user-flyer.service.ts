@@ -27,8 +27,7 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
   ) {
     super(model);
 
-    // this.migrateRemoveOrphanUserFlyers();
-    // this.migrateCreateInitialUserOffers();
+    this.migrateUserFlyersFlyerName();
   }
 
   override async create(createDto: CreateUserFlyerDto) {
@@ -288,25 +287,34 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     console.log('Starting migration: setting flyerName for UserFlyers...');
 
     const userFlyers = await this.model
-      .find({ flyerName: { $exists: false } })
-      .populate('flyer', 'name')
+      .find({}, { flyer: 1 })
+      .populate({ path: 'flyer', select: { sortDate: 1, sortName: 1 } })
       .lean();
-
     console.log(`Found ${userFlyers.length} UserFlyers to update.`);
 
-    let updated = 0;
-    for (const userFlyer of userFlyers) {
-      const flyer = userFlyer.flyer as unknown as FlyerDto | undefined;
+    const ops = userFlyers
+      .filter(
+        (userFlyer) =>
+          (userFlyer.flyer as unknown as FlyerDto)?.sortDate && (userFlyer.flyer as unknown as FlyerDto)?.sortName
+      )
+      .map((userFlyer) => ({
+        updateOne: {
+          filter: { _id: userFlyer._id },
+          update: {
+            $set: {
+              flyerName: `${(userFlyer.flyer as unknown as FlyerDto).sortDate} ${
+                (userFlyer.flyer as unknown as FlyerDto).sortName
+              }`,
+            },
+          },
+        },
+      }));
 
-      if (flyer && flyer.sortDate && flyer.sortName) {
-        const flyerName = `${flyer.sortDate} ${flyer.sortName}`;
-
-        await this.model.updateOne({ _id: userFlyer._id }, { $set: { flyerName } });
-        updated++;
-      }
+    if (ops.length) {
+      await this.model.bulkWrite(ops);
     }
 
-    console.log(`✅ Migration finished. Updated ${updated} records.`);
+    console.log(`✅ Migration finished. Updated ${ops.length} records.`);
   }
 
   async migrateRemoveOrphanUserFlyers() {

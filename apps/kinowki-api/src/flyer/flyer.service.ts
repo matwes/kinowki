@@ -21,7 +21,6 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
 
   constructor(@InjectModel(Flyer.name) model: Model<Flyer>) {
     super(model);
-    this.setFlyerNames();
   }
 
   override async getAll(params?: { first: number; rows: number }, filters?: FilterQuery<Flyer>) {

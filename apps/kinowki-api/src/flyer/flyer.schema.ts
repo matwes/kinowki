@@ -6,9 +6,6 @@ export type FlyerDocument = HydratedDocument<Flyer>;
 
 @Schema({ timestamps: { createdAt: true, updatedAt: false } })
 export class Flyer {
-  @Prop()
-  id: string | undefined;
-
   @Prop({ required: true })
   sortName: string;
 
