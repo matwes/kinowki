@@ -16,68 +16,80 @@
     <ng-template #header>
       <div class="filter-bar">
         <div class="filter-item">
-          <div class="search-label">Nazwa</div>
           <input
             pInputText
             class="w-10rem"
             type="text"
-            placeholder="Szukaj..."
+            placeholder="Tytuł filmu"
             [ngModel]="flyerNameSearch"
             (ngModelChange)="filter('filterName', $event)" />
         </div>
         <div class="filter-item">
-          <div class="search-label">Rozmiar</div>
           <p-select
-            styleClass="w-9rem"
+            styleClass="w-11rem"
             [ngModel]="flyerSizeSearch"
             [options]="flyerSizes"
-            placeholder="Szukaj..."
+            placeholder="Rozmiar"
             [showClear]="true"
             scrollHeight="30rem"
-            (onChange)="filter('flyerSize', $event.value)" />
+            (onChange)="filter('flyerSize', $event.value)">
+            <ng-template #dropdownicon>
+              <i class="pi pi-arrow-up-right-and-arrow-down-left-from-center"></i>
+            </ng-template>
+          </p-select>
         </div>
         <div class="filter-item">
-          <div class="search-label">Typ</div>
           <p-select
-            styleClass="w-9rem"
+            styleClass="w-11rem"
             [ngModel]="flyerTypesSearch"
             [options]="flyerTypes"
-            placeholder="Szukaj..."
+            placeholder="Typ"
             [showClear]="true"
             scrollHeight="30rem"
-            (onChange)="filter('flyerType', $event.value)" />
+            (onChange)="filter('flyerType', $event.value)">
+            <ng-template #dropdownicon><i class="pi pi-objects-column"></i></ng-template
+          ></p-select>
         </div>
         <div class="filter-item">
-          <div class="search-label">Rodzaj</div>
           <p-select
-            styleClass="w-9rem"
+            styleClass="w-11rem"
             [ngModel]="flyerKindSearch"
             [options]="flyerKinds"
-            placeholder="Szukaj..."
+            placeholder="Obieg"
             [showClear]="true"
             scrollHeight="30rem"
-            (onChange)="filter('flyerKind', $event.value)" />
+            (onChange)="filter('flyerKind', $event.value)">
+            <ng-template #dropdownicon>
+              <i class="pi pi-map-marker"></i>
+            </ng-template>
+          </p-select>
         </div>
         <div class="filter-item">
-          <div class="search-label">Tag</div>
           <p-select
-            styleClass="w-9rem"
+            styleClass="w-11rem"
             [ngModel]="flyerTagSearch"
             [options]="tags"
             optionValue="_id"
             optionLabel="name"
-            placeholder="Szukaj..."
+            placeholder="Tag"
             [showClear]="true"
             scrollHeight="30rem"
-            (onChange)="filter('flyerTags', $event.value)" />
+            (onChange)="filter('flyerTags', $event.value)">
+            <ng-template #dropdownicon>
+              <i class="pi pi-tag"></i>
+            </ng-template>
+          </p-select>
         </div>
         <div class="filter-item">
-          <div class="search-label">Sortowanie</div>
           <p-select
-            styleClass="w-10rem"
+            styleClass="w-11rem"
             [ngModel]="flyerSort"
             [options]="sorts"
-            (onChange)="filter('sort', $event.value)" />
+            (onChange)="filter('sort', $event.value)">
+            <ng-template #dropdownicon>
+              <i class="pi pi-sort-alt"></i>
+            </ng-template>
+          </p-select>
         </div>
         <p-button
           *appShowIfAdmin
@@ -88,8 +100,7 @@
       </div>
     </ng-template>
     <ng-template #list let-flyers>
-      @if (usersMap$ | async; as usersMap) {
-      <div class="grid grid-cols-12 p-3 pb-0 gap-4 grid-nogutter justify-content-center">
+      <div class="grid grid-cols-12 p-1 pb-0 gap-3 grid-nogutter justify-content-center">
         @for(flyer of flyers; track $index) {
         <div class="flyer-cell shadow-3">
           @if(flyer.distributors || flyer.notes) {
@@ -99,22 +110,8 @@
             <i>{{ flyer.notes }}</i>
           </div>
           }
-          <app-big-flyer [flyer]="flyer" />
+          <app-big-flyer [flyer]="flyer" [usersMap]="usersMap()" />
           <div>
-            <div class="flyer-stats">
-              <div class="flyer-stat" [pTooltip]="flyer.have | users : usersMap">
-                <i class="pi pi-check"></i>
-                <span>{{ flyer.have?.length ?? 0 }}</span>
-              </div>
-              <div class="flyer-stat" [pTooltip]="flyer.trade | users : usersMap">
-                <i class="pi pi-arrow-right-arrow-left"></i>
-                <span>{{ flyer.trade?.length ?? 0 }}</span>
-              </div>
-              <div class="flyer-stat" [pTooltip]="flyer.want | users : usersMap">
-                <i class="pi pi-search"></i>
-                <span>{{ flyer.want?.length ?? 0 }}</span>
-              </div>
-            </div>
             <div class="flyer-cell-footer" [appUserFlyerStatusClass]="flyer.userFlyer">
               @for(release of flyer.releases; track $index) {
               <div class="text-center">
@@ -142,7 +139,6 @@
         </div>
         }
       </div>
-      }
     </ng-template>
   </p-dataview>
   <p-confirmDialog [style.width.rem]="28" />

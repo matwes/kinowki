@@ -11,20 +11,30 @@ import {
 } from '@angular/core';
 import { FlyerDto } from '@kinowki/shared';
 import { Image, ImageModule } from 'primeng/image';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { environment } from '../../../environments/environment';
-import { FlyerNotePipe, ShowIfAdminDirective } from '../../utils';
+import { FlyerKindNamePipe, FlyerSizeNamePipe, FlyerTypeNamePipe, ShowIfAdminDirective, UsersPipe } from '../../utils';
 
 @Component({
   selector: 'app-big-flyer',
   templateUrl: './big-flyer.component.html',
   styleUrl: './big-flyer.component.sass',
-  imports: [FlyerNotePipe, ImageModule, ShowIfAdminDirective],
+  imports: [
+    FlyerKindNamePipe,
+    FlyerSizeNamePipe,
+    FlyerTypeNamePipe,
+    ImageModule,
+    ShowIfAdminDirective,
+    TooltipModule,
+    UsersPipe,
+  ],
 })
 export class BigFlyerComponent implements AfterViewInit {
   private readonly CDN_URL = environment.cdnUrl;
 
   flyer = input.required<FlyerDto>();
+  usersMap = input.required<Map<string, string>>();
   blankWidth = signal(175);
 
   images = computed(() =>

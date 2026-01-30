@@ -31,4 +31,49 @@
     }
   </div>
 </div>
-<div class="note">{{ flyer() | flyerNote }}</div>
+@if (flyer(); as flyer) {
+<div class="flyer-stats">
+  @if (flyer.size && flyer.size!==1) {
+  <div class="flyer-stat" pTooltip="Rozmiar">
+    <i class="pi pi-arrow-up-right-and-arrow-down-left-from-center"></i>
+    <span>{{ flyer.size | flyerSizeName }}</span>
+  </div>
+  } @if (flyer.type&& flyer.type!==1) {
+  <div class="flyer-stat" pTooltip="Typ">
+    <i class="pi pi-objects-column"></i>
+    <span>{{ flyer.type | flyerTypeName }}</span>
+  </div>
+  } @if (flyer.kind&& flyer.kind!==1) {
+  <div class="flyer-stat" pTooltip="Obieg">
+    <i class="pi pi-map-marker"></i>
+    <span>{{ flyer.kind | flyerKindName }}</span>
+  </div>
+  } @for(tag of flyer.tags; track $index) {
+  <div class="flyer-stat" pTooltip="Tag">
+    <i class="pi pi-tag"></i>
+    <span>{{ tag.name }}</span>
+  </div>
+  } @if (flyer.note) {
+  <div class="flyer-stat" pTooltip="Komentarz">
+    <i class="pi pi-comment"></i>
+    <span>{{ flyer.note }}</span>
+  </div>
+  }
+</div>
+<div class="flyer-stats">
+  @if (usersMap(); as usersMap) {
+  <div class="flyer-stat" [pTooltip]="flyer.have | users : usersMap : 'Mają w kolekcji' : 'Nikt nie oznaczył'">
+    <i class="pi pi-check"></i>
+    <span>{{ flyer.have?.length ?? 0 }}</span>
+  </div>
+  <div class="flyer-stat" [pTooltip]="flyer.trade | users : usersMap : 'Mają na wymianę' : 'Nikt nie ma na wymianę'">
+    <i class="pi pi-arrow-right-arrow-left"></i>
+    <span>{{ flyer.trade?.length ?? 0 }}</span>
+  </div>
+  <div class="flyer-stat" [pTooltip]="flyer.want | users : usersMap : 'Poszukują' : 'Nikt nie poszukuje'">
+    <i class="pi pi-search"></i>
+    <span>{{ flyer.want?.length ?? 0 }}</span>
+  </div>
+  }
+</div>
+}

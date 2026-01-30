@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -70,11 +70,11 @@ import { FlyerDialogComponent } from './flyer-dialog';
     TooltipModule,
     UserFlyerStatusButtonComponent,
     UserFlyerStatusClassDirective,
-    UsersPipe,
   ],
   providers: [ConfirmationService, DialogService],
 })
 export class FlyersComponent implements OnInit {
+  private readonly userService = inject(UserService);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly dialogService = inject(DialogService);
@@ -82,8 +82,6 @@ export class FlyersComponent implements OnInit {
   private readonly tagService = inject(TagService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-
-  usersMap$ = inject(UserService).getUserMap();
 
   @ViewChild('flyersView', { static: true }) flyersView!: DataView;
 
@@ -101,6 +99,8 @@ export class FlyersComponent implements OnInit {
 
   lazyEvent = new Subject<TableLazyLoadEvent>();
   filters$ = new BehaviorSubject<{ [s: string]: FilterMetadata | FilterMetadata[] | undefined } | undefined>({});
+
+  usersMap = signal(new Map<string, string>());
 
   data$ = combineLatest([this.lazyEvent, this.filters$]).pipe(
     debounceTime(500),
@@ -138,6 +138,11 @@ export class FlyersComponent implements OnInit {
   private tagsFetched = false;
 
   ngOnInit(): void {
+    this.userService
+      .getUserMap()
+      .pipe(untilDestroyed(this))
+      .subscribe((res) => this.usersMap.set(res));
+
     this.tagService
       .getAll()
       .pipe(
@@ -152,7 +157,7 @@ export class FlyersComponent implements OnInit {
         const filters: { [s: string]: FilterMetadata | FilterMetadata[] | undefined } = {};
 
         const flyerSize = params['rozmiar'];
-        const flyerKind = params['rodzaj'];
+        const flyerKind = params['obieg'];
         const flyerType = params['typ'];
         const filterName = params['nazwa'];
         const flyerTag = params['tag'];
@@ -272,7 +277,7 @@ export class FlyersComponent implements OnInit {
       const flyerSort = filters['sort'];
 
       if (flyerKind && !Array.isArray(flyerKind) && flyerKind.value) {
-        params['rodzaj'] = flyerKind.value;
+        params['obieg'] = flyerKind.value;
       }
       if (flyerType && !Array.isArray(flyerType) && flyerType.value) {
         params['typ'] = flyerType.value;
