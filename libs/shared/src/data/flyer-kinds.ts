@@ -1,5 +1,5 @@
 export const flyerKinds = [
-  { value: 1, label: 'masowy' },
+  { value: 1, label: 'powszechny' },
   { value: 5, label: 'sieciowy' },
   { value: 2, label: 'limitowany' },
   { value: 3, label: 'festiwalowy' },
