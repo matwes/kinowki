@@ -1,0 +1,8 @@
+@if ( { probabilityLabel: probabilityLabel(), styleClass: styleClass()}; as data) {
+<div class="badge">
+  <span class="badge-probability" [ngClass]="data.styleClass" pTooltip="Ostatnie 10 premier z ulotkami">{{
+    data.probabilityLabel
+  }}</span>
+  <span>na razie brak ulotek</span>
+</div>
+}

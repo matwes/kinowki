@@ -18,7 +18,7 @@
         <div class="filter-item">
           <input
             pInputText
-            class="w-10rem"
+            class="w-11rem"
             type="text"
             placeholder="Tytuł filmu"
             [ngModel]="flyerNameSearch"
@@ -100,16 +100,9 @@
       </div>
     </ng-template>
     <ng-template #list let-flyers>
-      <div class="grid grid-cols-12 p-1 pb-0 gap-3 grid-nogutter justify-content-center">
+      <div class="grid grid-cols-12 p-1 pb-0 gap-3 grid-nogutter justify-content-center align-items-end">
         @for(flyer of flyers; track $index) {
         <div class="flyer-cell shadow-3">
-          @if(flyer.distributors || flyer.notes) {
-          <div class="flyer-cell-title">
-            {{ flyer.distributors }}
-            @if (flyer.distributors && flyer.notes) { • }
-            <i>{{ flyer.notes }}</i>
-          </div>
-          }
           <app-big-flyer [flyer]="flyer" [usersMap]="usersMap()" />
           <div>
             <div class="flyer-cell-footer" [appUserFlyerStatusClass]="flyer.userFlyer">
@@ -118,7 +111,12 @@
                 <div>
                   <b>{{ release.film.title }}</b>
                 </div>
-                <div [style.opacity]="0.75">{{ release.date }}</div>
+                <div [style.opacity]="0.75">
+                  {{ release.date }}
+                  @if (release.note) {
+                  <span> ({{ release.note }})</span>
+                  }
+                </div>
               </div>
               }
               <div class="flyer-actions left">

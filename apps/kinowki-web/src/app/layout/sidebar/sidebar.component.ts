@@ -36,7 +36,7 @@ export class SidebarComponent {
     { label: 'Ulotki', url: '/ulotki', icon: PrimeIcons.TH_LARGE },
     { label: 'Filmy', url: '/filmy', icon: PrimeIcons.VIDEO },
     { label: 'Premiery', url: '/premiery', icon: PrimeIcons.CALENDAR },
-    { label: 'Dystrybutorzy', url: '/dystrybutorzy', icon: PrimeIcons.BOOK },
+    { label: 'Dystrybutorzy', url: '/dystrybutorzy', icon: PrimeIcons.GLOBE },
     { label: 'Wymiana', url: '/wymiana', icon: PrimeIcons.ARROW_RIGHT_ARROW_LEFT },
     ...(this.authService.isAdmin() ? [{ label: 'Tagi', url: '/tagi', icon: PrimeIcons.TAG }] : []),
     { label: 'Kontakt', url: '/kontakt', icon: PrimeIcons.INFO_CIRCLE },

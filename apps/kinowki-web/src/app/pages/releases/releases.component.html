@@ -44,7 +44,7 @@
     (onLazyLoad)="lazyLoad($event)">
     <ng-template #groupheader let-release>
       <tr pRowGroupHeader>
-        <td colspan="6" class="text-center">
+        <td colspan="5" class="text-center">
           <span class="group-header">{{ release | releaseDate }}</span>
         </td>
       </tr>
@@ -59,26 +59,29 @@
           </a>
           }
         </td>
-        <td [style.width]="'30%'">
+        <td [style.width]="'35%'">
+          @if(release.distributors.length || release.note) {
+          <div class="distributors">
+            {{ release.distributors | join : ' • ' : 'name' }}
+            @if (release.distributors.length && release.note) { • }
+            <i>{{ release.note }}</i>
+          </div>
+          }
           <div class="flex gap-2">
             <b>{{ release.film?.title }} ({{ release.film?.year }})</b>
           </div>
           <div [style.opacity]="0.75">{{ release.film?.originalTitle }}</div>
         </td>
-        <td [style.width]="'30%'">
-          <app-distributor-badge
-            [distributors]="release.distributors"
-            [releaseType]="release.releaseType"
-            [hasFlyers]="release.flyers.length"
-            [releaseDate]="release.date"
-            [releaseNote]="release.note" />
-        </td>
-        <td [style.width]="'30%'" [style.padding]="'0.25rem 1rem'">
+        <td [style.width]="'55%'" [style.padding]="'0.25rem 1rem'">
           <div class="flyers">
             @for(flyer of release.flyers; track $index) {
             <app-flyer [flyer]="flyer" (statusChanged)="lazyLoad()" />
             } @empty {
-            <span class="ml-2"> @if (passed) { brak ulotek } @else { na razie brak ulotek }</span>
+            <span class="ml-2">
+              @if (passed) { brak ulotek } @else {
+              <app-probability-badge [distributors]="release.distributors" />
+              }</span
+            >
             }
           </div>
         </td>

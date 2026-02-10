@@ -7,8 +7,8 @@
       <p-image
         width="auto"
         [imageStyle]="{
-          'max-width': '9.375rem',
-          'max-height': '13.375rem',
+          'max-width': '10.5rem',
+          'max-height': '15rem',
           'object-fit': 'contain',
           'object-position': $index % 2 === 0 ? 'right' : 'left'
         }"
@@ -32,8 +32,13 @@
   </div>
 </div>
 @if (flyer(); as flyer) {
-<div class="flyer-stats">
-  @if (flyer.size && flyer.size!==1) {
+<div class="flyer-stats pt-1" [style.paddingBottom.rem]="0.125">
+  @if ($any(flyer).distributors) {
+  <div class="flyer-stat" pTooltip="Dystrybutor">
+    <i class="pi pi-globe"></i>
+    <span>{{ $any(flyer).distributors }}</span>
+  </div>
+  }@if (flyer.size && flyer.size!==1) {
   <div class="flyer-stat" pTooltip="Rozmiar">
     <i class="pi pi-arrow-up-right-and-arrow-down-left-from-center"></i>
     <span>{{ flyer.size | flyerSizeName }}</span>
@@ -55,12 +60,12 @@
   </div>
   } @if (flyer.note) {
   <div class="flyer-stat" pTooltip="Komentarz">
-    <i class="pi pi-comment"></i>
+    <i class="pi pi-info-circle"></i>
     <span>{{ flyer.note }}</span>
   </div>
   }
 </div>
-<div class="flyer-stats">
+<div class="flyer-stats pb-1">
   @if (usersMap(); as usersMap) {
   <div class="flyer-stat" [pTooltip]="flyer.have | users : usersMap : 'Mają w kolekcji' : 'Nikt nie oznaczył'">
     <i class="pi pi-check"></i>

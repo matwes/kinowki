@@ -28,7 +28,7 @@ import {
 
 import { months, ReleaseDto } from '@kinowki/shared';
 import { ReleaseService } from '../../services';
-import { DistributorBadgeComponent, ImdbPipe, ReleaseDatePipe, ShowIfAdminDirective } from '../../utils';
+import { ImdbPipe, JoinPipe, ProbabilityBadgeComponent, ReleaseDatePipe, ShowIfAdminDirective } from '../../utils';
 import { FlyerComponent } from '../flyer';
 
 const FIRST_YEAR = 1990;
@@ -43,12 +43,13 @@ const LAST_YEAR = new Date().getFullYear() + 1;
     ButtonModule,
     CommonModule,
     ConfirmDialogModule,
-    DistributorBadgeComponent,
     FlyerComponent,
     FormsModule,
     ImdbPipe,
     InputTextModule,
+    JoinPipe,
     MultiSelectModule,
+    ProbabilityBadgeComponent,
     ReleaseDatePipe,
     SelectButtonModule,
     SelectModule,
