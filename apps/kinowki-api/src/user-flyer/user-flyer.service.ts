@@ -56,10 +56,14 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     params?: { first: number; rows: number }
   ) {
     if ((state === UserFlyerFilter.TRADE_MATCH || state === UserFlyerFilter.WANT_MATCH) && loggedUserId) {
-      const userTrade = new Types.ObjectId(state === UserFlyerFilter.TRADE_MATCH ? userId : loggedUserId);
-      const userWant = new Types.ObjectId(state === UserFlyerFilter.TRADE_MATCH ? loggedUserId : userId);
+      const userTradeId = new Types.ObjectId(state === UserFlyerFilter.TRADE_MATCH ? userId : loggedUserId);
+      const userWantId = new Types.ObjectId(state === UserFlyerFilter.TRADE_MATCH ? loggedUserId : userId);
 
-      const totalRecords = await this.userOfferService.getOfferCount(userTrade, userWant);
+      const [totalRecords, userTrade, userWant] = await Promise.all([
+        this.userOfferService.getOfferCount(userTradeId, userWantId),
+        this.userService.get(userTradeId),
+        this.userService.get(userWantId),
+      ]);
 
       if (!totalRecords) {
         return {
@@ -68,9 +72,14 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
         };
       }
 
-      const result = await this.model
+      const [matchUser1, matchStatus1, matchUser2, matchStatus2] =
+        userTrade.tradeTotal < userWant.wantTotal
+          ? [userTradeId, UserFlyerStatus.TRADE, userWantId, UserFlyerStatus.WANT]
+          : [userWantId, UserFlyerStatus.WANT, userTradeId, UserFlyerStatus.TRADE];
+
+      const result: UserFlyerDto[] = await this.model
         .aggregate([
-          { $match: { user: userTrade, status: UserFlyerStatus.TRADE } },
+          { $match: { user: matchUser1, status: matchStatus1 } },
           {
             $lookup: {
               from: 'userflyers',
@@ -81,8 +90,8 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
                     $expr: {
                       $and: [
                         { $eq: ['$flyer', '$$flyerId'] },
-                        { $eq: ['$user', userWant] },
-                        { $eq: ['$status', UserFlyerStatus.WANT] },
+                        { $eq: ['$user', matchUser2] },
+                        { $eq: ['$status', matchStatus2] },
                       ],
                     },
                   },
@@ -137,7 +146,7 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
         .collation({ locale: 'pl', strength: 1 });
 
       return {
-        data: result as UserFlyerDto[],
+        data: result,
         totalRecords,
       };
     } else {

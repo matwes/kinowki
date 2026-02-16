@@ -1,5 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 
 export abstract class CrudService<Schema, BaseDto, CreateDto, UpdateDto> {
   abstract name: string;
@@ -13,7 +13,7 @@ export abstract class CrudService<Schema, BaseDto, CreateDto, UpdateDto> {
     return (await newItem.save()).toObject<BaseDto>();
   }
 
-  async update(id: string, updateDto: UpdateDto) {
+  async update(id: string | Types.ObjectId, updateDto: UpdateDto) {
     const existingItem = await this.model.findByIdAndUpdate(id, updateDto, { new: true }).lean<BaseDto>().exec();
     if (!existingItem) {
       throw new NotFoundException(`${this.name} #${id} not found`);
@@ -39,7 +39,7 @@ export abstract class CrudService<Schema, BaseDto, CreateDto, UpdateDto> {
     return itemData;
   }
 
-  async get(id: string) {
+  async get(id: string | Types.ObjectId) {
     const existingItem = await this.model.findById(id).lean<BaseDto>().exec();
     if (!existingItem) {
       throw new NotFoundException(`${this.name} #${id} not found`);
@@ -47,7 +47,7 @@ export abstract class CrudService<Schema, BaseDto, CreateDto, UpdateDto> {
     return existingItem;
   }
 
-  async delete(id: string) {
+  async delete(id: string | Types.ObjectId) {
     const deletedItem = await this.model.findByIdAndDelete(id).lean<BaseDto>().exec();
     if (!deletedItem) {
       throw new NotFoundException(`${this.name} #${id} not found`);

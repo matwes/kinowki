@@ -5,7 +5,7 @@ import { FlyerDto, flyerSizeMap, flyerTypeMap } from '@kinowki/shared';
 export class FlyerNotePipe implements PipeTransform {
   transform(flyer: FlyerDto): string {
     const note = flyer.note;
-    const type = flyer.type && flyer.type !== 1 ? flyerTypeMap[flyer.type] : null;
+    const type = flyer.type && flyer.type !== 1 && flyer.type !== 14 ? flyerTypeMap[flyer.type] : null;
     const size = flyer.size && flyer.size !== 1 ? flyerSizeMap[flyer.size] : null;
     const tags = flyer.tags?.map((tag) => tag.name) ?? [];
 

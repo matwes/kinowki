@@ -94,7 +94,7 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
           ...(oldest.releaseType !== 1 && oldest.releaseType !== 5 ? [releaseTypeMap[oldest.releaseType]] : []),
           ...(oldest.note ? [oldest.note] : []),
           ...(!flyer.size || flyer.size === 1 ? [] : [flyerSizeMap[flyer.size]]),
-          ...(!flyer.type || flyer.type === 1 ? [] : [flyerTypeMap[flyer.type]]),
+          ...(!flyer.type || flyer.type === 1 || flyer.type === 14 ? [] : [flyerTypeMap[flyer.type]]),
           ...(flyer.note ? [flyer.note] : []),
         ];
 

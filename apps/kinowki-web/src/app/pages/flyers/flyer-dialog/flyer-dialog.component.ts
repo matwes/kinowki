@@ -226,7 +226,7 @@ export class FlyerDialogComponent implements OnInit {
         : []),
       ...(oldestRelease.note ? [oldestRelease.note] : []),
       ...(!this.size.value || this.size.value === 1 ? [] : [flyerSizeMap[this.size.value]]),
-      ...(!this.type.value || this.type.value === 1 ? [] : [flyerTypeMap[this.type.value]]),
+      ...(!this.type.value || this.type.value === 1 || this.type.value === 14 ? [] : [flyerTypeMap[this.type.value]]),
       ...(this.note.value ? [this.note.value] : []),
     ];
 

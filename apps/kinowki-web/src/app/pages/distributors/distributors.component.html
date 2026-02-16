@@ -134,7 +134,7 @@
             @for(flyer of release.flyers; track $index) {
             <app-flyer [flyer]="flyer" (statusChanged)="lazyLoadReleases()" />
             } @empty {
-            <span class="ml-1"> @if (passed) { brak ulotek } @else { na razie brak ulotek }</span>
+            <span class="ml-1"> @if (passed) { brak ulotki } @else { na razie brak ulotki }</span>
             }
           </div>
         </td>

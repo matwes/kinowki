@@ -24,6 +24,6 @@ export class UserFlyer {
 
 export const UserFlyerSchema = SchemaFactory.createForClass(UserFlyer)
   .index({ user: 1, flyer: 1 }, { unique: true })
-  .index({ user: 1, status: 1 })
+  .index({ user: 1, status: 1, flyer: 1 })
   .index({ flyer: 1, user: 1, status: 1 })
   .index({ flyer: 1, status: 1 });
