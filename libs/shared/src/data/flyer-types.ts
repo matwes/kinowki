@@ -12,6 +12,7 @@ export const flyerTypes = [
   { value: 11, label: 'wizytówka' },
   { value: 12, label: 'zawieszka' },
   { value: 13, label: 'kalendarzyk' },
+  { value: 15, label: 'kolorowanka' },
   { value: 14, label: 'inna' },
 ];
 
