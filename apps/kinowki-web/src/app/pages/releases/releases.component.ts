@@ -90,17 +90,15 @@ export class ReleasesComponent implements OnInit {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (release as any).info = [
           ...release.distributors.map((distributor) => distributor.name),
-          ...[
-            release.note
-              ? [release.note]
-              : release.releaseType === 3
-              ? ['wideo']
-              : release.releaseType === 4
-              ? ['wznowienie']
-              : release.releaseType === 6
-              ? ['wycofana']
-              : [],
-          ],
+          ...(release.note
+            ? [release.note]
+            : release.releaseType === 3
+            ? ['wideo']
+            : release.releaseType === 4
+            ? ['wznowienie']
+            : release.releaseType === 6
+            ? ['wycofana']
+            : []),
         ]
           .filter((val) => !!val)
           .join(' • ');
