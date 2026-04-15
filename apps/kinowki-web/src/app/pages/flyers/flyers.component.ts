@@ -38,7 +38,6 @@ import {
   ShowIfLoggedDirective,
   UserFlyerStatusButtonComponent,
   UserFlyerStatusClassDirective,
-  UsersPipe,
   notEmpty,
 } from '../../utils';
 import { BigFlyerComponent } from '../big-flyer';

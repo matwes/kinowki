@@ -60,12 +60,8 @@
           }
         </td>
         <td [style.width]="'35%'">
-          @if(release.distributors.length || release.note) {
-          <div class="distributors">
-            {{ release.distributors | join : ' • ' : 'name' }}
-            @if (release.distributors.length && release.note) { • }
-            <i>{{ release.note }}</i>
-          </div>
+          @if(release.info) {
+          <div class="release-info">{{ release.info }}</div>
           }
           <div class="flex gap-2">
             <b>{{ release.film?.title }} ({{ release.film?.year }})</b>

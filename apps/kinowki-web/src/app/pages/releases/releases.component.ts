@@ -28,7 +28,7 @@ import {
 
 import { months, ReleaseDto } from '@kinowki/shared';
 import { ReleaseService } from '../../services';
-import { ImdbPipe, JoinPipe, ProbabilityBadgeComponent, ReleaseDatePipe, ShowIfAdminDirective } from '../../utils';
+import { ImdbPipe, ProbabilityBadgeComponent, ReleaseDatePipe, ShowIfAdminDirective } from '../../utils';
 import { FlyerComponent } from '../flyer';
 
 const FIRST_YEAR = 1990;
@@ -47,7 +47,6 @@ const LAST_YEAR = new Date().getFullYear() + 1;
     FormsModule,
     ImdbPipe,
     InputTextModule,
-    JoinPipe,
     MultiSelectModule,
     ProbabilityBadgeComponent,
     ReleaseDatePipe,
@@ -86,6 +85,29 @@ export class ReleasesComponent implements OnInit {
     debounceTime(500),
     map(([lazyEvent, filters]) => ({ ...lazyEvent, filters })),
     switchMap((event) => this.releaseService.getAll(event)),
+    map((res) => {
+      res.data.forEach((release) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (release as any).info = [
+          ...release.distributors.map((distributor) => distributor.name),
+          ...[
+            release.note
+              ? [release.note]
+              : release.releaseType === 3
+              ? ['wideo']
+              : release.releaseType === 4
+              ? ['wznowienie']
+              : release.releaseType === 6
+              ? ['wycofana']
+              : [],
+          ],
+        ]
+          .filter((val) => !!val)
+          .join(' • ');
+      });
+
+      return res;
+    }),
     shareReplay(1)
   );
 

@@ -115,6 +115,8 @@
                   {{ release.date }}
                   @if (release.note) {
                   <span> ({{ release.note }})</span>
+                  } @else if (release.releaseType === 6) {
+                  <span> (wycofana)</span>
                   }
                 </div>
               </div>
