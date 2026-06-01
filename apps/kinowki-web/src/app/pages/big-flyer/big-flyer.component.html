@@ -18,12 +18,17 @@
       <div class="size-badge" *appShowIfAdmin>{{ imageSizes()[$index].width }}×{{ imageSizes()[$index].height }}</div>
       }
     </div>
-    } } @empty {
+    } } @empty { @if (isLoadingImages()) {
+    <div class="no-images">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>ładowanie skanów</span>
+    </div>
+    } @else if (!images().length) {
     <div class="no-images">
       <i class="pi pi-image"></i>
       <span>brak skanów</span>
     </div>
-    }
+    } }
   </div>
 </div>
 @if (flyer(); as flyer) {

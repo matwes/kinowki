@@ -101,7 +101,7 @@
     </ng-template>
     <ng-template #list let-flyers>
       <div class="grid grid-cols-12 p-1 pb-0 gap-3 grid-nogutter justify-content-center align-items-end">
-        @for(flyer of flyers; track $index) {
+        @for(flyer of flyers; track flyer._id) {
         <div class="flyer-cell shadow-3">
           <app-big-flyer [flyer]="flyer" [usersMap]="usersMap()" />
           <div>

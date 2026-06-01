@@ -38,6 +38,7 @@ export class BigFlyerComponent implements AfterViewInit {
   flyer = input.required<FlyerDto>();
   usersMap = input.required<Map<string, string>>();
   blankWidth = signal(175);
+  isLoadingImages = signal(true);
   imageSizes = signal<Record<number, { width: number; height: number }>>({});
 
   isHorizontal = computed(() => {
@@ -66,14 +67,14 @@ export class BigFlyerComponent implements AfterViewInit {
       if (horizontal) {
         return {
           'max-width': '21rem',
-          'max-height': '7.8125rem',
+          'max-height': '7.875rem',
           'object-fit': 'contain',
         };
       }
 
       return {
         'max-width': '10.5rem',
-        'max-height': '15.625rem',
+        'max-height': '15.75rem',
         'object-fit': 'contain',
         'object-position': index % 2 === 0 ? 'right' : 'left',
       };
@@ -82,9 +83,12 @@ export class BigFlyerComponent implements AfterViewInit {
 
   constructor() {
     effect(() => {
-      if (this.flyer()) {
-        queueMicrotask(() => this.updateBlankWidth());
-      }
+      this.flyer();
+
+      this.imageSizes.set({});
+      this.blankWidth.set(175);
+
+      queueMicrotask(() => this.updateBlankWidth());
     });
   }
 
@@ -93,6 +97,8 @@ export class BigFlyerComponent implements AfterViewInit {
   }
 
   private updateBlankWidth(): void {
+    this.isLoadingImages.set(true);
+
     const imgEls = this.imageEls.map((ref) => ref.nativeElement.querySelector('img'));
 
     imgEls.forEach((img, index) => {
