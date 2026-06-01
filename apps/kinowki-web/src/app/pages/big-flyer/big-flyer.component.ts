@@ -127,10 +127,14 @@ export class BigFlyerComponent implements AfterViewInit {
     const firstImageEl = imgEls[0];
     if (firstImageEl) {
       const setSize = () => {
-        const w = firstImageEl.offsetWidth;
-        const h = firstImageEl.offsetHeight;
+        requestAnimationFrame(() => {
+          const rect = firstImageEl.getBoundingClientRect();
 
-        this.blankSize.set({ width: w, height: h });
+          this.blankSize.set({
+            width: rect.width,
+            height: rect.height,
+          });
+        });
       };
 
       if (firstImageEl.complete) {
