@@ -33,9 +33,17 @@ import { FlyerKindNamePipe, FlyerSizeNamePipe, FlyerTypeNamePipe, ShowIfAdminDir
 export class BigFlyerComponent implements AfterViewInit {
   private readonly CDN_URL = environment.cdnUrl;
 
+  @ViewChildren(Image, { read: ElementRef }) imageEls!: QueryList<ElementRef<HTMLElement>>;
+
   flyer = input.required<FlyerDto>();
   usersMap = input.required<Map<string, string>>();
   blankWidth = signal(175);
+  imageSizes = signal<Record<number, { width: number; height: number }>>({});
+
+  isHorizontal = computed(() => {
+    const first = this.imageSizes()[0];
+    return first ? first.width > first.height : false;
+  });
 
   images = computed(() =>
     this.flyer().images.map((image) => {
@@ -51,9 +59,26 @@ export class BigFlyerComponent implements AfterViewInit {
     })
   );
 
-  imageSizes = signal<Record<number, { width: number; height: number }>>({});
+  imageStyles = computed(() => {
+    const horizontal = this.isHorizontal();
 
-  @ViewChildren(Image, { read: ElementRef }) imageEls!: QueryList<ElementRef<HTMLElement>>;
+    return this.images().map((_, index) => {
+      if (horizontal) {
+        return {
+          'max-width': '21rem',
+          'max-height': '7.8125rem',
+          'object-fit': 'contain',
+        };
+      }
+
+      return {
+        'max-width': '10.5rem',
+        'max-height': '15.625rem',
+        'object-fit': 'contain',
+        'object-position': index % 2 === 0 ? 'right' : 'left',
+      };
+    });
+  });
 
   constructor() {
     effect(() => {
