@@ -1,3 +1,4 @@
+import { NgStyle } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -25,6 +26,7 @@ import { FlyerKindNamePipe, FlyerSizeNamePipe, FlyerTypeNamePipe, ShowIfAdminDir
     FlyerSizeNamePipe,
     FlyerTypeNamePipe,
     ImageModule,
+    NgStyle,
     ShowIfAdminDirective,
     TooltipModule,
     UsersPipe,
@@ -37,8 +39,7 @@ export class BigFlyerComponent implements AfterViewInit {
 
   flyer = input.required<FlyerDto>();
   usersMap = input.required<Map<string, string>>();
-  blankWidth = signal(175);
-  isLoadingImages = signal(true);
+  blankSize = signal({ width: 175, height: 250 });
   imageSizes = signal<Record<number, { width: number; height: number }>>({});
 
   isHorizontal = computed(() => {
@@ -81,13 +82,19 @@ export class BigFlyerComponent implements AfterViewInit {
     });
   });
 
+  blankStyle = computed(() => {
+    const size = this.blankSize();
+
+    return {
+      width: `${size.width}px`,
+      height: `${size.height}px`,
+    };
+  });
+
   constructor() {
     effect(() => {
       this.flyer();
-
       this.imageSizes.set({});
-      this.blankWidth.set(175);
-
       queueMicrotask(() => this.updateBlankWidth());
     });
   }
@@ -97,8 +104,6 @@ export class BigFlyerComponent implements AfterViewInit {
   }
 
   private updateBlankWidth(): void {
-    this.isLoadingImages.set(true);
-
     const imgEls = this.imageEls.map((ref) => ref.nativeElement.querySelector('img'));
 
     imgEls.forEach((img, index) => {
@@ -121,11 +126,17 @@ export class BigFlyerComponent implements AfterViewInit {
 
     const firstImageEl = imgEls[0];
     if (firstImageEl) {
-      const setWidth = () => this.blankWidth.set(firstImageEl.offsetWidth);
+      const setSize = () => {
+        const w = firstImageEl.offsetWidth;
+        const h = firstImageEl.offsetHeight;
+
+        this.blankSize.set({ width: w, height: h });
+      };
+
       if (firstImageEl.complete) {
-        setWidth();
+        setSize();
       } else {
-        firstImageEl.addEventListener('load', setWidth, { once: true });
+        firstImageEl.addEventListener('load', setSize, { once: true });
       }
     }
   }
