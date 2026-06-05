@@ -88,7 +88,7 @@ export class BigFlyerComponent implements AfterViewInit {
 
       return {
         'max-width': '10.5rem',
-        'max-height': '15rem',
+        'max-height': '15.75rem',
         'object-fit': 'contain',
         'object-position': index % 2 === 0 ? 'right' : 'left',
       };
