@@ -32,14 +32,7 @@ import {
 
 import { FlyerDto, TagDto, flyerKinds, flyerSizes, flyerTypes, genres, releaseTypes } from '@kinowki/shared';
 import { FlyerService, TagService, UserService } from '../../services';
-import {
-  CopyFlyerNameButtonComponent,
-  ShowIfAdminDirective,
-  ShowIfLoggedDirective,
-  UserFlyerStatusButtonComponent,
-  UserFlyerStatusClassDirective,
-  notEmpty,
-} from '../../utils';
+import { ShowIfAdminDirective, UserFlyerStatusClassDirective, notEmpty } from '../../utils';
 import { BigFlyerComponent } from '../big-flyer';
 import { FlyerDialogComponent } from './flyer-dialog';
 
@@ -53,7 +46,6 @@ import { FlyerDialogComponent } from './flyer-dialog';
     ButtonModule,
     CommonModule,
     ConfirmDialogModule,
-    CopyFlyerNameButtonComponent,
     DataViewModule,
     FormsModule,
     ImageModule,
@@ -62,12 +54,10 @@ import { FlyerDialogComponent } from './flyer-dialog';
     SelectButtonModule,
     SelectModule,
     ShowIfAdminDirective,
-    ShowIfLoggedDirective,
     TableModule,
     TagModule,
     ToastModule,
     TooltipModule,
-    UserFlyerStatusButtonComponent,
     UserFlyerStatusClassDirective,
   ],
   providers: [ConfirmationService, DialogService],
@@ -107,15 +97,10 @@ export class FlyersComponent implements OnInit {
     switchMap((event) => this.flyerService.getAll(event)),
     map((res) => {
       res.data.forEach((flyer) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (flyer as any).distributors = [
-          ...new Set(flyer.releases.flatMap((release) => release.distributors).map((distributor) => distributor.name)),
-        ].join(' • ');
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (flyer as any).notes = [
-          ...new Set(flyer.releases.map((release) => release.note || null).filter((note) => note !== null)),
-        ].join(' • ');
+        flyer.releases.forEach((release) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (release as any).distributorsLabel = [...new Set(release.distributors.map((d) => d.name))].join(' • ');
+        });
       });
 
       return res;

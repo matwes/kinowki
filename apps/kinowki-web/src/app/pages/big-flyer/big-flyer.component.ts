@@ -6,6 +6,7 @@ import {
   effect,
   ElementRef,
   input,
+  output,
   QueryList,
   signal,
   ViewChildren,
@@ -15,7 +16,15 @@ import { Image, ImageModule } from 'primeng/image';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { environment } from '../../../environments/environment';
-import { FlyerKindNamePipe, FlyerSizeNamePipe, FlyerTypeNamePipe, ShowIfAdminDirective, UsersPipe } from '../../utils';
+import {
+  FlyerKindNamePipe,
+  FlyerSizeNamePipe,
+  FlyerTypeNamePipe,
+  ShowIfAdminDirective,
+  ShowIfLoggedDirective,
+  UserFlyerStatusButtonComponent,
+  UsersPipe,
+} from '../../utils';
 
 @Component({
   selector: 'app-big-flyer',
@@ -28,7 +37,9 @@ import { FlyerKindNamePipe, FlyerSizeNamePipe, FlyerTypeNamePipe, ShowIfAdminDir
     ImageModule,
     NgStyle,
     ShowIfAdminDirective,
+    ShowIfLoggedDirective,
     TooltipModule,
+    UserFlyerStatusButtonComponent,
     UsersPipe,
   ],
 })
@@ -39,6 +50,8 @@ export class BigFlyerComponent implements AfterViewInit {
 
   flyer = input.required<FlyerDto>();
   usersMap = input.required<Map<string, string>>();
+  statusChanged = output();
+
   blankSize = signal({ width: 175, height: 250 });
   imageSizes = signal<Record<number, { width: number; height: number }>>({});
 
@@ -68,14 +81,14 @@ export class BigFlyerComponent implements AfterViewInit {
       if (horizontal) {
         return {
           'max-width': '21rem',
-          'max-height': '7.875rem',
+          'max-height': '7.5rem',
           'object-fit': 'contain',
         };
       }
 
       return {
         'max-width': '10.5rem',
-        'max-height': '15.75rem',
+        'max-height': '15rem',
         'object-fit': 'contain',
         'object-position': index % 2 === 0 ? 'right' : 'left',
       };

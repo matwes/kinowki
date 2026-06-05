@@ -100,31 +100,28 @@
       </div>
     </ng-template>
     <ng-template #list let-flyers>
-      <div class="grid grid-cols-12 p-1 pb-0 gap-3 grid-nogutter justify-content-center align-items-end">
+      <div class="flyer-grid">
         @for(flyer of flyers; track flyer._id) {
         <div class="flyer-cell shadow-3">
-          <app-big-flyer [flyer]="flyer" [usersMap]="usersMap()" />
           <div>
             <div class="flyer-cell-footer" [appUserFlyerStatusClass]="flyer.userFlyer">
               @for(release of flyer.releases; track $index) {
               <div class="text-center">
                 <div>
-                  <b>{{ release.film.title }}</b>
+                  <b [style.fontSize.px]="13">{{ release.film.title }}</b>
                 </div>
-                <div [style.opacity]="0.75">
+                <div [style.fontSize.px]="12" [style.opacity]="0.65">
                   {{ release.date }}
-                  @if (release.note) {
-                  <span> ({{ release.note }})</span>
+                  @if (release.distributorsLabel) {
+                  <span> {{ release.distributorsLabel }}</span>
+                  } @if (release.note) {
+                  <i> ({{ release.note }})</i>
                   } @else if (release.releaseType === 6) {
-                  <span> (wycofana)</span>
+                  <i> (wycofana)</i>
                   }
                 </div>
               </div>
               }
-              <div class="flyer-actions left">
-                <app-user-flyer-status-button [flyer]="flyer" (statusChanged)="lazyLoad()" *appShowIfLogged />
-                <app-copy-flyer-name-button [flyer]="flyer" />
-              </div>
               <div class="flyer-actions right" *appShowIfAdmin>
                 <p-button icon="pi pi-pencil" size="small" [rounded]="true" (click)="openFlyerDialog(flyer)" />
                 <p-button
@@ -136,6 +133,7 @@
               </div>
             </div>
           </div>
+          <app-big-flyer [flyer]="flyer" [usersMap]="usersMap()" (statusChanged)="lazyLoad()" />
         </div>
         }
       </div>
