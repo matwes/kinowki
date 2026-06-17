@@ -6,7 +6,16 @@
       <a class="page" [routerLink]="page.url" routerLinkActive="active">
         {{ page.label }}
       </a>
-      } @if (authService.isLoggedIn()) {
+      }
+      <div class="flex align-items-center gap-3">
+        <a class="page" [href]="facebookUrl" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+          <i class="pi pi-facebook"></i>
+        </a>
+        <a class="page" [href]="instagramUrl" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <i class="pi pi-instagram"></i>
+        </a>
+      </div>
+      @if (authService.isLoggedIn()) {
       <button class="page user" type="button" (click)="menu.toggle($event)">
         <i class="pi pi-user mr-1" pButtonIcon></i>
         {{ authService.userName() }}
@@ -36,11 +45,25 @@
         <app-logo />
       </div>
       @for(page of pages(); track page.url) {
-      <a class="drawer-item" [routerLink]="page.url" routerLinkActive="active" (click)="showDrawer = false">
+      <a
+        class="drawer-item"
+        [routerLink]="page.url"
+        target="_blank"
+        rel="noopener noreferrer"
+        (click)="showDrawer = false">
         <i class="mr-2" [ngClass]="page.icon"></i>
         {{ page.label }}
       </a>
-      } @if (authService.isLoggedIn()) {
+      }
+      <a class="drawer-item" [href]="facebookUrl" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+        <i class="mr-2 pi pi-facebook"></i>
+        Facebook
+      </a>
+      <a class="drawer-item" [href]="instagramUrl" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+        <i class="mr-2 pi pi-instagram"></i>
+        Instagram
+      </a>
+      @if (authService.isLoggedIn()) {
       <button class="drawer-item" type="button" (click)="logout()">
         <i class="pi pi-sign-out mr-1" pButtonIcon></i>
         Wyloguj się

@@ -10,7 +10,7 @@ import { MenuModule } from 'primeng/menu';
 import { ToastModule } from 'primeng/toast';
 import { of, switchMap } from 'rxjs';
 
-import { AuthService, FlyerService } from '../../services';
+import { AuthService } from '../../services';
 import { LoginDialogComponent } from '../login-dialog';
 import { LogoComponent } from '../logo';
 import { RegisterDialogComponent } from '../register-dialog';
@@ -27,7 +27,6 @@ import { ForgotPasswordDialogComponent } from '../forgot-password-dialog';
 export class SidebarComponent {
   private readonly dialogService = inject(DialogService);
   private readonly messageService = inject(MessageService);
-  private readonly flyerService = inject(FlyerService);
   protected readonly authService = inject(AuthService);
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
@@ -45,6 +44,8 @@ export class SidebarComponent {
   items = computed<MenuItem[]>(() => [{ label: 'Wyloguj', icon: PrimeIcons.SIGN_OUT, command: () => this.logout() }]);
 
   showDrawer = false;
+  facebookUrl = 'https://www.facebook.com/kinowki';
+  instagramUrl = 'https://www.instagram.com/kinowki.ulotki';
 
   openLoginDialog() {
     this.showDrawer = false;
