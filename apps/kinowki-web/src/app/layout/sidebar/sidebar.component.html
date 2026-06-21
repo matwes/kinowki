@@ -45,12 +45,7 @@
         <app-logo />
       </div>
       @for(page of pages(); track page.url) {
-      <a
-        class="drawer-item"
-        [routerLink]="page.url"
-        target="_blank"
-        rel="noopener noreferrer"
-        (click)="showDrawer = false">
+      <a class="drawer-item" [routerLink]="page.url" routerLinkActive="active" (click)="showDrawer = false">
         <i class="mr-2" [ngClass]="page.icon"></i>
         {{ page.label }}
       </a>
