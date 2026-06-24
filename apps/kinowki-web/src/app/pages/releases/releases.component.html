@@ -45,7 +45,7 @@
     <ng-template #groupheader let-release>
       <tr pRowGroupHeader>
         <td colspan="5" class="text-center">
-          <span class="group-header">{{ release | releaseDate }}</span>
+          <span class="group-header">{{ release?.date | releaseDate }}</span>
         </td>
       </tr>
     </ng-template>

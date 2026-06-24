@@ -1,15 +1,14 @@
 import { DatePipe } from '@angular/common';
 import { inject, Pipe, PipeTransform } from '@angular/core';
-import { ReleaseDto } from '@kinowki/shared';
+import { Nullable } from 'primeng/ts-helpers';
 
 @Pipe({ name: 'releaseDate' })
 export class ReleaseDatePipe implements PipeTransform {
   readonly datePipe = inject(DatePipe);
 
-  transform(release: ReleaseDto, mode: 'long' | 'short' = 'long'): string {
-    if (!release?.date) return '';
+  transform(date: Nullable<string>, mode: 'long' | 'short' = 'long'): string {
+    if (!date) return '';
 
-    const date = release.date;
     const [year, month, day] = date.split('-');
 
     if (mode === 'short') {
