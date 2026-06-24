@@ -32,7 +32,7 @@ import {
 
 import { FlyerDto, TagDto, flyerKinds, flyerSizes, flyerTypes, genres, releaseTypes } from '@kinowki/shared';
 import { FlyerService, TagService, UserService } from '../../services';
-import { ShowIfAdminDirective, UserFlyerStatusClassDirective, notEmpty } from '../../utils';
+import { ReleaseDatePipe, ShowIfAdminDirective, UserFlyerStatusClassDirective, notEmpty } from '../../utils';
 import { BigFlyerComponent } from '../big-flyer';
 import { FlyerDialogComponent } from './flyer-dialog';
 
@@ -51,6 +51,7 @@ import { FlyerDialogComponent } from './flyer-dialog';
     ImageModule,
     InputTextModule,
     PopoverModule,
+    ReleaseDatePipe,
     SelectButtonModule,
     SelectModule,
     ShowIfAdminDirective,

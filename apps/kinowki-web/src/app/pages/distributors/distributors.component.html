@@ -113,7 +113,7 @@
         <td class="text-center">
           <div class="badge">
             <i class="mr-2" [ngClass]="release.releaseType | releaseTypeIcon"></i>
-            <span class="badge-date">{{ release.date }}</span>
+            <span class="badge-date">{{ release.date | releaseDate : 'short' }}</span>
           </div>
         </td>
         <td class="text-center">
