@@ -22,7 +22,7 @@ export abstract class CrudService<Schema, BaseDto, CreateDto, UpdateDto> {
   }
 
   async getAll(params?: { first: number; rows: number }, filters?: FilterQuery<Schema>) {
-    let query = this.model.find(filters);
+    let query = this.model.find(filters ?? {});
 
     if (params) {
       query = query.limit(params.rows).skip(params.first);

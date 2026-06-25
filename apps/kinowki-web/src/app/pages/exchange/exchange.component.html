@@ -28,7 +28,12 @@
           </a>
           }
         </td>
-        <td [class.font-bold]="user.isActive">{{ user.name }}</td>
+        <td [class.font-bold]="user.isActive" class="py-0">
+          <div class="user-name">{{ user.name }}</div>
+          @if (user.city) {
+          <div class="user-city">{{ user.city }}</div>
+          }
+        </td>
         <td class="text-center">
           <p-selectbutton
             [options]="user.collection"

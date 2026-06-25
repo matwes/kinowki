@@ -1,6 +1,6 @@
 import { Component, computed, ElementRef, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ButtonModule } from 'primeng/button';
 import { DrawerModule } from 'primeng/drawer';
@@ -25,6 +25,7 @@ import { ForgotPasswordDialogComponent } from '../forgot-password-dialog';
   styleUrl: './sidebar.component.sass',
 })
 export class SidebarComponent {
+  private readonly router = inject(Router);
   private readonly dialogService = inject(DialogService);
   private readonly messageService = inject(MessageService);
   protected readonly authService = inject(AuthService);
@@ -41,7 +42,18 @@ export class SidebarComponent {
     { label: 'Kontakt', url: '/kontakt', icon: PrimeIcons.INFO_CIRCLE },
   ]);
 
-  items = computed<MenuItem[]>(() => [{ label: 'Wyloguj', icon: PrimeIcons.SIGN_OUT, command: () => this.logout() }]);
+  readonly items: MenuItem[] = [
+    {
+      label: 'Ustawienia',
+      icon: PrimeIcons.COG,
+      command: () => this.router.navigate(['/ustawienia']),
+    },
+    {
+      label: 'Wyloguj',
+      icon: PrimeIcons.SIGN_OUT,
+      command: () => this.logout(),
+    },
+  ];
 
   showDrawer = false;
   facebookUrl = 'https://www.facebook.com/kinowki';

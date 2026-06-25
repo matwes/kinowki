@@ -16,7 +16,7 @@ export class UserService extends CrudService<User, UserDto, CreateUserDto, Updat
   }
 
   override async getAll(params?: { first: number; rows: number }, filters?: FilterQuery<User>): Promise<UserDto[]> {
-    let query = this.model.find(filters);
+    let query = this.model.find(filters ?? {});
 
     if (params) {
       query = query.limit(params.rows).skip(params.first);
@@ -25,7 +25,7 @@ export class UserService extends CrudService<User, UserDto, CreateUserDto, Updat
     const itemData = await query
       .sort({ [this.sortKey]: this.sortOrder })
       .collation({ locale: 'pl', strength: 1 })
-      .select('name email haveTotal tradeTotal wantTotal')
+      .select('name email city haveTotal tradeTotal wantTotal')
       .lean<UserDto[]>()
       .exec();
     if (!itemData) {

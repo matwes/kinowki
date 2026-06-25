@@ -11,10 +11,11 @@ import { TagModule } from './tag/tag.module';
 import { UserModule } from './user/user.module';
 import { UserFlyerModule } from './user-flyer/user-flyer.module';
 import { UserOfferModule } from './user-offer/user-offer.module';
+import { UnmarkedFlyersModule } from './unmarked-flyers/unmarked-flyers.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.MONGO_URL, { dbName: 'kinowki', autoIndex: true }),
+    MongooseModule.forRoot(process.env.MONGO_URL ?? '', { dbName: 'kinowki', autoIndex: true }),
     ScheduleModule.forRoot(),
     AuthModule,
     DistributorModule,
@@ -22,6 +23,7 @@ import { UserOfferModule } from './user-offer/user-offer.module';
     FlyerModule,
     ReleaseModule,
     TagModule,
+    UnmarkedFlyersModule,
     UserFlyerModule,
     UserModule,
     UserOfferModule,

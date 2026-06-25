@@ -59,6 +59,10 @@
         Instagram
       </a>
       @if (authService.isLoggedIn()) {
+      <a class="drawer-item" routerLink="/ustawienia" routerLinkActive="active" (click)="showDrawer = false">
+        <i class="mr-2 pi pi-cog"></i>
+        Ustawienia
+      </a>
       <button class="drawer-item" type="button" (click)="logout()">
         <i class="pi pi-sign-out mr-1" pButtonIcon></i>
         Wyloguj się
@@ -81,4 +85,4 @@
     </div>
   </ng-template>
 </p-drawer>
-<p-menu #menu [model]="items()" [popup]="true" />
+<p-menu #menu [model]="items" [popup]="true" />

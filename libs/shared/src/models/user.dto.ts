@@ -4,6 +4,7 @@ export interface CreateUserDto {
   password: string;
   role: string;
   isActive: boolean;
+  city?: string;
   haveTotal?: number;
   tradeTotal?: number;
   wantTotal?: number;

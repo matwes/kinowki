@@ -45,6 +45,10 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
     ).toObject<UserFlyerDto>();
   }
 
+  async insertMany(toInsert: CreateUserFlyerDto[]) {
+    return await this.model.insertMany(toInsert, { ordered: false });
+  }
+
   updateFlyerName(flyer: string | Types.ObjectId, flyerName: string) {
     return this.model.updateMany({ flyer }, { $set: { flyerName } });
   }
@@ -188,7 +192,7 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
   }
 
   async addUserStatus(userId: string | undefined, flyers: FlyerDto[]) {
-    const userFlyers = await this.getAll(null, { flyer: { $in: flyers.map((flyer) => flyer._id) } });
+    const userFlyers = await this.getAll(undefined, { flyer: { $in: flyers.map((flyer) => flyer._id) } });
 
     const stats = {};
     for (const userFlyer of userFlyers) {

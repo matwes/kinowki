@@ -24,7 +24,7 @@ export class AuthService {
     private readonly mailService: MailService
   ) {}
 
-  async register(email: string, password: string, name?: string) {
+  async register(email: string, password: string, name: string) {
     const existing = await this.userService.findByEmail(email);
     if (existing) {
       throw new ConflictException(`User with e-mail ${email} already exists`);

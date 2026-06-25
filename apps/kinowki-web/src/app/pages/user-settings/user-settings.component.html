@@ -1,0 +1,61 @@
+<p-confirmDialog />
+<div class="settings-container">
+  <div class="page-header">
+    <h1>Ustawienia konta</h1>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <p-card>
+      <ng-template pTemplate="title">Dane użytkownika</ng-template>
+      <div class="form-grid">
+        <div class="field">
+          <p-iftalabel>
+            <input id="name" pInputText formControlName="email" class="w-full" />
+            <label for="name">Adres e-mail</label>
+          </p-iftalabel>
+        </div>
+        <div class="field">
+          <p-iftalabel>
+            <label for="name">Nazwa użytkownika</label>
+            <input id="name" pInputText formControlName="name" class="w-full" />
+            @if (form.controls.name.invalid && form.controls.name.touched) {
+            <small class="error-message">Podaj nazwę użytkownika</small>
+            }
+          </p-iftalabel>
+        </div>
+        <div class="field">
+          <p-iftalabel>
+            <label for="city">Miejsce, gdzie zbieram ulotki</label>
+            <input id="city" pInputText formControlName="city" class="w-full" />
+          </p-iftalabel>
+        </div>
+      </div>
+    </p-card>
+    <p-card>
+      <ng-template pTemplate="title">Nieoznaczone ulotki</ng-template>
+      <div class="bulk-section">
+        <div class="bulk-count">
+          Pozostało: <strong>{{ unmarkedFlyersTotal() }}</strong>
+        </div>
+        @if (unmarkedFlyersTotal() > 0) {
+        <p-button
+          label="Oznacz wszystkie jako „szukam”"
+          severity="warn"
+          [disabled]="markingAll()"
+          (onClick)="confirmMarkAllAsWanted()" />
+        } @else {
+        <small class="text-secondary">Wszystkie ulotki zostały już oznaczone</small>
+        }
+      </div>
+    </p-card>
+    <div class="actions">
+      <p-button
+        type="submit"
+        [label]="saveState() === 'saving' ? 'Zapisuję...' : saveState() === 'saved' ? 'Zapisano' : 'Zapisz zmiany'"
+        [icon]="
+          saveState() === 'saving' ? 'pi pi-spin pi-spinner' : saveState() === 'saved' ? 'pi pi-check' : 'pi pi-save'
+        "
+        [severity]="saveState() === 'saved' ? 'success' : 'primary'"
+        [disabled]="form.invalid || saveState() === 'saving' || !form.dirty" />
+    </div>
+  </form>
+</div>

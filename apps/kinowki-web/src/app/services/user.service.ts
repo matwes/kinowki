@@ -3,6 +3,12 @@ import { CreateUserDto, UpdateUserDto, UserDto } from '@kinowki/shared';
 import { map, Observable, of } from 'rxjs';
 import { CrudService } from './crud.service';
 
+interface UserSettings {
+  name: string;
+  email: string;
+  city: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -29,5 +35,13 @@ export class UserService extends CrudService<UserDto, CreateUserDto, UpdateUserD
     }
 
     return this.loadingPromise;
+  }
+
+  getMe() {
+    return this.httpClient.get<{ message: string; data: UserSettings }>(`${this.url}/me`);
+  }
+
+  updateMe(updateDto: Partial<UserSettings>) {
+    return this.httpClient.put<{ message: string }>(`${this.url}/me`, updateDto);
   }
 }

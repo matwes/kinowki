@@ -55,7 +55,7 @@ export class UserFlyerController extends CrudController<
       try {
         const params = rows ? { first: first || 0, rows } : undefined;
 
-        const result = await this.userFlyerService.getAllWithReleases(state, userId, userData.userId, params);
+        const result = await this.userFlyerService.getAllWithReleases(state, userId, userData?.userId, params);
 
         const flyers = result.data.map((userFlyer) => userFlyer.flyer as unknown as FlyerDto);
 
@@ -78,9 +78,9 @@ export class UserFlyerController extends CrudController<
   @Post()
   override async create(@Req() req, @Res() res: Response, @Body() createDto: CreateUserFlyerDto) {
     const userData = req.user as UserData | null;
-    const userId = userData.userId;
+    const userId = userData?.userId;
 
-    if (!userData) {
+    if (!userId) {
       res.status(HttpStatus.UNAUTHORIZED).json({
         message: 'You must be logged in to perform this action.',
       });
@@ -120,9 +120,9 @@ export class UserFlyerController extends CrudController<
     @Body() updateDto: UpdateUserFlyerDto
   ) {
     const userData = req.user as UserData | null;
-    const userId = userData.userId;
+    const userId = userData?.userId;
 
-    if (!userData) {
+    if (!userId) {
       res.status(HttpStatus.UNAUTHORIZED).json({
         message: 'You must be logged in to perform this action.',
       });

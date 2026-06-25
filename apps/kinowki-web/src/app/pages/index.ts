@@ -7,3 +7,4 @@ export * from './flyers';
 export * from './releases';
 export * from './reset-password';
 export * from './tags';
+export * from './user-settings';

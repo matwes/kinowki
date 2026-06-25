@@ -9,6 +9,7 @@ import {
   ReleasesComponent,
   ResetPasswordComponent,
   TagsComponent,
+  UserSettingsComponent,
 } from './pages';
 
 export const appRoutes: Route[] = [
@@ -19,6 +20,7 @@ export const appRoutes: Route[] = [
   { path: 'wymiana', component: ExchangeComponent },
   { path: 'tagi', component: TagsComponent },
   { path: 'kontakt', component: ContactComponent },
+  { path: 'ustawienia', component: UserSettingsComponent },
   { path: 'activate', component: ActivateComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: '**', redirectTo: '/ulotki' },

@@ -24,7 +24,7 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
   }
 
   override async getAll(params?: { first: number; rows: number }, filters?: FilterQuery<Flyer>) {
-    let query = this.model.find(filters);
+    let query = this.model.find(filters ?? {});
 
     if (params) {
       query = query.limit(params.rows).skip(params.first);
@@ -47,7 +47,7 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
     sort?: Record<string, 1 | -1>
   ) {
     let query = this.model
-      .find(filters)
+      .find(filters ?? {})
       .populate('tags')
       .populate({ path: 'releases', populate: [{ path: 'film' }, { path: 'distributors' }] });
 

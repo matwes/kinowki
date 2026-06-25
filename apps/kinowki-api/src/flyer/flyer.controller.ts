@@ -19,7 +19,6 @@ import { FilterQuery } from 'mongoose';
 import { CreateFlyerDto, FlyerDto, UpdateFlyerDto } from '@kinowki/shared';
 import { UserData } from '../auth/jwt-strategy';
 import { UserFlyerService } from '../user-flyer/user-flyer.service';
-import { UserService } from '../user/user.service';
 import { AdminGuard, CrudController, errorHandler, getRegex, OptionalJwtAuthGuard } from '../utils';
 import { Flyer } from './flyer.schema';
 import { FlyerService } from './flyer.service';
@@ -30,11 +29,7 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
 
   name = 'flyer';
 
-  constructor(
-    protected flyerService: FlyerService,
-    private readonly userFlyerService: UserFlyerService,
-    private readonly userService: UserService
-  ) {
+  constructor(protected flyerService: FlyerService, private readonly userFlyerService: UserFlyerService) {
     super(flyerService);
   }
 
