@@ -80,8 +80,9 @@ export class BigFlyerComponent implements AfterViewInit {
 
     return images.map((_, index) => {
       const style = {
-        'max-width': '10.5rem',
+        'max-width': '10rem',
         'max-height': '15.75rem',
+        height: '15.75rem',
         'object-fit': 'contain',
         'object-position': '50% 50%',
       };
