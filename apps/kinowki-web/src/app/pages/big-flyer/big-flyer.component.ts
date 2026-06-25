@@ -75,23 +75,27 @@ export class BigFlyerComponent implements AfterViewInit {
   );
 
   imageStyles = computed(() => {
+    const images = this.images();
     const horizontal = this.isHorizontal();
 
-    return this.images().map((_, index) => {
-      if (horizontal) {
-        return {
-          'max-width': '21rem',
-          'max-height': '7.5rem',
-          'object-fit': 'contain',
-        };
-      }
-
-      return {
+    return images.map((_, index) => {
+      const style = {
         'max-width': '10.5rem',
         'max-height': '15.75rem',
         'object-fit': 'contain',
-        'object-position': index % 2 === 0 ? 'right' : 'left',
+        'object-position': '50% 50%',
       };
+
+      if (images.length > 1) {
+        if (horizontal) {
+          style['max-width'] = '21rem';
+          style['max-height'] = '7.75rem';
+        } else {
+          style['object-position'] = index % 2 === 0 ? 'right' : 'left';
+        }
+      }
+
+      return style;
     });
   });
 
