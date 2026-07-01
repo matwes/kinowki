@@ -1,4 +1,5 @@
 export * from './distributor.dto';
+export * from './film-group.dto';
 export * from './film.dto';
 export * from './flyer.dto';
 export * from './image.dto';

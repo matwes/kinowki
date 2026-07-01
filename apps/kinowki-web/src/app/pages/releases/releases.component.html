@@ -64,7 +64,9 @@
           <div class="release-info">{{ release.info }}</div>
           }
           <div class="flex gap-2">
-            <b>{{ release.film?.title }} ({{ release.film?.year }})</b>
+            <a class="film-link" [routerLink]="['/film', release.film?._id]">
+              <b>{{ release.film?.title }} ({{ release.film?.year }})</b>
+            </a>
           </div>
           <div [style.opacity]="0.75">{{ release.film?.originalTitle }}</div>
         </td>

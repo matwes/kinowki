@@ -16,15 +16,13 @@ import { Image, ImageModule } from 'primeng/image';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { environment } from '../../../environments/environment';
-import {
-  FlyerKindNamePipe,
-  FlyerSizeNamePipe,
-  FlyerTypeNamePipe,
-  ShowIfAdminDirective,
-  ShowIfLoggedDirective,
-  UserFlyerStatusButtonComponent,
-  UsersPipe,
-} from '../../utils';
+import { FlyerKindNamePipe } from '../flyer-kind-name';
+import { FlyerSizeNamePipe } from '../flyer-size-name';
+import { FlyerTypeNamePipe } from '../flyer-type-name';
+import { ShowIfAdminDirective } from '../show-if-admin';
+import { ShowIfLoggedDirective } from '../show-if-logged';
+import { UserFlyerStatusButtonComponent } from '../user-flyer-status-button';
+import { UsersPipe } from '../users';
 
 @Component({
   selector: 'app-big-flyer',

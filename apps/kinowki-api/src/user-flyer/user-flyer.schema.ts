@@ -7,16 +7,16 @@ export type UserFlyerDocument = HydratedDocument<UserFlyer>;
 @Schema()
 export class UserFlyer {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: true })
-  user: Types.ObjectId;
+  user!: Types.ObjectId;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Flyer', required: true })
-  flyer: Types.ObjectId;
+  flyer!: Types.ObjectId;
 
   @Prop({ type: String, required: true })
-  flyerName: string;
+  flyerName!: string;
 
   @Prop({ type: Number, enum: UserFlyerStatus, default: UserFlyerStatus.UNWANTED })
-  status: UserFlyerStatus;
+  status!: UserFlyerStatus;
 
   @Prop()
   note?: string;

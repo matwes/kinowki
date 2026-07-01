@@ -1,0 +1,14 @@
+<form [formGroup]="form" (submit)="onSave()">
+  <div class="formgrid grid m-2">
+    <div class="field col-12">
+      <p-iftalabel>
+        <input pInputText fluid id="name" [formControl]="name" />
+        <label for="name">Nazwa</label>
+      </p-iftalabel>
+    </div>
+  </div>
+  <div class="flex flex-row-reverse gap-3">
+    <p-button label="Zapisz" severity="primary" type="submit" />
+    <p-button label="Anuluj" severity="secondary" (onClick)="onCancel()" />
+  </div>
+</form>

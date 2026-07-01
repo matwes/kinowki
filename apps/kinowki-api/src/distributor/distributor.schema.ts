@@ -6,28 +6,28 @@ export type DistributorDocument = HydratedDocument<Distributor>;
 @Schema()
 export class Distributor {
   @Prop({ required: true, index: true, unique: true })
-  name: string;
+  name!: string;
 
   @Prop({ index: true })
-  releasesCount: number;
+  releasesCount!: number;
 
   @Prop()
-  pastReleasesCount: number;
+  pastReleasesCount?: number;
 
   @Prop()
-  pastReleasesWithFlyersCount: number;
+  pastReleasesWithFlyersCount?: number;
 
   @Prop()
-  pastReleasesWithFlyersPercent: number;
+  pastReleasesWithFlyersPercent?: number;
 
   @Prop()
-  flyerProbability: number;
+  flyerProbability?: number;
 
   @Prop()
-  firstYear: number;
+  firstYear?: number;
 
   @Prop()
-  lastYear: number;
+  lastYear?: number;
 }
 
 export const DistributorSchema = SchemaFactory.createForClass(Distributor);

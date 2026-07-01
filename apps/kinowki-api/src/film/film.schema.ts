@@ -1,30 +1,33 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, SchemaTypes, Types } from 'mongoose';
 
 export type FilmDocument = HydratedDocument<Film>;
 
 @Schema()
 export class Film {
   @Prop({ required: true })
-  title: string;
+  title!: string;
 
   @Prop({ required: false })
   originalTitle?: string;
 
   @Prop({ required: true })
-  firstLetter: string;
+  firstLetter!: string;
 
   @Prop({ required: true })
-  year: number;
+  year!: number;
 
   @Prop({ required: false })
   description?: string;
 
   @Prop({ required: true })
-  genres: number[];
+  genres!: number[];
 
   @Prop({ required: false })
   imdb?: number;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'FilmGroup' })
+  group?: Types.ObjectId;
 }
 
 export const FilmSchema = SchemaFactory.createForClass(Film)

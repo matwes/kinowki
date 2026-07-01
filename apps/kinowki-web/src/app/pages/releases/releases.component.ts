@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConfirmationService, FilterMetadata, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -28,8 +28,13 @@ import {
 
 import { months, ReleaseDto } from '@kinowki/shared';
 import { ReleaseService } from '../../services';
-import { ImdbPipe, ProbabilityBadgeComponent, ReleaseDatePipe, ShowIfAdminDirective } from '../../utils';
-import { FlyerComponent } from '../flyer';
+import {
+  FlyerComponent,
+  ImdbPipe,
+  ProbabilityBadgeComponent,
+  ReleaseDatePipe,
+  ShowIfAdminDirective,
+} from '../../utils';
 
 const FIRST_YEAR = 1990;
 const LAST_YEAR = new Date().getFullYear() + 1;
@@ -50,6 +55,7 @@ const LAST_YEAR = new Date().getFullYear() + 1;
     MultiSelectModule,
     ProbabilityBadgeComponent,
     ReleaseDatePipe,
+    RouterModule,
     SelectButtonModule,
     SelectModule,
     ShowIfAdminDirective,

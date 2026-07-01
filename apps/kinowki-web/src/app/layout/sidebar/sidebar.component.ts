@@ -38,7 +38,12 @@ export class SidebarComponent {
     { label: 'Premiery', url: '/premiery', icon: PrimeIcons.CALENDAR },
     { label: 'Dystrybutorzy', url: '/dystrybutorzy', icon: PrimeIcons.GLOBE },
     { label: 'Wymiana', url: '/wymiana', icon: PrimeIcons.ARROW_RIGHT_ARROW_LEFT },
-    ...(this.authService.isAdmin() ? [{ label: 'Tagi', url: '/tagi', icon: PrimeIcons.TAG }] : []),
+    ...(this.authService.isAdmin()
+      ? [
+          { label: 'Grupy', url: '/grupy', icon: PrimeIcons.DATABASE },
+          { label: 'Tagi', url: '/tagi', icon: PrimeIcons.TAG },
+        ]
+      : []),
     { label: 'Kontakt', url: '/kontakt', icon: PrimeIcons.INFO_CIRCLE },
   ]);
 

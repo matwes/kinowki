@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConfirmationService, FilterMetadata, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -16,6 +16,7 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import {
   BehaviorSubject,
+  Observable,
   Subject,
   combineLatest,
   debounceTime,
@@ -33,13 +34,20 @@ import {
   CreateReleaseDto,
   DistributorDto,
   FilmDto,
+  FilmGroupDto,
   UpdateDistributorDto,
   UpdateReleaseDto,
   genres,
 } from '@kinowki/shared';
-import { DistributorService, FilmService, ReleaseService } from '../../services';
-import { DistributorBadgeComponent, GenreNamePipe, ImdbPipe, notEmpty, ShowIfAdminDirective } from '../../utils';
-import { FlyerComponent } from '../flyer';
+import { CrudService, DistributorService, FilmGroupService, FilmService, ReleaseService } from '../../services';
+import {
+  DistributorBadgeComponent,
+  FlyerComponent,
+  GenreNamePipe,
+  ImdbPipe,
+  ShowIfAdminDirective,
+  notEmpty,
+} from '../../utils';
 import { FilmDialogComponent } from './film-dialog';
 import { letters } from './letters';
 
@@ -59,6 +67,7 @@ import { letters } from './letters';
     ImdbPipe,
     InputTextModule,
     MultiSelectModule,
+    RouterModule,
     SelectButtonModule,
     SelectModule,
     ShowIfAdminDirective,
@@ -74,6 +83,7 @@ export class FilmsComponent implements OnInit {
   private readonly dialogService = inject(DialogService);
   private readonly filmService = inject(FilmService);
   private readonly distributorService = inject(DistributorService);
+  private readonly filmGroupService = inject(FilmGroupService);
   private readonly releaseService = inject(ReleaseService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -101,6 +111,7 @@ export class FilmsComponent implements OnInit {
   value$ = this.data$.pipe(map((res) => res.data));
   totalRecords$ = this.data$.pipe(map((res) => res.totalRecords));
   private distributors?: DistributorDto[];
+  private filmGroups?: FilmGroupDto[];
 
   ngOnInit(): void {
     this.route.queryParams
@@ -215,21 +226,25 @@ export class FilmsComponent implements OnInit {
   }
 
   openFilmDialog(item?: FilmDto) {
-    const distributors$ = this.distributors
-      ? of(this.distributors)
-      : this.distributorService.getAll().pipe(
-          map((res) => res.data),
-          tap((distributors) => (this.distributors = distributors)),
-          shareReplay(1)
-        );
+    const distributors$ = this.getCachedList(
+      this.distributors,
+      (items) => (this.distributors = items),
+      this.distributorService
+    );
 
-    distributors$
+    const filmGroups$ = this.getCachedList(
+      this.filmGroups,
+      (items) => (this.filmGroups = items),
+      this.filmGroupService
+    );
+
+    forkJoin({ distributors: distributors$, filmGroups: filmGroups$ })
       .pipe(
         untilDestroyed(this),
         switchMap(
-          (distributors) =>
+          ({ distributors, filmGroups }) =>
             this.dialogService.open(FilmDialogComponent, {
-              data: { item, distributors },
+              data: { item, distributors, filmGroups },
               header: item ? 'Edytuj film' : 'Dodaj film',
               width: '90%',
               closeOnEscape: false,
@@ -283,5 +298,19 @@ export class FilmsComponent implements OnInit {
 
   private isCreateDto(dto: CreateReleaseDto | UpdateReleaseDto): dto is CreateReleaseDto {
     return !(dto as UpdateDistributorDto)._id;
+  }
+
+  private getCachedList<A, B, C>(
+    cache: A[] | undefined,
+    setCache: (items: A[]) => void,
+    service: CrudService<A, B, C>
+  ): Observable<A[]> {
+    return cache
+      ? of(cache)
+      : service.getAll().pipe(
+          map((res) => res.data),
+          tap(setCache),
+          shareReplay(1)
+        );
   }
 }

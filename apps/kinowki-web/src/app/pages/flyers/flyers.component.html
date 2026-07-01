@@ -103,34 +103,32 @@
       <div class="flyer-grid">
         @for(flyer of flyers; track flyer._id) {
         <div class="flyer-cell shadow-3">
-          <div>
-            <div class="flyer-cell-footer" [appUserFlyerStatusClass]="flyer.userFlyer">
-              @for(release of flyer.releases; track $index) {
-              <div class="text-center">
-                <div>
-                  <b [style.fontSize.px]="13">{{ release.film.title }}</b>
-                </div>
-                <div [style.fontSize.px]="12" [style.opacity]="0.65">
-                  {{ release.date | releaseDate : 'short' }}
-                  @if (release.distributorsLabel) {
-                  <span> {{ release.distributorsLabel }}</span>
-                  } @if (release.note) {
-                  <i> ({{ release.note }})</i>
-                  } @else if (release.releaseType === 6) {
-                  <i> (wycofana)</i>
-                  }
-                </div>
+          <div class="flyer-cell-footer" [appUserFlyerStatusClass]="flyer.userFlyer">
+            @for(release of flyer.releases; track $index) {
+            <div class="text-center">
+              <a class="film-link" [routerLink]="['/film', release.film._id]">
+                <b [style.fontSize.px]="13">{{ release.film.title }}</b>
+              </a>
+              <div [style.fontSize.px]="12" [style.opacity]="0.65">
+                {{ release.date | releaseDate : 'short' }}
+                @if (release.distributorsLabel) {
+                <span> {{ release.distributorsLabel }}</span>
+                } @if (release.note) {
+                <i> ({{ release.note }})</i>
+                } @else if (release.releaseType === 6) {
+                <i> (wycofana)</i>
+                }
               </div>
-              }
-              <div class="flyer-actions right" *appShowIfAdmin>
-                <p-button icon="pi pi-pencil" size="small" [rounded]="true" (click)="openFlyerDialog(flyer)" />
-                <p-button
-                  icon="pi pi-trash"
-                  severity="danger"
-                  size="small"
-                  [rounded]="true"
-                  (click)="deleteFlyer(flyer)" />
-              </div>
+            </div>
+            }
+            <div class="flyer-actions right" *appShowIfAdmin>
+              <p-button icon="pi pi-pencil" size="small" [rounded]="true" (click)="openFlyerDialog(flyer)" />
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                size="small"
+                [rounded]="true"
+                (click)="deleteFlyer(flyer)" />
             </div>
           </div>
           <app-big-flyer [flyer]="flyer" [usersMap]="usersMap()" (statusChanged)="lazyLoad()" />

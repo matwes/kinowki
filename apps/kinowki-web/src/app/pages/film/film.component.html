@@ -1,0 +1,50 @@
+<div class="page">
+  @for (film of films(); track film._id) {
+  <section class="film">
+    <header class="film-header">
+      <div class="year">- {{ film.year }} -</div>
+      <h1>{{ film.title }}</h1>
+      @if (film.originalTitle) {
+      <div class="original">
+        {{ film.originalTitle }}
+      </div>
+      }
+      <div class="genres">
+        @if(film.imdb) {
+        <a class="flex" [href]="film.imdb | imdb" target="_blank">
+          <img [style.height.rem]="1.375" src="imdb.svg" alt="logo" />
+        </a>
+        } @for (genre of film.genres; track genre) {
+        <p-tag [value]="genre | genreName" severity="secondary" />
+        }
+      </div>
+    </header>
+    <div class="releases">
+      @for (release of $any(film.releases); track release._id) {
+      <section class="release">
+        <app-distributor-badge
+          class="distributor-badge"
+          [distributors]="release.distributors"
+          [releaseType]="release.releaseType"
+          [hasFlyers]="release.flyers.length"
+          [releaseDate]="release.date"
+          [releaseNote]="release.note"
+          [showReleaseDate]="true" />
+        <div class="flyers">
+          @for (flyer of release.flyers; track flyer._id) {
+          <app-big-flyer [flyer]="flyer" [usersMap]="usersMap()" (statusChanged)="reloadFilms()" />
+          } @empty {
+          <div class="no-flyers">
+            <i class="pi pi-times"></i>
+            brak ulotek
+          </div>
+          }
+        </div>
+      </section>
+
+      }
+    </div>
+  </section>
+
+  }
+</div>

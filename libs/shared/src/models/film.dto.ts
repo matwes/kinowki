@@ -8,6 +8,7 @@ export interface CreateFilmDto {
   genres: number[];
   description?: string;
   imdb?: number;
+  group?: string;
 }
 
 export interface UpdateFilmDto extends Partial<CreateFilmDto> {

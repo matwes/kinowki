@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConfirmationService, FilterMetadata, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -26,9 +26,15 @@ import {
 
 import { DistributorDto, genres, ReleaseDto } from '@kinowki/shared';
 import { DistributorService, ReleaseService } from '../../services';
-import { ImdbPipe, notEmpty, ReleaseDatePipe, ReleaseTypeIconPipe, ShowIfAdminDirective } from '../../utils';
+import {
+  FlyerComponent,
+  ImdbPipe,
+  ReleaseDatePipe,
+  ReleaseTypeIconPipe,
+  ShowIfAdminDirective,
+  notEmpty,
+} from '../../utils';
 import { DistributorDialogComponent } from './distributor-dialog';
-import { FlyerComponent } from '../flyer';
 
 @UntilDestroy()
 @Component({
@@ -45,6 +51,7 @@ import { FlyerComponent } from '../flyer';
     InputTextModule,
     ReleaseDatePipe,
     ReleaseTypeIconPipe,
+    RouterModule,
     ShowIfAdminDirective,
     TableModule,
     ToastModule,

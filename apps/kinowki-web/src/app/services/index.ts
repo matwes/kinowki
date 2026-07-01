@@ -1,5 +1,7 @@
 export * from './auth.service';
+export * from './crud.service';
 export * from './distributor.service';
+export * from './film-group.service';
 export * from './film.service';
 export * from './flyer.service';
 export * from './release.service';

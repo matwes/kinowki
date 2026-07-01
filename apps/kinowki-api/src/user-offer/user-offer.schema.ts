@@ -6,13 +6,13 @@ export type UserOfferDocument = HydratedDocument<UserOffer>;
 @Schema()
 export class UserOffer {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: true })
-  userTrade: Types.ObjectId;
+  userTrade!: Types.ObjectId;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: true })
-  userWant: Types.ObjectId;
+  userWant!: Types.ObjectId;
 
   @Prop({ type: Number })
-  count: number;
+  count?: number;
 }
 
 export const UserOfferSchema = SchemaFactory.createForClass(UserOffer)

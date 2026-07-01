@@ -73,7 +73,13 @@
         @for(flyer of flyers; track $index) {
         <div class="flyer-wrapper">
           <div class="film-title">
-            <div class="title">{{ flyer.releases | join : ' • ' : 'film.title' }}</div>
+            <div class="title">
+              @for(release of flyer.releases; track release._id) {
+              <a class="film-link" [routerLink]="['/film', release.film?._id]">{{ release.film?.title }}</a>
+              @if (!$last) {
+              <span> • </span>
+              } }
+            </div>
             <div class="date">{{ flyer.releases[0].date }}</div>
           </div>
           <app-flyer [flyer]="flyer" (statusChanged)="lazyLoadFlyers()" />

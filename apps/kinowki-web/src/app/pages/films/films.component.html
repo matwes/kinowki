@@ -71,7 +71,9 @@
           }
         </td>
         <td>
-          <b>{{ film.title }} ({{ film.year }})</b>
+          <a class="film-link" [routerLink]="['/film', film._id]">
+            <b>{{ film.title }} ({{ film.year }})</b>
+          </a>
           <div [style.opacity]="0.75">{{ film.originalTitle }}</div>
         </td>
         <td>

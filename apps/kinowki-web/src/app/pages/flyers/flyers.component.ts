@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConfirmationService, FilterMetadata, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -32,8 +32,13 @@ import {
 
 import { FlyerDto, TagDto, flyerKinds, flyerSizes, flyerTypes, genres, releaseTypes } from '@kinowki/shared';
 import { FlyerService, TagService, UserService } from '../../services';
-import { ReleaseDatePipe, ShowIfAdminDirective, UserFlyerStatusClassDirective, notEmpty } from '../../utils';
-import { BigFlyerComponent } from '../big-flyer';
+import {
+  BigFlyerComponent,
+  ReleaseDatePipe,
+  ShowIfAdminDirective,
+  UserFlyerStatusClassDirective,
+  notEmpty,
+} from '../../utils';
 import { FlyerDialogComponent } from './flyer-dialog';
 
 @UntilDestroy()
@@ -52,6 +57,7 @@ import { FlyerDialogComponent } from './flyer-dialog';
     InputTextModule,
     PopoverModule,
     ReleaseDatePipe,
+    RouterModule,
     SelectButtonModule,
     SelectModule,
     ShowIfAdminDirective,

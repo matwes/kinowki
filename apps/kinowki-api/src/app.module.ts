@@ -12,6 +12,7 @@ import { UserModule } from './user/user.module';
 import { UserFlyerModule } from './user-flyer/user-flyer.module';
 import { UserOfferModule } from './user-offer/user-offer.module';
 import { UnmarkedFlyersModule } from './unmarked-flyers/unmarked-flyers.module';
+import { FilmGroupModule } from './film-group/film-group.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UnmarkedFlyersModule } from './unmarked-flyers/unmarked-flyers.module';
     ScheduleModule.forRoot(),
     AuthModule,
     DistributorModule,
+    FilmGroupModule,
     FilmModule,
     FlyerModule,
     ReleaseModule,

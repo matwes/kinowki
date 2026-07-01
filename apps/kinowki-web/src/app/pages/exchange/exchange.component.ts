@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, Component, inject, signal, ViewChild } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { DataView, DataViewModule } from 'primeng/dataview';
@@ -25,8 +25,7 @@ import {
 
 import { FlyerDto, UserFlyerFilter } from '@kinowki/shared';
 import { AuthService, UserFlyerService, UserOfferService, UserService } from '../../services';
-import { JoinPipe } from '../../utils';
-import { FlyerComponent } from '../flyer';
+import { FlyerComponent } from '../../utils';
 
 @UntilDestroy()
 @Component({
@@ -37,8 +36,8 @@ import { FlyerComponent } from '../flyer';
     AsyncPipe,
     DataViewModule,
     FlyerComponent,
-    JoinPipe,
     ReactiveFormsModule,
+    RouterModule,
     SelectButtonModule,
     TableModule,
     TooltipModule,

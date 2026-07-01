@@ -15,6 +15,7 @@ import { FilmController } from './film.controller';
     FlyerModule,
     UserFlyerModule,
   ],
+  exports: [FilmService],
   controllers: [FilmController],
   providers: [FilmService],
 })

@@ -2,6 +2,8 @@ export * from './activate';
 export * from './contact';
 export * from './distributors';
 export * from './exchange';
+export * from './film';
+export * from './film-groups';
 export * from './films';
 export * from './flyers';
 export * from './releases';

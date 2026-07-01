@@ -31,6 +31,7 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
     }
 
     const itemData = await query
+      .populate('tags')
       .sort({ createdAt: -1 })
       .collation({ locale: 'pl', strength: 1 })
       .lean<FlyerDto[]>()

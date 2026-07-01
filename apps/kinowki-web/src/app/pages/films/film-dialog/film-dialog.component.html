@@ -24,7 +24,7 @@
         <label for="imdb">IMDb</label>
       </p-iftalabel>
     </div>
-    <div class="field col-6">
+    <div class="field col-3">
       <p-iftalabel>
         <p-multiSelect
           id="genres"
@@ -36,6 +36,22 @@
           [formControl]="genres"
           appendTo="body" />
         <label for="genres">Gatunek</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-3">
+      <p-iftalabel>
+        <p-select
+          id="group"
+          fluid
+          [filter]="true"
+          filterBy="name"
+          [options]="options.groups"
+          [formControl]="group"
+          scrollHeight="30rem"
+          appendTo="body"
+          optionLabel="name"
+          optionValue="_id" />
+        <label for="group">Grupa</label>
       </p-iftalabel>
     </div>
     <div class="field col-12 flex align-items-center gap-2">

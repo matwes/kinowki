@@ -1,0 +1,135 @@
+:host
+  overflow: hidden
+  display: flex
+  flex-direction: column
+  height: 100%
+  overflow-y: auto
+
+:host ::ng-deep app-big-flyer
+  .badge
+    align-items: end !important
+
+  .flyer-details
+    min-height: 3rem !important
+
+:host ::ng-deep app-distributor-badge .badge
+  font-weight: bold
+  padding: 0.25rem 0.5rem
+  border-radius: 0.25rem
+  background-color: var(--p-surface-800)
+  color: var(--p-tag-secondary-color)
+  display: flex
+  flex-direction: row
+  gap: 8px
+  flex-wrap: nowrap
+  width: max-content
+  align-items: center
+  height: 28px
+
+.page
+  max-width: 90vw
+  margin: 20px auto 0
+  padding: 0 24px
+
+.film
+  display: flex
+  flex-direction: column
+  align-items: center
+  border-radius: 20px
+  margin-bottom: 1rem
+
+  &-header
+    text-align: center
+
+  &-header h1
+    margin: 0
+    font-size: 2.5rem
+    font-weight: 700
+    line-height: 1.1
+
+.year
+  margin-top: 8px
+  font-size: 1.4rem
+  opacity: .65
+
+.original
+  margin-top: 12px
+  font-style: italic
+  opacity: .7
+
+.genres
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-wrap: wrap
+  gap: 10px
+  margin-top: 12px
+
+.genre
+  padding: 6px 14px
+  border-radius: 999px
+  background: var(--surface-200)
+  font-size: .9rem
+
+.imdb
+  display: inline-block
+  margin-top: 22px
+  padding: 8px 18px
+  border-radius: 999px
+  background: #f5c518
+  color: black
+  font-weight: 600
+  text-decoration: none
+  transition: .2s
+
+  &:hover
+    transform: translateY(-2px)
+
+.releases
+  margin-top: 40px
+  display: flex
+  gap: 28px
+  flex-wrap: wrap
+  justify-content: center
+
+.release
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)
+  background: var(--p-surface-900)
+  padding: 28px
+  border-radius: 8px
+  padding-bottom: 16px
+  position: relative
+
+  &-top
+    display: flex
+    justify-content: space-between
+    align-items: center
+    gap: 20px
+
+.flyers
+  display: flex
+  justify-content: center
+  flex-wrap: wrap
+  gap: 18px
+
+.distributor-badge
+  position: absolute
+  top: -14px
+  left: -14px
+
+.no-flyers
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  width: 21rem
+  height: 18rem
+  gap: 0.5rem
+  color: var(--p-text-muted-color)
+  font-family: monospace
+  font-style: normal
+  letter-spacing: 0.25rem
+  font-size: 0.875rem
+
+  .pi
+    font-size: 4rem

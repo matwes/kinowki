@@ -11,7 +11,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 
-import { DistributorDto, FilmDto, genreMap, genres, releaseTypes } from '@kinowki/shared';
+import { DistributorDto, FilmDto, FilmGroupDto, genreMap, genres, releaseTypes } from '@kinowki/shared';
 import { letters } from '../letters';
 
 @Component({
@@ -36,6 +36,7 @@ export class FilmDialogComponent implements OnInit {
   private readonly config: DynamicDialogConfig<{
     item: FilmDto;
     distributors: DistributorDto[];
+    filmGroups: FilmGroupDto[];
   }> = inject(DynamicDialogConfig);
   private readonly fb = inject(NonNullableFormBuilder);
 
@@ -43,7 +44,8 @@ export class FilmDialogComponent implements OnInit {
     genres: { value: number; label: string }[];
     releaseTypes: { value: number; label: string }[];
     distributors: DistributorDto[];
-  } = { genres, releaseTypes, distributors: [] };
+    groups: FilmGroupDto[];
+  } = { genres, releaseTypes, distributors: [], groups: [] };
 
   form = this.fb.group({
     title: [undefined as unknown as string, Validators.required],
@@ -52,6 +54,7 @@ export class FilmDialogComponent implements OnInit {
     year: [undefined as unknown as number, Validators.required],
     genres: [[] as number[]],
     imdb: undefined as number | undefined,
+    group: undefined as string | undefined,
     releases: this.fb.array(
       [] as FormGroup<{
         _id: FormControl<string | undefined>;
@@ -88,6 +91,10 @@ export class FilmDialogComponent implements OnInit {
     return this.form.controls.imdb;
   }
 
+  get group() {
+    return this.form.controls.group;
+  }
+
   get releases() {
     return this.form.controls.releases;
   }
@@ -95,6 +102,7 @@ export class FilmDialogComponent implements OnInit {
   ngOnInit(): void {
     if (this.config.data) {
       this.options.distributors = this.config.data.distributors ?? [];
+      this.options.groups = this.config.data.filmGroups ?? [];
       const film = this.config.data.item;
 
       if (film) {
@@ -104,6 +112,7 @@ export class FilmDialogComponent implements OnInit {
         this.year.setValue(film.year);
         this.genres.setValue(film.genres);
         this.imdb.setValue(film.imdb);
+        this.group.setValue(film.group);
 
         film.releases?.forEach((release) => {
           const date = release.date.endsWith('-00') ? release.date.slice(0, -2) + '01' : release.date;
@@ -166,6 +175,7 @@ export class FilmDialogComponent implements OnInit {
       year: this.year.value,
       genres: this.genres.value.sort((a, b) => genreMap[a].localeCompare(genreMap[b])),
       imdb: this.imdb.value,
+      group: this.group.value,
     };
   }
 
@@ -210,7 +220,7 @@ export class FilmDialogComponent implements OnInit {
     if (letters.includes(normalized)) {
       return normalized;
     }
-    
+
     return '#';
   }
 }

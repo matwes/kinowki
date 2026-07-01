@@ -6,22 +6,22 @@ export type UserDocument = HydratedDocument<User>;
 @Schema()
 export class User {
   @Prop({ required: true, index: true, unique: true })
-  name: string;
+  name!: string;
 
   @Prop({ required: true, index: true, unique: true })
-  email: string;
+  email!: string;
 
   @Prop({ required: true })
-  password: string;
+  password!: string;
 
   @Prop()
   city?: string;
 
   @Prop({ required: true })
-  role: string;
+  role!: string;
 
   @Prop({ default: false })
-  isActive: boolean;
+  isActive?: boolean;
 
   @Prop()
   resetPasswordToken?: string;
@@ -30,13 +30,13 @@ export class User {
   resetPasswordExpires?: Date;
 
   @Prop({ type: Number, default: 0 })
-  haveTotal: number;
+  haveTotal?: number;
 
   @Prop({ type: Number, default: 0 })
-  tradeTotal: number;
+  tradeTotal?: number;
 
   @Prop({ type: Number, default: 0 })
-  wantTotal: number;
+  wantTotal?: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
