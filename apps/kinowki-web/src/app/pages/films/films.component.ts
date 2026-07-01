@@ -232,19 +232,20 @@ export class FilmsComponent implements OnInit {
       this.distributorService
     );
 
-    const filmGroups$ = this.getCachedList(
-      this.filmGroups,
-      (items) => (this.filmGroups = items),
-      this.filmGroupService
-    );
+    // const filmGroups$ = this.getCachedList(
+    //   this.filmGroups,
+    //   (items) => (this.filmGroups = items),
+    //   this.filmGroupService
+    // );
 
-    forkJoin({ distributors: distributors$, filmGroups: filmGroups$ })
+    // forkJoin({ distributors: distributors$, filmGroups: filmGroups$ })
+    forkJoin({ distributors: distributors$ })
       .pipe(
         untilDestroyed(this),
         switchMap(
-          ({ distributors, filmGroups }) =>
+          ({ distributors }) =>
             this.dialogService.open(FilmDialogComponent, {
-              data: { item, distributors, filmGroups },
+              data: { item, distributors },
               header: item ? 'Edytuj film' : 'Dodaj film',
               width: '90%',
               closeOnEscape: false,

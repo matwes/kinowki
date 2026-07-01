@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -12,8 +13,10 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 
 import { DistributorDto, FilmDto, FilmGroupDto, genreMap, genres, releaseTypes } from '@kinowki/shared';
+import { FilmGroupService } from '../../../services';
 import { letters } from '../letters';
 
+@UntilDestroy()
 @Component({
   selector: 'app-film-dialog',
   templateUrl: './film-dialog.component.html',
@@ -38,6 +41,7 @@ export class FilmDialogComponent implements OnInit {
     distributors: DistributorDto[];
     filmGroups: FilmGroupDto[];
   }> = inject(DynamicDialogConfig);
+  private readonly filmGroupService = inject(FilmGroupService);
   private readonly fb = inject(NonNullableFormBuilder);
 
   options: {
@@ -100,9 +104,16 @@ export class FilmDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.filmGroupService
+      .getAll()
+      .pipe(untilDestroyed(this))
+      .subscribe((res) => {
+        this.options.groups = res.data ?? [];
+      });
+
     if (this.config.data) {
       this.options.distributors = this.config.data.distributors ?? [];
-      this.options.groups = this.config.data.filmGroups ?? [];
+      // this.options.groups = this.config.data.filmGroups ?? [];
       const film = this.config.data.item;
 
       if (film) {
