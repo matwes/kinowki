@@ -66,7 +66,11 @@ export class FilmGroupController extends CrudController<
             })
           );
 
-          return { ...film, releases: releasesWithFlyers, flyerCount };
+          return {
+            ...film,
+            releases: releasesWithFlyers.sort((a, b) => a.date.localeCompare(b.date)),
+            flyerCount,
+          };
         })
       );
 
@@ -78,7 +82,16 @@ export class FilmGroupController extends CrudController<
             name: group ? 'collection' : film.title,
             virtual: !group,
           },
-          films: extendedFilms.sort((a, b) => a.year - b.year),
+          films: extendedFilms.sort((a, b) => {
+            if (a.year !== b.year) {
+              return a.year - b.year;
+            }
+
+            const firstReleaseA = a.releases[0]?.date ?? '';
+            const firstReleaseB = b.releases[0]?.date ?? '';
+
+            return firstReleaseA.localeCompare(firstReleaseB);
+          }),
         },
       });
     } catch (err) {

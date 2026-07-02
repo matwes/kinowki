@@ -6,6 +6,8 @@
   overflow-y: auto
 
 :host ::ng-deep app-big-flyer
+  flex: 0 0 auto !important
+
   .badge
     align-items: end !important
 
@@ -48,12 +50,14 @@
     line-height: 1.1
 
 .year
-  margin-top: 8px
-  font-size: 1.4rem
+  margin-top: 32px
+  font-size: 16px
   opacity: .65
+  letter-spacing: 6px
+  font-weight: bold
 
 .original
-  margin-top: 12px
+  margin-top: 8px
   font-style: italic
   opacity: .7
 
@@ -63,7 +67,7 @@
   align-items: center
   flex-wrap: wrap
   gap: 10px
-  margin-top: 12px
+  margin-top: 8px
 
 .genre
   padding: 6px 14px
