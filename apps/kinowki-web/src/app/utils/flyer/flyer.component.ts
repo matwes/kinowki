@@ -56,6 +56,18 @@ export class FlyerComponent implements AfterViewInit {
     })
   );
 
+  readonly imageStyles = computed(() => {
+    const images = this.images();
+    const maxWidth = images.length === 1 ? '6.25rem' : '3.125rem';
+
+    return images.map((_, index) => ({
+      'max-width': maxWidth,
+      'max-height': '4.5rem',
+      'object-fit': 'contain',
+      'object-position': images.length === 1 ? 'center' : index % 2 === 0 ? 'right' : 'left',
+    }));
+  });
+
   @ViewChildren(Image, { read: ElementRef }) imageEls!: QueryList<ElementRef<HTMLElement>>;
 
   constructor() {
