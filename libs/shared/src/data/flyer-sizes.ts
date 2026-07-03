@@ -42,7 +42,7 @@ export const flyerSizes = [
   { value: 41, label: '74×210 mm' },
   { value: 42, label: '138×200 mm' },
   { value: 43, label: '150×147 mm' },
-  { value: 44, label: '123×175 mm' },
+  { value: 44, label: '125×175 mm' },
   { value: 45, label: '105×177 mm' },
   { value: 46, label: '208×108 mm' },
   { value: 47, label: '115×183 mm' },
