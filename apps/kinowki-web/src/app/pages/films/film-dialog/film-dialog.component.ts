@@ -104,16 +104,9 @@ export class FilmDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.filmGroupService
-      .getAll()
-      .pipe(untilDestroyed(this))
-      .subscribe((res) => {
-        this.options.groups = res.data ?? [];
-      });
-
     if (this.config.data) {
       this.options.distributors = this.config.data.distributors ?? [];
-      // this.options.groups = this.config.data.filmGroups ?? [];
+      this.options.groups = this.config.data.filmGroups ?? [];
       const film = this.config.data.item;
 
       if (film) {
