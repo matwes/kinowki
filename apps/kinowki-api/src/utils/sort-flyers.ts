@@ -1,7 +1,12 @@
 import { FlyerDto } from '@kinowki/shared';
 
 export const sortFlyers = (a: FlyerDto, b: FlyerDto) => {
-  return a.type !== b.type
+  const kindA = a.kind === 1 ? 0 : a.kind;
+  const kindB = b.kind === 1 ? 0 : b.kind;
+
+  return kindA !== kindB
+    ? kindA - kindB
+    : a.type !== b.type
     ? a.type == null
       ? 1
       : b.type == null
