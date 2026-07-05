@@ -58,8 +58,8 @@ export class FilmGroupController extends CrudController<
 
               flyerCount += flyers.length;
 
-              if (userData?.userId && flyers.length) {
-                await this.userFlyerService.addUserStatus(userData.userId, flyers);
+              if (flyers.length) {
+                await this.userFlyerService.addUserStatus(userData?.userId?.toString(), flyers);
               }
 
               return { ...release, flyers };
