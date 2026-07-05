@@ -109,5 +109,3 @@ export const flyerSizeMap = flyerSizes.reduce(
   (map, size) => ({ ...map, [size.value]: size.label }),
   {} as Record<number, string>
 );
-
-flyerSizeMap[2] = 'pozioma';

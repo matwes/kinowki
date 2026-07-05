@@ -29,17 +29,17 @@
 @if (flyer(); as flyer) {
 <div class="flyer-details">
   <div class="flyer-stats pb-1" [style.paddingBottom.rem]="0.125">
-    @if (flyer.size && flyer.size!==1) {
+    @if (flyer.size) {
     <div class="flyer-stat" pTooltip="Rozmiar">
       <i class="pi pi-arrow-up-right-and-arrow-down-left-from-center"></i>
       <span>{{ flyer.size | flyerSizeName }}</span>
     </div>
-    } @if (flyer.type&& flyer.type!==1) {
+    } @if (flyer.type && flyer.type!==1) {
     <div class="flyer-stat" pTooltip="Typ">
       <i class="pi pi-objects-column"></i>
       <span>{{ flyer.type | flyerTypeName }}</span>
     </div>
-    } @if (flyer.kind&& flyer.kind!==1) {
+    } @if (flyer.kind && flyer.kind!==1) {
     <div class="flyer-stat" pTooltip="Obieg">
       <i class="pi pi-map-marker"></i>
       <span>{{ flyer.kind | flyerKindName }}</span>
