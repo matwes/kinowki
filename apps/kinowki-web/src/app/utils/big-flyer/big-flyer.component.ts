@@ -11,12 +11,11 @@ import {
   signal,
   ViewChildren,
 } from '@angular/core';
-import { FlyerDto } from '@kinowki/shared';
+import { FlyerDto, flyerKindMap } from '@kinowki/shared';
 import { Image, ImageModule } from 'primeng/image';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { environment } from '../../../environments/environment';
-import { FlyerKindNamePipe } from '../flyer-kind-name';
 import { FlyerSizeNamePipe } from '../flyer-size-name';
 import { FlyerTypeNamePipe } from '../flyer-type-name';
 import { ShowIfAdminDirective } from '../show-if-admin';
@@ -29,7 +28,6 @@ import { UsersPipe } from '../users';
   templateUrl: './big-flyer.component.html',
   styleUrl: './big-flyer.component.sass',
   imports: [
-    FlyerKindNamePipe,
     FlyerSizeNamePipe,
     FlyerTypeNamePipe,
     ImageModule,
@@ -52,6 +50,22 @@ export class BigFlyerComponent implements AfterViewInit {
 
   blankSize = signal({ width: 175, height: 250 });
   imageSizes = signal<Record<number, { width: number; height: number }>>({});
+
+  readonly displayKind = computed(() => {
+    const flyer = this.flyer();
+
+    if (flyer.kind === 2 && flyer.note) {
+      return flyer.note;
+    }
+
+    return flyerKindMap[flyer.kind] ?? 'nieznany';
+  });
+
+  readonly showNote = computed(() => {
+    const flyer = this.flyer();
+
+    return !!flyer.note && flyer.kind !== 2;
+  });
 
   isHorizontal = computed(() => {
     const first = this.imageSizes()[0];

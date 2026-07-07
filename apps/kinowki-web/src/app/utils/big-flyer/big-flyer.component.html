@@ -34,22 +34,22 @@
       <i class="pi pi-arrow-up-right-and-arrow-down-left-from-center"></i>
       <span>{{ flyer.size | flyerSizeName }}</span>
     </div>
-    } @if (flyer.type && flyer.type!==1) {
+    } @if (flyer.type && flyer.type !== 1) {
     <div class="flyer-stat" pTooltip="Typ">
       <i class="pi pi-objects-column"></i>
       <span>{{ flyer.type | flyerTypeName }}</span>
     </div>
-    } @if (flyer.kind && flyer.kind!==1) {
+    } @if (flyer.kind && flyer.kind !== 1) {
     <div class="flyer-stat" pTooltip="Obieg">
       <i class="pi pi-map-marker"></i>
-      <span>{{ flyer.kind | flyerKindName }}</span>
+      <span>{{ displayKind() }}</span>
     </div>
     } @for(tag of flyer.tags; track $index) {
     <div class="flyer-stat" pTooltip="Tag">
       <i class="pi pi-tag"></i>
       <span>{{ tag.name }}</span>
     </div>
-    } @if (flyer.note) {
+    } @if (showNote()) {
     <div class="flyer-stat" pTooltip="Komentarz">
       <i class="pi pi-info-circle"></i>
       <span>{{ flyer.note }}</span>
