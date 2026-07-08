@@ -102,7 +102,7 @@ export class BigFlyerComponent implements AfterViewInit {
       if (images.length > 1) {
         if (horizontal) {
           style['max-width'] = '20rem';
-          style['max-height'] = '7.75rem';
+          style['max-height'] = '7rem';
         } else {
           style['object-position'] = index % 2 === 0 ? 'right' : 'left';
         }
