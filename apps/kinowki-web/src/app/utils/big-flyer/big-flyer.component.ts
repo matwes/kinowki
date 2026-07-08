@@ -107,7 +107,7 @@ export class BigFlyerComponent implements AfterViewInit {
           style['object-position'] = index % 2 === 0 ? 'right' : 'left';
         }
       } else {
-        style.height = '13.125rem';
+        style.height = '14.25rem';
       }
 
       return style;
