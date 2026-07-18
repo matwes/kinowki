@@ -108,6 +108,7 @@ export class BigFlyerComponent implements AfterViewInit {
         }
       } else {
         style.height = '14.25rem';
+        style['max-width'] = '17.75rem';
       }
 
       return style;
