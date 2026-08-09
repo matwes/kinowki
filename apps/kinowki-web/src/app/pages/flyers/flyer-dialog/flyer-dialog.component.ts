@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { IftaLabelModule } from 'primeng/iftalabel';
@@ -32,6 +33,7 @@ import { ReleaseService } from '../../../services';
   styleUrl: './flyer-dialog.component.sass',
   imports: [
     ButtonModule,
+    CheckboxModule,
     CommonModule,
     DatePickerModule,
     IftaLabelModule,
@@ -78,6 +80,7 @@ export class FlyerDialogComponent implements OnInit {
         thumbnail: FormControl<string | undefined>;
       }>[]
     ),
+    highlight: undefined as boolean | undefined,
   });
 
   get sortName() {
@@ -120,6 +123,10 @@ export class FlyerDialogComponent implements OnInit {
     return this.form.controls.images;
   }
 
+  get highlight() {
+    return this.form.controls.highlight;
+  }
+
   ngOnInit(): void {
     let initialReleases: ReleaseDto[] = [];
 
@@ -137,6 +144,7 @@ export class FlyerDialogComponent implements OnInit {
         this.size.setValue(flyer.size);
         this.tags.setValue(flyer.tags.map((tag) => tag._id));
         this.note.setValue(flyer.note);
+        this.highlight.setValue(flyer.highlight ?? undefined);
 
         flyer.images?.forEach((image) => {
           this.images.push(
@@ -360,6 +368,7 @@ export class FlyerDialogComponent implements OnInit {
         original: image.controls.original.value,
         thumbnail: image.controls.thumbnail.value,
       })),
+      highlight: this.highlight.value ?? undefined,
     };
   }
 }

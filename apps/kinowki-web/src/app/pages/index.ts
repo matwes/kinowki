@@ -6,6 +6,7 @@ export * from './film';
 export * from './film-groups';
 export * from './films';
 export * from './flyers';
+export * from './home';
 export * from './releases';
 export * from './reset-password';
 export * from './tags';

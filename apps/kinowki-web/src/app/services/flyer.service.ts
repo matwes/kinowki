@@ -7,4 +7,8 @@ import { CrudService } from './crud.service';
 })
 export class FlyerService extends CrudService<FlyerDto, CreateFlyerDto, UpdateFlyerDto> {
   name = 'flyer';
+
+  getHighlight() {
+    return this.httpClient.get<{ message: string; data: FlyerDto[] }>(`${this.url}/highlight`);
+  }
 }

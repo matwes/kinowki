@@ -1,0 +1,83 @@
+<main class="homepage">
+  <section class="hero">
+    <div class="hero-content">
+      <h1>
+        Największa baza
+        <br />
+        polskich ulotek
+        <br />
+        filmowych.
+      </h1>
+      <div class="hero-features">
+        @for (feature of features; track feature.title) {
+        <div class="feature">
+          <div class="feature-icon">
+            <i [class]="feature.icon"></i>
+          </div>
+          <div class="feature-content">
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.description }}</p>
+          </div>
+        </div>
+        }
+      </div>
+      <div class="hero-actions">
+        <button class="primary-button" type="button" (click)="goToDatabase()">
+          <i class="pi pi-th-large"></i>
+          <span>Przeglądaj bazę</span>
+        </button>
+        <div class="search-button">
+          <i class="pi pi-search"></i>
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            (keydown.enter)="search()"
+            placeholder="Wpisz tytuł i naciśnij enter"
+            aria-label="Wyszukaj film" />
+        </div>
+      </div>
+    </div>
+    <div class="hero-flyers">
+      @for (flyer of heroFlyers; track flyer.title; let i = $index) {
+      <div class="hero-flyer" [class]="'hero-flyer flyer-' + i">
+        <img [src]="flyer.image" [alt]="flyer.title" />
+      </div>
+      }
+    </div>
+  </section>
+  <section class="stats">
+    @for (stat of stats; track stat.label) {
+    <div class="stat">
+      <i [class]="stat.icon"></i>
+      <div>
+        <strong>{{ stat.value }}</strong>
+        <span>{{ stat.label }}</span>
+      </div>
+    </div>
+    }
+  </section>
+  <section class="section">
+    <div class="section-header">
+      <h2>Nadchodzące premiery</h2>
+      <a href="/premiery">
+        Zobacz wszystkie
+        <i class="pi pi-arrow-right"></i>
+      </a>
+    </div>
+    <div class="flyer-grid">
+      @for (flyer of recentFlyers(); track flyer._id) {
+      <article class="flyer-card">
+        <a class="flyer-image" [routerLink]="['/film', flyer.filmId]" [attr.aria-label]="'Zobacz film: ' + flyer.title">
+          <img [src]="flyer.image" [alt]="flyer.title" />
+        </a>
+        <a class="film-link" [routerLink]="['/film', flyer.filmId]">
+          <h3>{{ flyer.title }}</h3>
+        </a>
+        <span class="flyer-year">
+          {{ flyer.releaseDate | releaseDate : 'short' }}
+        </span>
+      </article>
+      }
+    </div>
+  </section>
+</main>

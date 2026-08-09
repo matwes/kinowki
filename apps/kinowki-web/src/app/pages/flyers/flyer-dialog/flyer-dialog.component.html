@@ -1,6 +1,6 @@
 <form [formGroup]="form" (submit)="onSave()">
   <div class="formgrid grid m-2">
-    <div class="field col-12">
+    <div class="field col-10">
       <p-iftalabel>
         <p-multiSelect
           id="releases"
@@ -22,6 +22,10 @@
         </p-multiSelect>
         <label for="tags">Premiery</label>
       </p-iftalabel>
+    </div>
+    <div class="field-checkbox col-2">
+      <p-checkbox id="flyer-highlight" [formControl]="highlight" appendTo="body" [binary]="true" />
+      <label for="noDay">Highlight</label>
     </div>
     <div class="field col-12">
       <p-iftalabel>

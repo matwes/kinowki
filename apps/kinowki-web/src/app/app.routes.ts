@@ -8,6 +8,7 @@ import {
   FilmGroupsComponent,
   FilmsComponent,
   FlyersComponent,
+  HomeComponent,
   ReleasesComponent,
   ResetPasswordComponent,
   TagsComponent,
@@ -15,6 +16,7 @@ import {
 } from './pages';
 
 export const appRoutes: Route[] = [
+  { path: '', component: HomeComponent },
   { path: 'ulotki', component: FlyersComponent },
   { path: 'filmy', component: FilmsComponent },
   { path: 'film/:id', component: FilmComponent },
@@ -27,5 +29,5 @@ export const appRoutes: Route[] = [
   { path: 'ustawienia', component: UserSettingsComponent },
   { path: 'activate', component: ActivateComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: '**', redirectTo: '/ulotki' },
+  { path: '**', redirectTo: '' },
 ];

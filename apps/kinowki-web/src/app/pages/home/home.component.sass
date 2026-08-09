@@ -1,0 +1,420 @@
+$accent: #8bcf00
+$accent-hover: #9de600
+
+$background: #070b0d
+$surface: var(--p-surface-900)
+$surface-light: #11191d
+$border: rgba(255, 255, 255, 0.08)
+
+$text: #f1f3f4
+$text-secondary: #9ca3a7
+
+.homepage
+  width: 100%
+  height: 100%
+  max-width: 1400px
+  margin: 0 auto
+  padding: 0 32px 32px
+  color: $text
+  overflow-y: auto
+
+.hero
+  position: relative
+  display: flex
+  align-items: center
+  overflow: hidden
+  padding: 20px 0 40px
+
+  h1
+    margin: 0
+    font-size: clamp(42px, 4vw, 64px)
+    line-height: 1.05
+    letter-spacing: -1.5px
+    font-weight: 700
+
+.hero-content
+  position: relative
+  z-index: 10
+  width: 48%
+
+.hero-features
+  display: flex
+  flex-direction: column
+  margin-top: 24px
+  gap: 12px
+  max-width: 470px
+
+.feature
+  display: flex
+  align-items: flex-start
+  gap: 18px
+
+.feature-icon
+  flex: 0 0 36px
+  display: flex
+  align-items: center
+  justify-content: center
+  width: 36px
+  height: 20px
+  color: $accent
+  font-size: 23px
+
+.feature-content
+  h3
+    margin: 0 0 4px
+    font-size: 17px
+    font-weight: 600
+
+  p
+    margin: 0
+    color: $text-secondary
+    font-size: 14px
+    line-height: 1.45
+
+.hero-actions
+  display: flex
+  gap: 12px
+  margin-top: 36px
+
+.primary-button, .search-button
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  height: 46px
+  padding: 0 20px
+  border-radius: 6px
+  font-size: 14px
+  font-weight: 500
+  cursor: pointer
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease
+
+.primary-button
+  gap: 9px
+  border: 1px solid $accent
+  background: $accent
+  color: #071000
+
+  &:hover
+    background: $accent-hover
+    border-color: $accent-hover
+
+.search-button
+  gap: 10px
+  min-width: 190px
+  border: 1px solid rgba(255, 255, 255, 0.16)
+  background: rgba(255, 255, 255, 0.025)
+  color: $text
+
+  &:hover
+    background: rgba(255, 255, 255, 0.06)
+    border-color: rgba(255, 255, 255, 0.25)
+
+.hero-flyers
+  position: absolute
+  right: -30px
+  top: 0
+  width: 58%
+  height: 560px
+  pointer-events: none
+
+.hero-flyer
+  position: absolute
+  width: 200px
+  overflow: hidden
+  border-radius: 4px
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), 0 5px 15px rgba(0, 0, 0, 0.35)
+  transform-origin: center
+
+  img
+    display: block
+    width: 100%
+    height: auto
+    object-fit: cover
+
+.flyer-0
+  right: 400px
+  top: 45px
+  transform: rotate(-11deg)
+  z-index: 5
+
+.flyer-1
+  right: 125px
+  top: 15px
+  transform: rotate(4deg)
+  z-index: 2
+
+.flyer-2
+  right: 300px
+  top: 215px
+  transform: rotate(8deg)
+  z-index: 5
+
+.flyer-3
+  right: 50px
+  top: 240px
+  transform: rotate(-7deg)
+  z-index: 3
+
+.flyer-4
+  right: 550px
+  top: 230px
+  transform: rotate(-3deg)
+  z-index: 6
+
+.stats
+  display: grid
+  grid-template-columns: repeat(4, 1fr)
+  padding: 22px 25px
+  border: 1px solid $border
+  border-radius: 7px
+  background: $surface
+
+.stat
+  display: flex
+  align-items: center
+  gap: 16px
+  padding: 0 25px
+  border-right: 1px solid $border
+
+  &:first-child
+    padding-left: 0
+
+  &:last-child
+    border-right: 0
+    padding-right: 0
+
+  > i
+    color: $accent
+    font-size: 25px
+
+  strong
+    display: block
+    font-size: 20px
+    line-height: 1.2
+
+  span
+    display: block
+    color: $text-secondary
+    font-size: 12px
+
+.section
+  margin-top: 24px
+
+.section-header
+  display: flex
+  align-items: center
+  justify-content: space-between
+  margin-bottom: 18px
+
+  h2
+    margin: 0
+    font-size: 22px
+    font-weight: 600
+
+  a
+    display: inline-flex
+    align-items: center
+    gap: 7px
+    color: $accent
+    font-size: 13px
+    text-decoration: none
+    transition: color 0.2s ease
+
+    &:hover
+      color: $accent-hover
+
+    i
+      font-size: 11px
+
+.flyer-grid
+  display: grid
+  grid-template-columns: repeat(6, 1fr)
+  gap: 16px
+
+.flyer-card
+  min-width: 0
+
+  .flyer-image
+    display: block
+    overflow: hidden
+    aspect-ratio: 2 / 3
+    border-radius: 5px
+    background: $surface
+
+    img
+      display: block
+      width: 100%
+      height: 100%
+      object-fit: cover
+      transition: transform 0.3s ease
+
+    &:hover img
+      transform: scale(1.025)
+
+  h3
+    margin: 10px 0 0
+    font-size: 14px
+    font-weight: 500
+    line-height: 1
+
+  .flyer-year
+    opacity: 0.65
+    font-size: 12px
+
+@media (max-width: 1100px)
+  .homepage
+    padding-left: 24px
+    padding-right: 24px
+
+  .hero-content
+    width: 55%
+
+  .hero-flyers
+    right: -170px
+    width: 65%
+
+  .hero-flyer
+    width: 200px
+
+  .flyer-grid
+    grid-template-columns: repeat(3, 1fr)
+
+@media (max-width: 800px)
+  .hero
+    display: block
+    min-height: auto
+    padding-top: 45px
+
+    h1
+      font-size: 42px
+
+  .hero-content
+    width: 100%
+
+  .hero-flyers
+    position: relative
+    right: auto
+    top: auto
+    width: 100%
+    height: 360px
+    margin-top: 30px
+
+  .hero-flyer
+    width: 170px
+
+  .flyer-0
+    left: 10%
+    top: 20px
+
+  .flyer-1
+    right: 10%
+    top: 0
+
+  .flyer-2
+    left: 35%
+    top: 100px
+
+  .flyer-3
+    right: 2%
+    top: 145px
+
+  .flyer-4
+    left: 15%
+    top: 180px
+
+  .stats
+    grid-template-columns: repeat(2, 1fr)
+    gap: 20px
+
+  .stat
+    padding: 0 15px
+
+    &:nth-child(2)
+      border-right: 0
+
+    &:nth-child(3)
+      padding-left: 0
+
+  .flyer-grid
+    grid-template-columns: repeat(3, 1fr)
+
+@media (max-width: 550px)
+  .homepage
+    padding-left: 16px
+    padding-right: 16px
+
+  .hero h1
+    font-size: 36px
+
+  .hero-actions
+    flex-direction: column
+
+  .primary-button, .search-button
+    width: 100%
+
+  .hero-flyers
+    height: 300px
+
+  .hero-flyer
+    width: 140px
+
+  .stats
+    grid-template-columns: 1fr
+
+  .stat,
+  .stat:first-child,
+  .stat:last-child
+    padding: 12px 0
+    border-right: 0
+    border-bottom: 1px solid $border
+
+  .stat:last-child
+    border-bottom: 0
+
+  .flyer-grid
+    grid-template-columns: repeat(2, 1fr)
+    gap: 14px
+
+  .section-header
+    h2
+      font-size: 19px
+
+    a
+      font-size: 12px
+
+.search-button
+  display: flex
+  align-items: center
+  gap: 10px
+  width: 280px
+  height: 46px
+  padding: 0 16px
+  border: 1px solid rgba(255, 255, 255, 0.16)
+  border-radius: 6px
+  background: rgba(255, 255, 255, 0.025)
+  color: $text
+  transition: background 0.2s ease, border-color 0.2s ease
+
+  &:focus-within
+    border-color: rgba(139, 207, 0, 0.65)
+    background: rgba(255, 255, 255, 0.04)
+
+  > i
+    flex: 0 0 auto
+    color: $text-secondary
+    font-size: 15px
+
+  input
+    min-width: 0
+    width: 100%
+    padding: 0
+    border: 0
+    outline: 0
+    background: transparent
+    color: $text
+    font-family: inherit
+    font-size: 13px
+
+    &::placeholder
+      color: $text-secondary
+      opacity: 0.8

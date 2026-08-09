@@ -33,6 +33,19 @@ export class FlyerController extends CrudController<Flyer, FlyerDto, CreateFlyer
     super(flyerService);
   }
 
+  @Get('/highlight')
+  async getHighlight(@Res() res: Response) {
+    try {
+      const highlight = await this.flyerService.getAllWithReleases(undefined, { highlight: true });
+      res.status(HttpStatus.OK).json({
+        message: `Highlight found successfully`,
+        data: highlight,
+      });
+    } catch (err) {
+      errorHandler(res, err, `Getting highlight`);
+    }
+  }
+
   @UseGuards(AdminGuard)
   @Put('/:id')
   async update(@Req() req, @Res() res: Response, @Param('id') id: string, @Body() updateDto: UpdateFlyerDto) {

@@ -1,6 +1,6 @@
 <div class="sidebar shadow-3">
   <div class="sidebar-content">
-    <app-logo class="cursor-pointer" routerLink="/ulotki" />
+    <app-logo class="cursor-pointer" routerLink="" />
     <div class="top-bar-menu">
       @for(page of pages(); track page.url) {
       <a class="page" [routerLink]="page.url" routerLinkActive="active">
@@ -42,7 +42,7 @@
   <ng-template #headless>
     <div class="drawer">
       <div class="drawer-header shadow-3">
-        <app-logo />
+        <app-logo class="cursor-pointer" routerLink="" />
       </div>
       @for(page of pages(); track page.url) {
       <a class="drawer-item" [routerLink]="page.url" routerLinkActive="active" (click)="showDrawer = false">

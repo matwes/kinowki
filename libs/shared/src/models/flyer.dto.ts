@@ -14,6 +14,7 @@ export interface CreateFlyerDto {
   note?: string;
   releases: string[];
   images: ImageDto[];
+  highlight: boolean;
 }
 
 export interface UpdateFlyerDto extends Partial<CreateFlyerDto> {

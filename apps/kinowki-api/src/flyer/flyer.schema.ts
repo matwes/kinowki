@@ -38,6 +38,9 @@ export class Flyer {
 
   @Prop()
   createdAt: Date;
+
+  @Prop()
+  highlight?: boolean;
 }
 
 export const FlyerSchema = SchemaFactory.createForClass(Flyer)
@@ -48,4 +51,5 @@ export const FlyerSchema = SchemaFactory.createForClass(Flyer)
   .index({ kind: 1 })
   .index({ type: 1 })
   .index({ size: 1 })
+  .index({ highlight: 1 })
   .index({ tags: 1 });
