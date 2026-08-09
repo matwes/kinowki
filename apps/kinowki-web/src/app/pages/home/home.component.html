@@ -26,15 +26,15 @@
           <i class="pi pi-th-large"></i>
           <span>Przeglądaj bazę</span>
         </button>
-        <div class="search-button">
+        <label class="search-button">
           <i class="pi pi-search"></i>
           <input
             type="text"
             [(ngModel)]="searchQuery"
             (keydown.enter)="search()"
-            placeholder="Wpisz tytuł i naciśnij enter"
-            aria-label="Wyszukaj film" />
-        </div>
+            placeholder="Szukaj ulotki"
+            aria-label="Szukaj ulotki" />
+        </label>
       </div>
     </div>
     <div class="hero-flyers">
@@ -74,7 +74,7 @@
           <h3>{{ flyer.title }}</h3>
         </a>
         <span class="flyer-year">
-          {{ flyer.releaseDate | releaseDate : 'short' }}
+          {{ flyer.releaseDate | releaseDate : 'long' }}
         </span>
       </article>
       }
