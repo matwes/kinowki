@@ -71,12 +71,12 @@ export class HomeComponent {
   stats = [
     {
       icon: 'pi pi-video',
-      value: '9500+',
+      value: '9700+',
       label: 'filmów',
     },
     {
       icon: 'pi pi-th-large',
-      value: '8500+',
+      value: '9000+',
       label: 'ulotek',
     },
     {

@@ -2,14 +2,14 @@ import { NgStyle } from '@angular/common';
 import {
   AfterViewInit,
   Component,
+  ElementRef,
+  QueryList,
+  ViewChildren,
   computed,
   effect,
-  ElementRef,
   input,
   output,
-  QueryList,
   signal,
-  ViewChildren,
 } from '@angular/core';
 import { FlyerDto, flyerKindMap } from '@kinowki/shared';
 import { Image, ImageModule } from 'primeng/image';
@@ -21,7 +21,7 @@ import { FlyerTypeNamePipe } from '../flyer-type-name';
 import { ShowIfAdminDirective } from '../show-if-admin';
 import { ShowIfLoggedDirective } from '../show-if-logged';
 import { UserFlyerStatusButtonComponent } from '../user-flyer-status-button';
-import { UsersPipe } from '../users';
+import { FlyerUsersPopoverComponent } from '../flyer-users-popover';
 
 @Component({
   selector: 'app-big-flyer',
@@ -30,13 +30,13 @@ import { UsersPipe } from '../users';
   imports: [
     FlyerSizeNamePipe,
     FlyerTypeNamePipe,
+    FlyerUsersPopoverComponent,
     ImageModule,
     NgStyle,
     ShowIfAdminDirective,
     ShowIfLoggedDirective,
     TooltipModule,
     UserFlyerStatusButtonComponent,
-    UsersPipe,
   ],
 })
 export class BigFlyerComponent implements AfterViewInit {

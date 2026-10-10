@@ -1,0 +1,19 @@
+<p-popover #popover>
+  <div class="flyer-users">
+    @for ( section of [ { title: 'Mają w kolekcji', users: flyer().have, empty: 'Nikt nie ma tylko w kolekcji' }, {
+    title: 'Mają na wymianę', users: flyer().trade, empty: 'Nikt nie ma na wymianę' }, { title: 'Poszukują', users:
+    flyer().want, empty: 'Nikt nie poszukuje' } ]; track section.title ) {
+    <section>
+      <div class="section-title">{{ section.title }}</div>
+
+      @if (section.users?.length) { @for (userId of section.users; track userId) {
+      <div class="user">
+        {{ usersMap().get(userId) ?? userId }}
+      </div>
+      } } @else {
+      <div class="empty">{{ section.empty }}</div>
+      }
+    </section>
+    }
+  </div>
+</p-popover>
