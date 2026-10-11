@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -96,8 +96,6 @@ export class FlyersComponent implements OnInit {
   lazyEvent = new Subject<TableLazyLoadEvent>();
   filters$ = new BehaviorSubject<{ [s: string]: FilterMetadata | FilterMetadata[] | undefined } | undefined>({});
 
-  usersMap = signal(new Map<string, string>());
-
   data$ = combineLatest([this.lazyEvent, this.filters$]).pipe(
     debounceTime(500),
     map(([lazyEvent, filters]) => ({ ...lazyEvent, filters })),
@@ -129,11 +127,6 @@ export class FlyersComponent implements OnInit {
   private tagsFetched = false;
 
   ngOnInit(): void {
-    this.userService
-      .getUserMap()
-      .pipe(untilDestroyed(this))
-      .subscribe((res) => this.usersMap.set(res));
-
     this.tagService
       .getAll()
       .pipe(

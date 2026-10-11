@@ -1,6 +1,8 @@
-import { Component, ViewChild, input } from '@angular/core';
+import { Component, ViewChild, inject, input } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FlyerDto } from '@kinowki/shared';
 import { Popover, PopoverModule } from 'primeng/popover';
+import { UserService } from '../../services';
 
 @Component({
   selector: 'app-flyer-users-popover',
@@ -13,7 +15,10 @@ export class FlyerUsersPopoverComponent {
   @ViewChild('popover') popover!: Popover;
 
   flyer = input.required<FlyerDto>();
-  usersMap = input.required<Map<string, string>>();
+
+  readonly usersMap = toSignal(inject(UserService).getUserMap(), {
+    initialValue: new Map<string, string>(),
+  });
 
   toggle(event: Event): void {
     this.popover.toggle(event);

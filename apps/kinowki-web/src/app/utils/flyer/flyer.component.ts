@@ -14,30 +14,29 @@ import { FlyerDto } from '@kinowki/shared';
 import { Image, ImageModule } from 'primeng/image';
 
 import { environment } from '../../../environments/environment';
-import { CopyFlyerNameButtonComponent } from '../copy-flyer-name-button';
 import { FlyerNotePipe } from '../flyer-note';
 import { ShowIfLoggedDirective } from '../show-if-logged';
 import { UserFlyerStatusButtonComponent } from '../user-flyer-status-button';
 import { UserFlyerStatusClassDirective } from '../user-flyer-status-color';
+import { UserFlyerUserStatusesButtonComponent } from '../user-flyer-user-statuses-button';
 
 @Component({
   selector: 'app-flyer',
   templateUrl: './flyer.component.html',
   styleUrl: './flyer.component.sass',
   imports: [
-    CopyFlyerNameButtonComponent,
     FlyerNotePipe,
     ImageModule,
     ShowIfLoggedDirective,
     UserFlyerStatusButtonComponent,
     UserFlyerStatusClassDirective,
+    UserFlyerUserStatusesButtonComponent,
   ],
 })
 export class FlyerComponent implements AfterViewInit {
   private readonly CDN_URL = environment.cdnUrl;
 
   flyer = input.required<FlyerDto>();
-  big = input(false);
   statusChanged = output<void>();
 
   blankWidth = signal(175);

@@ -1,0 +1,4 @@
+<p-button [styleClass]="buttonClass()" size="small" [rounded]="true" (onClick)="usersPopover.toggle($event)">
+  {{ usersCount() }}
+</p-button>
+<app-flyer-users-popover #usersPopover [flyer]="flyer()" />

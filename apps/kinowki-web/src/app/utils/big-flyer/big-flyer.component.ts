@@ -45,7 +45,6 @@ export class BigFlyerComponent implements AfterViewInit {
   @ViewChildren(Image, { read: ElementRef }) imageEls!: QueryList<ElementRef<HTMLElement>>;
 
   flyer = input.required<FlyerDto>();
-  usersMap = input.required<Map<string, string>>();
   statusChanged = output();
 
   blankSize = signal({ width: 175, height: 250 });

@@ -5,7 +5,7 @@ import { filter, map, startWith, Subject, switchMap } from 'rxjs';
 import { TagModule } from 'primeng/tag';
 
 import { FilmDto } from '@kinowki/shared';
-import { FilmGroupService, UserService } from '../../services';
+import { FilmGroupService } from '../../services';
 import { GenreNamePipe, notEmpty, ImdbPipe, BigFlyerComponent, DistributorBadgeComponent } from '../../utils';
 
 @UntilDestroy()
@@ -18,18 +18,12 @@ import { GenreNamePipe, notEmpty, ImdbPipe, BigFlyerComponent, DistributorBadgeC
 export class FilmComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly filmGroupService = inject(FilmGroupService);
-  private readonly userService = inject(UserService);
 
   films = signal<FilmDto[]>([]);
-  usersMap = signal(new Map<string, string>());
 
   private refresh$ = new Subject<void>();
 
   ngOnInit(): void {
-    this.userService
-      .getUserMap()
-      .pipe(untilDestroyed(this))
-      .subscribe((res) => this.usersMap.set(res));
     this.route.paramMap
       .pipe(
         map((params) => params.get('id')),

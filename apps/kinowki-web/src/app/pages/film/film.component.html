@@ -32,7 +32,7 @@
           [showReleaseDate]="true" />
         <div class="flyers">
           @for (flyer of release.flyers; track flyer._id) {
-          <app-big-flyer [flyer]="flyer" [usersMap]="usersMap()" (statusChanged)="reloadFilms()" />
+          <app-big-flyer [flyer]="flyer" (statusChanged)="reloadFilms()" />
           } @empty {
           <div class="no-flyers">
             <i class="pi pi-times"></i>

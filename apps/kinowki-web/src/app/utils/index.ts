@@ -20,3 +20,4 @@ export * from './show-if-admin';
 export * from './show-if-logged';
 export * from './user-flyer-status-button';
 export * from './user-flyer-status-color';
+export * from './user-flyer-user-statuses-button';
