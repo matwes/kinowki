@@ -4,7 +4,7 @@ import { FilterQuery, Types } from 'mongoose';
 
 import { CreateReleaseDto, ReleaseDto, UpdateReleaseDto } from '@kinowki/shared';
 import { FlyerService } from '../flyer/flyer.service';
-import { CrudController, getRegex, OptionalJwtAuthGuard, sortFlyers } from '../utils';
+import { CrudController, errorHandler, getRegex, OptionalJwtAuthGuard, sortFlyers } from '../utils';
 import { Release } from './release.schema';
 import { ReleaseService } from './release.service';
 import { UserData } from '../auth/jwt-strategy';
@@ -26,7 +26,7 @@ export class ReleaseController extends CrudController<Release, ReleaseDto, Creat
   @UseGuards(OptionalJwtAuthGuard)
   override async getAll(
     @Req() req,
-    @Res() response: Response,
+    @Res() res: Response,
     @Query('first', new ParseIntPipe({ optional: true })) first?: number,
     @Query('rows', new ParseIntPipe({ optional: true })) rows?: number,
     @Query('year', new ParseIntPipe({ optional: true })) year?: number,
@@ -69,8 +69,8 @@ export class ReleaseController extends CrudController<Release, ReleaseDto, Creat
         data.map(async (release) => {
           const flyers = (await this.flyerService.getAll(undefined, { releases: release._id })).sort(sortFlyers);
 
-          if (userData?.userId && flyers.length) {
-            await this.userFlyerService.addUserStatus(userData.userId, flyers);
+          if (flyers.length) {
+            await this.userFlyerService.addUserStatus(userData?.userId, flyers);
           }
 
           release.flyers = flyers;
@@ -79,13 +79,13 @@ export class ReleaseController extends CrudController<Release, ReleaseDto, Creat
         })
       );
 
-      response.status(HttpStatus.OK).json({
+      res.status(HttpStatus.OK).json({
         message: `All ${this.name} data found successfully`,
         data: extendedData,
         totalRecords,
       });
     } catch (err) {
-      response.status(err.status).json(err.response);
+      errorHandler(res, err, 'Getting releases');
     }
   }
 }

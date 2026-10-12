@@ -194,7 +194,7 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
   async addUserStatus(userId: string | undefined, flyers: FlyerDto[]) {
     const userFlyers = await this.getAll(undefined, { flyer: { $in: flyers.map((flyer) => flyer._id) } });
 
-    const stats = {};
+    const stats: Record<string, Partial<FlyerDto>> = {};
     for (const userFlyer of userFlyers) {
       const id = userFlyer.flyer.toString();
       if (!stats[id]) {
@@ -202,11 +202,11 @@ export class UserFlyerService extends CrudService<UserFlyer, UserFlyerDto, Creat
       }
 
       if (userFlyer.status === UserFlyerStatus.HAVE) {
-        stats[id].have.push(userFlyer.user.toString());
+        stats[id].have?.push(userFlyer.user.toString());
       } else if (userFlyer.status === UserFlyerStatus.TRADE) {
-        stats[id].trade.push(userFlyer.user.toString());
+        stats[id].trade?.push(userFlyer.user.toString());
       } else if (userFlyer.status === UserFlyerStatus.WANT) {
-        stats[id].want.push(userFlyer.user.toString());
+        stats[id].want?.push(userFlyer.user.toString());
       }
 
       if (userId && userFlyer.user.toString() === userId) {

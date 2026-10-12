@@ -1,6 +1,5 @@
 export * from './alphabet';
 export * from './big-flyer';
-export * from './copy-flyer-name-button';
 export * from './distributor-badge';
 export * from './flyer';
 export * from './flyer-note';

@@ -63,8 +63,8 @@ export class FilmController extends CrudController<Film, FilmDto, CreateFilmDto,
               const flyers = (await this.flyerService.getAll(undefined, { releases: release._id })).sort(sortFlyers);
               flyerCount += flyers.length;
 
-              if (userData?.userId && flyers.length) {
-                await this.userFlyerService.addUserStatus(userData.userId, flyers);
+              if (flyers.length) {
+                await this.userFlyerService.addUserStatus(userData?.userId, flyers);
               }
 
               return {

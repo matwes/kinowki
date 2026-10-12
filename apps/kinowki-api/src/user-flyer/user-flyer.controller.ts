@@ -59,8 +59,8 @@ export class UserFlyerController extends CrudController<
 
         const flyers = result.data.map((userFlyer) => userFlyer.flyer as unknown as FlyerDto);
 
-        if (userData?.userId && result.data.length) {
-          await this.userFlyerService.addUserStatus(userData.userId, flyers);
+        if (result.data.length) {
+          await this.userFlyerService.addUserStatus(userData?.userId, flyers);
         }
 
         res.status(HttpStatus.OK).json({
