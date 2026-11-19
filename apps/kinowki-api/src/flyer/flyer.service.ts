@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 
-import { CreateFlyerDto, FlyerDto, UpdateFlyerDto } from '@kinowki/shared';
+import { CreateFlyerDto, FlyerDto, migrationFlyerSizes, UpdateFlyerDto } from '@kinowki/shared';
 import { CrudService } from '../utils';
 import { Flyer } from './flyer.schema';
 
@@ -13,6 +13,7 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
 
   constructor(@InjectModel(Flyer.name) model: Model<Flyer>) {
     super(model);
+    this.migrateSizes();
   }
 
   override async getAll(params?: { first: number; rows: number }, filters?: FilterQuery<Flyer>) {
@@ -57,5 +58,27 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
       throw new NotFoundException(`${this.name} data not found!`);
     }
     return itemData;
+  }
+
+  async migrateSizes() {
+    console.log('Start size migration');
+    const operations = migrationFlyerSizes.map((entry) => ({
+      updateMany: {
+        filter: { size: entry.value },
+        update: {
+          $set: {
+            size: entry.newValue,
+            orientation: entry.orientation,
+          },
+        },
+      },
+    }));
+
+    const result = await this.model.bulkWrite(operations);
+
+    console.log('Size migration done:', {
+      matched: result.matchedCount,
+      modified: result.modifiedCount,
+    });
   }
 }

@@ -34,6 +34,11 @@
       <i class="pi pi-arrow-up-right-and-arrow-down-left-from-center"></i>
       <span>{{ flyer.size | flyerSizeName }}</span>
     </div>
+    }@if (flyer.orientation === 1) {
+    <div class="flyer-stat" pTooltip="Orientacja">
+      <i class="pi pi-arrows-h"></i>
+      <span>pozioma</span>
+    </div>
     } @if (flyer.type && flyer.type !== 1) {
     <div class="flyer-stat" pTooltip="Typ">
       <i class="pi pi-objects-column"></i>

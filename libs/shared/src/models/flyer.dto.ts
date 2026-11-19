@@ -3,6 +3,12 @@ import { ReleaseDto } from './release.dto';
 import { TagDto } from './tag.dto';
 import { UserFlyerDto } from './user-flyer.dto';
 
+export enum FlyerOrientation {
+  PORTRAIT = 0,
+  LANDSCAPE = 1,
+  SQUARE = 2,
+}
+
 export interface CreateFlyerDto {
   sortName: string;
   sortDate: string;
@@ -11,6 +17,7 @@ export interface CreateFlyerDto {
   kindNote?: string;
   type?: number;
   size?: number;
+  orientation?: FlyerOrientation;
   tags: string[];
   note?: string;
   releases: string[];

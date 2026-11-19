@@ -27,6 +27,9 @@ export class Flyer {
   @Prop()
   size?: number;
 
+  @Prop()
+  orientation?: number;
+
   @Prop({ required: true, type: [SchemaTypes.ObjectId], ref: 'Tag' })
   tags: Types.ObjectId[];
 

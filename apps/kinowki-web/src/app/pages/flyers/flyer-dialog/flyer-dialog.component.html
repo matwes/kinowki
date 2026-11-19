@@ -48,7 +48,7 @@
     <div class="field col-1 align-self-center">
       <p-button icon="pi pi-refresh" severity="success" rounded variant="outlined" (onClick)="refresh()" />
     </div>
-    <div class="field col-3">
+    <div class="field col-4">
       <p-iftalabel>
         <p-select
           id="type"
@@ -60,8 +60,25 @@
         <label for="type">Typ ulotki</label>
       </p-iftalabel>
     </div>
-
-    <div class="field col-3">
+    <div class="field col-4">
+      <p-iftalabel>
+        <p-select
+          id="kind"
+          fluid
+          [options]="options.flyerKinds"
+          [formControl]="kind"
+          appendTo="body"
+          scrollHeight="30rem" />
+        <label for="kind">Obieg</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-4">
+      <p-iftalabel>
+        <input pInputText fluid id="note" [formControl]="kindNote" />
+        <label for="kindNote">Notka obiegu</label>
+      </p-iftalabel>
+    </div>
+    <div class="field col-6">
       <p-iftalabel>
         <p-select
           id="size"
@@ -76,22 +93,16 @@
         <label for="size">Rozmiar ulotki</label>
       </p-iftalabel>
     </div>
-    <div class="field col-3">
+    <div class="field col-6">
       <p-iftalabel>
         <p-select
-          id="kind"
+          id="orientation"
           fluid
-          [options]="options.flyerKinds"
-          [formControl]="kind"
+          [options]="options.flyerOrientations"
+          [formControl]="orientation"
           appendTo="body"
           scrollHeight="30rem" />
-        <label for="kind">Obieg</label>
-      </p-iftalabel>
-    </div>
-    <div class="field col-3">
-      <p-iftalabel>
-        <input pInputText fluid id="note" [formControl]="kindNote" />
-        <label for="kindNote">Notka obiegu</label>
+        <label for="kind">Orientacja</label>
       </p-iftalabel>
     </div>
     <div class="field col-6">

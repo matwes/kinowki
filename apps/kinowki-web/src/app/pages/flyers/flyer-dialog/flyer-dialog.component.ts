@@ -15,6 +15,7 @@ import { BehaviorSubject, debounceTime, filter, map, Observable, scan, startWith
 
 import {
   FlyerDto,
+  FlyerOrientation,
   ReleaseDto,
   TagDto,
   UpdateFlyerDto,
@@ -56,9 +57,20 @@ export class FlyerDialogComponent implements OnInit {
   options: {
     flyerKinds: { value: number; label: string }[];
     flyerSizes: { value: number; label: string }[];
+    flyerOrientations: { value: number; label: string }[];
     flyerTypes: { value: number; label: string }[];
     tags: TagDto[];
-  } = { flyerKinds, flyerSizes, flyerTypes, tags: [] };
+  } = {
+    flyerKinds,
+    flyerSizes,
+    flyerOrientations: [
+      { value: FlyerOrientation.PORTRAIT, label: 'Pionowa' },
+      { value: FlyerOrientation.LANDSCAPE, label: 'Pozioma' },
+      { value: FlyerOrientation.SQUARE, label: 'Kwadratowa' },
+    ],
+    flyerTypes,
+    tags: [],
+  };
 
   releaseSearch = new BehaviorSubject<string>('');
   releases$: Nullable<Observable<ReleaseDto[]>>;
@@ -72,7 +84,8 @@ export class FlyerDialogComponent implements OnInit {
     kind: 1,
     kindNote: undefined as string | undefined,
     type: 1 as number | undefined,
-    size: 1 as number | undefined,
+    size: 500 as number | undefined,
+    orientation: 0 as FlyerOrientation | undefined,
     tags: [[] as string[]],
     note: undefined as string | undefined,
     images: this.fb.array(
@@ -116,6 +129,10 @@ export class FlyerDialogComponent implements OnInit {
     return this.form.controls.size;
   }
 
+  get orientation() {
+    return this.form.controls.orientation;
+  }
+
   get tags() {
     return this.form.controls.tags;
   }
@@ -148,6 +165,7 @@ export class FlyerDialogComponent implements OnInit {
         this.kindNote.setValue(flyer.kindNote);
         this.type.setValue(flyer.type);
         this.size.setValue(flyer.size);
+        this.orientation.setValue(flyer.orientation);
         this.tags.setValue(flyer.tags.map((tag) => tag._id));
         this.note.setValue(flyer.note);
         this.highlight.setValue(flyer.highlight ?? undefined);
@@ -236,6 +254,7 @@ export class FlyerDialogComponent implements OnInit {
     const type = this.type.value;
     const kindNote = this.kindNote.value;
     const note = this.note.value;
+    const orientation = this.orientation.value;
 
     let name = `${releases.map((release) => release.film.title).join(' | ')}`;
 
@@ -244,7 +263,8 @@ export class FlyerDialogComponent implements OnInit {
         ? [releaseTypeMap[oldestRelease.releaseType]]
         : []),
       ...(oldestRelease.note ? [oldestRelease.note] : []),
-      ...(!size || size === 1 ? [] : [flyerSizeMap[size]]),
+      ...(!size || size === 500 ? [] : [flyerSizeMap[size]]),
+      ...(orientation === 1 ? ['pozioma'] : []),
       ...(!type || type === 1 || type === 14 ? [] : [flyerTypeMap[type]]),
       ...(kindNote ? [kindNote] : []),
       ...(note ? [note] : []),
@@ -375,6 +395,7 @@ export class FlyerDialogComponent implements OnInit {
       kindNote: this.kindNote.value,
       type: this.type.value,
       size: this.size.value,
+      orientation: this.orientation.value,
       tags: this.tags.value,
       note: this.note.value,
       images: this.images.controls.map((image) => ({
