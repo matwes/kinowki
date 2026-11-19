@@ -19,6 +19,9 @@ export class Flyer {
   kind: number;
 
   @Prop()
+  kindNote?: string;
+
+  @Prop()
   type?: number;
 
   @Prop()

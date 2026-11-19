@@ -70,6 +70,7 @@ export class FlyerDialogComponent implements OnInit {
     filterName: undefined as unknown as string,
     releases: [[] as string[]],
     kind: 1,
+    kindNote: undefined as string | undefined,
     type: 1 as number | undefined,
     size: 1 as number | undefined,
     tags: [[] as string[]],
@@ -101,6 +102,10 @@ export class FlyerDialogComponent implements OnInit {
 
   get kind() {
     return this.form.controls.kind;
+  }
+
+  get kindNote() {
+    return this.form.controls.kindNote;
   }
 
   get type() {
@@ -140,6 +145,7 @@ export class FlyerDialogComponent implements OnInit {
         this.filterName.setValue(flyer.filterName);
         this.releases.setValue(flyer.releases.map((release) => release._id));
         this.kind.setValue(flyer.kind);
+        this.kindNote.setValue(flyer.kindNote);
         this.type.setValue(flyer.type);
         this.size.setValue(flyer.size);
         this.tags.setValue(flyer.tags.map((tag) => tag._id));
@@ -209,6 +215,7 @@ export class FlyerDialogComponent implements OnInit {
         .map((releaseId) => this.releaseMap.get(releaseId))
         .filter((release) => !!release)
         .flatMap((release) => [release.film?.title, release.film?.originalTitle, release.note]),
+      this.kindNote.value,
       this.note.value,
     ]
       .filter(Boolean)
@@ -225,6 +232,10 @@ export class FlyerDialogComponent implements OnInit {
     }
 
     const oldestRelease = releases.reduce((oldest, current) => (current.date < oldest.date ? current : oldest));
+    const size = this.size.value;
+    const type = this.type.value;
+    const kindNote = this.kindNote.value;
+    const note = this.note.value;
 
     let name = `${releases.map((release) => release.film.title).join(' | ')}`;
 
@@ -233,9 +244,10 @@ export class FlyerDialogComponent implements OnInit {
         ? [releaseTypeMap[oldestRelease.releaseType]]
         : []),
       ...(oldestRelease.note ? [oldestRelease.note] : []),
-      ...(!this.size.value || this.size.value === 1 ? [] : [flyerSizeMap[this.size.value]]),
-      ...(!this.type.value || this.type.value === 1 || this.type.value === 14 ? [] : [flyerTypeMap[this.type.value]]),
-      ...(this.note.value ? [this.note.value] : []),
+      ...(!size || size === 1 ? [] : [flyerSizeMap[size]]),
+      ...(!type || type === 1 || type === 14 ? [] : [flyerTypeMap[type]]),
+      ...(kindNote ? [kindNote] : []),
+      ...(note ? [note] : []),
     ];
 
     if (tags.length) {
@@ -360,6 +372,7 @@ export class FlyerDialogComponent implements OnInit {
         return releaseA.film.title.localeCompare(releaseB.film.title);
       }),
       kind: this.kind.value,
+      kindNote: this.kindNote.value,
       type: this.type.value,
       size: this.size.value,
       tags: this.tags.value,

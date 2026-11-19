@@ -2,15 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 
-import {
-  CreateFlyerDto,
-  FlyerDto,
-  flyerSizeMap,
-  flyerTypeMap,
-  ReleaseDto,
-  releaseTypeMap,
-  UpdateFlyerDto,
-} from '@kinowki/shared';
+import { CreateFlyerDto, FlyerDto, UpdateFlyerDto } from '@kinowki/shared';
 import { CrudService } from '../utils';
 import { Flyer } from './flyer.schema';
 
@@ -65,64 +57,5 @@ export class FlyerService extends CrudService<Flyer, FlyerDto, CreateFlyerDto, U
       throw new NotFoundException(`${this.name} data not found!`);
     }
     return itemData;
-  }
-
-  async setFlyerNames() {
-    const flyers = await this.model
-      .find()
-      .populate({
-        path: 'releases',
-        populate: { path: 'film' },
-      })
-      .lean();
-
-    const ops = flyers.map((flyer) => {
-      const releases = flyer.releases as unknown as ReleaseDto[];
-      const filterName = [
-        ...releases.flatMap((release) => [release.film?.title, release.film?.originalTitle, release.note]),
-        flyer.note,
-      ]
-        .filter(Boolean)
-        .join(';');
-
-      let sortName = '';
-
-      if (releases.length) {
-        const oldest = releases.reduce((oldest, current) => (current.date < oldest.date ? current : oldest));
-        sortName = releases.map((release) => release.film.title).join(' | ');
-
-        const tags = [
-          ...(oldest.releaseType !== 1 && oldest.releaseType !== 5 ? [releaseTypeMap[oldest.releaseType]] : []),
-          ...(oldest.note ? [oldest.note] : []),
-          ...(!flyer.size || flyer.size === 1 ? [] : [flyerSizeMap[flyer.size]]),
-          ...(!flyer.type || flyer.type === 1 || flyer.type === 14 ? [] : [flyerTypeMap[flyer.type]]),
-          ...(flyer.note ? [flyer.note] : []),
-        ];
-
-        if (tags.length) {
-          sortName += ` [${tags.join('] [')}]`;
-        }
-      }
-
-      return {
-        updateOne: {
-          filter: { _id: flyer._id },
-          update: {
-            $set: { filterName, sortName },
-            $unset: { id: '', name: '' },
-          },
-        },
-      };
-    });
-
-    await this.model.bulkWrite(ops);
-  }
-
-  async migrateFlyerKind() {
-    console.log('Starting migration: setting Flyer.kind = 1 where missing...');
-
-    const res = await this.model.updateMany({ kind: { $exists: false } }, { $set: { kind: 1 } });
-
-    console.log(`✅ Migration finished. Updated ${res.modifiedCount} records.`);
   }
 }

@@ -41,15 +41,15 @@
     </div>
     } @if (flyer.kind && flyer.kind !== 1) {
     <div class="flyer-stat" pTooltip="Obieg">
-      <i class="pi pi-map-marker"></i>
-      <span>{{ displayKind() }}</span>
+      <i [ngClass]="flyer.kind | flyerKindIcon"></i>
+      <span>{{ flyer.kindNote || flyerKindMap[flyer.kind] || 'nieznany' }}</span>
     </div>
     } @for(tag of flyer.tags; track $index) {
     <div class="flyer-stat" pTooltip="Tag">
       <i class="pi pi-tag"></i>
       <span>{{ tag.name }}</span>
     </div>
-    } @if (showNote()) {
+    } @if (flyer.note) {
     <div class="flyer-stat" pTooltip="Komentarz">
       <i class="pi pi-info-circle"></i>
       <span>{{ flyer.note }}</span>

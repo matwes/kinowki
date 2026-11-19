@@ -82,7 +82,7 @@ export class DistributorBadgeComponent {
     if (releaseType === 1) {
       return PrimeIcons.VIDEO;
     } else if (releaseType === 2) {
-      return PrimeIcons.TROPHY;
+      return PrimeIcons.STAR;
     } else if (releaseType === 3) {
       return PrimeIcons.PLAY_CIRCLE;
     } else if (releaseType === 4) {

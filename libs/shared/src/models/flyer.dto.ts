@@ -8,6 +8,7 @@ export interface CreateFlyerDto {
   sortDate: string;
   filterName: string;
   kind: number;
+  kindNote?: string;
   type?: number;
   size?: number;
   tags: string[];

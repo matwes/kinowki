@@ -1,4 +1,4 @@
-import { NgStyle } from '@angular/common';
+import { NgStyle, NgClass } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -22,16 +22,19 @@ import { ShowIfAdminDirective } from '../show-if-admin';
 import { ShowIfLoggedDirective } from '../show-if-logged';
 import { UserFlyerStatusButtonComponent } from '../user-flyer-status-button';
 import { FlyerUsersPopoverComponent } from '../flyer-users-popover';
+import { FlyerKindIconPipe } from '../flyer-kind-icon';
 
 @Component({
   selector: 'app-big-flyer',
   templateUrl: './big-flyer.component.html',
   styleUrl: './big-flyer.component.sass',
   imports: [
+    FlyerKindIconPipe,
     FlyerSizeNamePipe,
     FlyerTypeNamePipe,
     FlyerUsersPopoverComponent,
     ImageModule,
+    NgClass,
     NgStyle,
     ShowIfAdminDirective,
     ShowIfLoggedDirective,
@@ -50,21 +53,7 @@ export class BigFlyerComponent implements AfterViewInit {
   blankSize = signal({ width: 175, height: 250 });
   imageSizes = signal<Record<number, { width: number; height: number }>>({});
 
-  readonly displayKind = computed(() => {
-    const flyer = this.flyer();
-
-    if (flyer.kind === 2 && flyer.note) {
-      return flyer.note;
-    }
-
-    return flyerKindMap[flyer.kind] ?? 'nieznany';
-  });
-
-  readonly showNote = computed(() => {
-    const flyer = this.flyer();
-
-    return !!flyer.note && flyer.kind !== 2;
-  });
+  flyerKindMap = flyerKindMap;
 
   isHorizontal = computed(() => {
     const first = this.imageSizes()[0];
