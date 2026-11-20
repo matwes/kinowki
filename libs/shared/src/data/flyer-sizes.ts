@@ -34,6 +34,7 @@ export const flyerSizes = [
   { value: 133, label: '12×12 cm' },
   { value: 134, label: '13×13 cm' },
   { value: 135, label: '14.8×14.8 cm' },
+  { value: 136, label: '5.5×9 cm' },
   { value: 500, label: 'A6' },
   { value: 501, label: 'A5' },
   { value: 502, label: 'A4' },
