@@ -33,7 +33,7 @@ export const flyerSizes = [
   { value: 132, label: '10×10 cm' },
   { value: 133, label: '12×12 cm' },
   { value: 134, label: '13×13 cm' },
-  { value: 135, label: '14.8×14.8 cm' },
+  // { value: 135, label: '' },
   { value: 136, label: '5.5×9 cm' },
   { value: 500, label: 'A6' },
   { value: 501, label: 'A5' },
@@ -68,8 +68,8 @@ export const flyerSizes = [
   { value: 530, label: '11.5×16.5 cm' },
   { value: 531, label: '11.5×17 cm' },
   { value: 532, label: '11.5×17.5 cm' },
-  { value: 533, label: '11.5×18.3 cm' },
-  { value: 534, label: '11.5×21.7 cm' },
+  { value: 533, label: '10.5×18 cm' },
+  { value: 534, label: '10.5×21.5 cm' },
   { value: 535, label: '12×16 cm' },
   { value: 536, label: '12×21 cm' },
   { value: 537, label: '12×23.5 cm' },
@@ -79,10 +79,10 @@ export const flyerSizes = [
   { value: 541, label: '13×18 cm' },
   { value: 542, label: '13×19 cm' },
   { value: 543, label: '13×19.5 cm' },
-  { value: 544, label: '13.8×20 cm' },
+  { value: 544, label: '14×20 cm' },
   { value: 545, label: '14×17 cm' },
   { value: 546, label: '14.5×15.5 cm' },
-  { value: 547, label: '14.7×15 cm' },
+  { value: 547, label: '12×18 cm' },
   { value: 548, label: '15×15 cm' },
   { value: 549, label: '15×18.5 cm' },
   { value: 550, label: '15×20.5 cm' },
@@ -101,8 +101,8 @@ export const flyerSizes = [
     return 1;
   }
 
-  const [aWidth, aHeight] = a.label.split('×').map(Number);
-  const [bWidth, bHeight] = b.label.split('×').map(Number);
+  const [aWidth, aHeight] = a.label.split('×').map(parseFloat);
+  const [bWidth, bHeight] = b.label.split('×').map(parseFloat);
 
   return aWidth - bWidth || aHeight - bHeight;
 });
