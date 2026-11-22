@@ -7,15 +7,15 @@ export const flyerSizes = [
   { value: 106, label: '4×8 cm' },
   { value: 107, label: '4×9 cm' },
   { value: 108, label: '4.5×9 cm' },
-  { value: 109, label: '4.9×5.2 cm' },
+  { value: 109, label: '7.5×8 cm' },
   { value: 110, label: '5×5 cm' },
   { value: 111, label: '5×10.5 cm' },
-  { value: 112, label: '5×14.8 cm' },
-  { value: 113, label: '5.2×7.4 cm' },
+  // { value: 112, label: '' },
+  { value: 113, label: '5×7.5 cm' },
   { value: 114, label: '5.5×5.5 cm' },
   { value: 115, label: '5.5×8 cm' },
   { value: 116, label: '5.5×8.5 cm' },
-  { value: 117, label: '5.6×8.6 cm' },
+  // { value: 117, label: '' },
   { value: 118, label: '6×6 cm' },
   { value: 119, label: '6.5×6.5 cm' },
   { value: 120, label: '7×7 cm' },
@@ -45,25 +45,25 @@ export const flyerSizes = [
   { value: 507, label: '5×19 cm' },
   { value: 508, label: '5×19.5 cm' },
   { value: 509, label: '5×20 cm' },
-  { value: 510, label: '5.3×14.9 cm' },
-  { value: 511, label: '7.4×21 cm' },
+  { value: 510, label: '5×15 cm' },
+  { value: 511, label: '7.5×21 cm' },
   { value: 512, label: '7.5×15 cm' },
   { value: 513, label: '9×17.5 cm' },
   { value: 514, label: '9.5×16.5 cm' },
   { value: 515, label: '9.5×19.5 cm' },
   { value: 516, label: '9.5×20 cm' },
   { value: 517, label: '9.5×21 cm' },
-  { value: 518, label: '9.7×20.5 cm' },
+  { value: 518, label: '9.5×20.5 cm' },
   { value: 519, label: '10×18 cm' },
   { value: 520, label: '10×18.5 cm' },
   { value: 521, label: '10×20 cm' },
   { value: 522, label: '10×21 cm' },
-  { value: 523, label: '10.3×19.2 cm' },
-  { value: 524, label: '10.5×16.8 cm' },
-  { value: 525, label: '10.5×17.7 cm' },
+  { value: 523, label: '10×19 cm' },
+  { value: 524, label: '10.5×17 cm' },
+  { value: 525, label: '10.5×17.5 cm' },
   { value: 526, label: '10.5×19.5 cm' },
   { value: 527, label: '10.5×20 cm' },
-  { value: 528, label: '10.8×20.8 cm' },
+  { value: 528, label: '10.5×18.5 cm' },
   { value: 529, label: '11.5×16 cm' },
   { value: 530, label: '11.5×16.5 cm' },
   { value: 531, label: '11.5×17 cm' },
@@ -101,7 +101,10 @@ export const flyerSizes = [
     return 1;
   }
 
-  return a.label.localeCompare(b.label, 'pl', { numeric: true });
+  const [aWidth, aHeight] = a.label.split('×').map(Number);
+  const [bWidth, bHeight] = b.label.split('×').map(Number);
+
+  return aWidth - bWidth || aHeight - bHeight;
 });
 
 export const flyerSizeMap = flyerSizes.reduce(
